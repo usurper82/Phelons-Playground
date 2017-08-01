@@ -51,6 +51,7 @@ namespace Trinity.Components.Adventurer.Coroutines
                 if (value != States.NotStarted)
                 {
                     Core.Logger.Debug("[Exploration] " + value);
+                    StatusText = "[Exploration] " + value;
                 }
                 _state = value;
             }
@@ -72,10 +73,11 @@ namespace Trinity.Components.Adventurer.Coroutines
         {
             CoroutineCoodinator.Current = this;
 
-            if (_breakCondition != null && _breakCondition.Invoke())
+            if (_breakCondition != null && _breakCondition())
             {
                 Core.Logger.Debug("BreakCondition Triggered");
-                return false;
+                Core.Logger.Debug($"[Exploration] Break condition triggered, so we're done.");
+                State = States.Completed;
             }
 
             switch (State)
@@ -255,6 +257,8 @@ namespace Trinity.Components.Adventurer.Coroutines
         {
             State = States.NotStarted;
         }
+
+        public string StatusText { get; set; }
 
         public void DisablePulse()
         {

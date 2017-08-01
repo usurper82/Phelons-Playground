@@ -21,11 +21,10 @@ namespace Trinity.Framework
         void Warn(string s, params object[] args);
         void Warn(LogCategory category, string s, params object[] args);
     }
+
     public class DefaultLogger : IFrameworkLogger
     {
         private readonly ILog _Logger = Zeta.Common.Logger.GetLoggerInstanceForType();
-
-        private string _lastMessage;
 
         public string Prefix { get; set; } = $"{TrinityPlugin.Instance.Name} {TrinityPlugin.Instance.Version}";
 
@@ -75,9 +74,7 @@ namespace Trinity.Framework
                 var cat = category != LogCategory.None ? $" [{category}] " : string.Empty;
                 var msg = $"[{Prefix}]{cat} {s}";
 
-                if (msg == _lastMessage)
-                    return;
-                    switch (level)
+                switch (level)
                 {
                     case TrinityLogLevel.Warn:
                         _Logger.Warn(msg);

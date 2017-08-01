@@ -61,37 +61,37 @@ namespace Trinity.Routines.Crusader
 
             if (AllowedToUse(Settings.Akarats, Skills.Crusader.AkaratsChampion) && ShouldAkaratsChampion())
             {
-                Core.Logger.Error(LogCategory.Routine, $"Akarats");
+                Core.Logger.Verbose(LogCategory.Routine, $"Akarats");
                 return AkaratsChampion();
             }
 
             if (ShouldCondemn())
             {
-                Core.Logger.Error(LogCategory.Routine, $"Condemn");
+                Core.Logger.Verbose(LogCategory.Routine, $"Condemn");
                 return Condemn();
             }
 
             if (ShouldProvoke())
             {
-                Core.Logger.Error(LogCategory.Routine, $"Provoke");
+                Core.Logger.Verbose(LogCategory.Routine, $"Provoke");
                 return Provoke();
             }
 
             if (ShouldJudgement())
             {
-                Core.Logger.Error(LogCategory.Routine, $"Judgement");
+                Core.Logger.Verbose(LogCategory.Routine, $"Judgement");
                 return Judgement();
             }
 
             if (TryBombard(out power))
             {
-                Core.Logger.Error(LogCategory.Routine, $"Bombard");
+                Core.Logger.Verbose(LogCategory.Routine, $"Bombard");
                 return power;
             }
 
             if (ShouldSteedCharge())
             {
-                Core.Logger.Error(LogCategory.Routine, $"Steed");
+                Core.Logger.Verbose(LogCategory.Routine, $"Steed");
                 return SteedCharge();
             }
 
@@ -261,13 +261,13 @@ namespace Trinity.Routines.Crusader
 
             if (TryLaw(out power))
             {
-                //Core.Logger.Error(LogCategory.Routine, $"Buff Law");
+                //Core.Logger.Verbose(LogCategory.Routine, $"Buff Law");
                 return power;
             }
 
             if (!Player.IsInTown && Settings.BombardmentOOC && HostileMonsters.Any(u => u.Distance < 150f))
             {
-                //Core.Logger.Error(LogCategory.Routine, $"Buff Bombard Func");
+                //Core.Logger.Verbose(LogCategory.Routine, $"Buff Bombard Func");
 
                 // Break Steed to bombard OOC only if waiting for CoE
                 var goodTimetoCast = !ShouldBombardWheneverPossible || !IsSteedCharging;
@@ -288,7 +288,7 @@ namespace Trinity.Routines.Crusader
 
         public TrinityPower GetDestructiblePower()
         {
-            Core.Logger.Error(LogCategory.Routine, $"GetDestructiblePower");
+            Core.Logger.Verbose(LogCategory.Routine, $"GetDestructiblePower");
             return DefaultDestructiblePower();
         }
 
@@ -296,7 +296,7 @@ namespace Trinity.Routines.Crusader
         {
             if (ShouldSteedCharge())
             {
-                Core.Logger.Error(LogCategory.Routine, $"SteedCharge MovementPower");
+                Core.Logger.Verbose(LogCategory.Routine, $"SteedCharge MovementPower");
                 return SteedCharge();
             }
 

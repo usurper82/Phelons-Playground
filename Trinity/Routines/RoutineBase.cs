@@ -495,7 +495,7 @@ namespace Trinity.Routines
                     //var lastPower = SpellHistory.LastPower;
                     var distance = buffedLocation.Distance(Player.Position);
 
-                    Core.Logger.Error(LogCategory.Routine, $"Buffed location found Dist={distance}");
+                    Core.Logger.Verbose(LogCategory.Routine, $"Buffed location found Dist={distance}");
 
                     if (buffedLocation.Distance(Player.Position) < arriveDistance)
                     {
@@ -515,15 +515,15 @@ namespace Trinity.Routines
                     }
                     //else if (checkPowerRange && lastPower != null && buffedLocation.Distance(Combat.Targeting.CurrentTarget.Position) > lastPower.MinimumRange + Combat.Targeting.CurrentTarget.CollisionRadius + Player.Radius)
                     //{
-                    //    Core.Logger.Error(LogCategory.Routine, $"Buffed spot outside attack range for power {lastPower.SNOPower} Range={lastPower.MinimumRange} TimeSinceUse={lastPower.TimeSinceUseMs} Dist={distance}");
+                    //    Core.Logger.Verbose(LogCategory.Routine, $"Buffed spot outside attack range for power {lastPower.SNOPower} Range={lastPower.MinimumRange} TimeSinceUse={lastPower.TimeSinceUseMs} Dist={distance}");
                     //}
                     else if (IsKitingEnabled && TargetUtil.AnyMobsInRangeOfPosition(buffedLocation, TrinityCombat.Routines.Current.KiteDistance))
                     {
-                        Core.Logger.Error(LogCategory.Routine, $"Moving to buffed spot would trigger kiting away from it.");
+                        Core.Logger.Verbose(LogCategory.Routine, $"Moving to buffed spot would trigger kiting away from it.");
                     }
                     else
                     {
-                        Core.Logger.Error(LogCategory.Routine, $"Moving to Buffed Position {buffedLocation} Dist={distance}");
+                        Core.Logger.Verbose(LogCategory.Routine, $"Moving to Buffed Position {buffedLocation} Dist={distance}");
                         power = new TrinityPower(SNOPower.Walk, maxDistance, buffedLocation);
                         return true;                           
                     } 

@@ -79,7 +79,7 @@ namespace Trinity.Framework.Actors
         {
             var currentFrame = ZetaDia.Memory.Executor.FrameCount;
 
-            if (!ZetaDia.IsInGame || ZetaDia.Globals.IsLoadingWorld)
+            if (!ZetaDia.IsInGame)
                 return;
 
             var gameId = ZetaDia.Service.CurrentGameId;
