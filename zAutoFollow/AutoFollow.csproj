@@ -1,0 +1,162 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{11F58773-D0B0-4060-A3BD-28BC046286CB}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>AutoFollow</RootNamespace>
+    <AssemblyName>AutoFollow</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Demonbuddy">
+      <HintPath>..\..\..\Demonbuddy3\Demonbuddy.exe</HintPath>
+    </Reference>
+    <Reference Include="GreyMagic">
+      <HintPath>..\..\..\Demonbuddy3\GreyMagic.dll</HintPath>
+    </Reference>
+    <Reference Include="IronPython">
+      <HintPath>..\..\..\Demonbuddy3\IronPython.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Dynamic">
+      <HintPath>..\..\Microsoft.Dynamic.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Scripting">
+      <HintPath>..\..\Microsoft.Scripting.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Scripting.Metadata">
+      <HintPath>..\..\Microsoft.Scripting.Metadata.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AutoFollow.cs" />
+    <Compile Include="AutoFollowPartyProvider.cs" />
+    <Compile Include="Behaviors\BaseBehavior.cs" />
+    <Compile Include="Behaviors\BehaviorCategory.cs" />
+    <Compile Include="Behaviors\FollowerCombat.cs" />
+    <Compile Include="Behaviors\FollowerPowerLevel.cs" />
+    <Compile Include="Behaviors\IBehavior.cs" />
+    <Compile Include="Behaviors\Leader.cs" />
+    <Compile Include="Behaviors\LeaderManual.cs" />
+    <Compile Include="Coroutines\Combat.cs" />
+    <Compile Include="Coroutines\Coordination.cs" />
+    <Compile Include="Coroutines\Movement.cs" />
+    <Compile Include="Coroutines\Party.cs" />
+    <Compile Include="Coroutines\Questing.cs" />
+    <Compile Include="Events\AsyncEvent.cs" />
+    <Compile Include="Events\ChangeMonitor.cs" />
+    <Compile Include="Events\EventData.cs" />
+    <Compile Include="Events\EventDispatcher.cs" />
+    <Compile Include="Events\EventManager.cs" />
+    <Compile Include="Events\EventType.cs" />
+    <Compile Include="Networking\Client.cs" />
+    <Compile Include="Networking\CommunicationThread.cs" />
+    <Compile Include="Networking\ConnectionMode.cs" />
+    <Compile Include="Networking\IService.cs" />
+    <Compile Include="Networking\Message.cs" />
+    <Compile Include="Networking\MessageWrapper.cs" />
+    <Compile Include="Networking\Server.cs" />
+    <Compile Include="Networking\Service.cs" />
+    <Compile Include="ProfileTags\AutoFollowTag.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources\CacheField.cs" />
+    <Compile Include="Resources\Common.cs" />
+    <Compile Include="Resources\Conditions.cs" />
+    <Compile Include="Resources\Data.cs" />
+    <Compile Include="Resources\Filestore.cs" />
+    <Compile Include="Resources\FileUtils.cs" />
+    <Compile Include="Resources\GameUI.cs" />
+    <Compile Include="Resources\Interactable.cs" />
+    <Compile Include="Resources\InterfaceLoader.cs" />
+    <Compile Include="Resources\JsonSerializer.cs" />
+    <Compile Include="Resources\Log.cs" />
+    <Compile Include="Resources\MathUtil.cs" />
+    <Compile Include="Resources\MemoryHelper.cs" />
+    <Compile Include="Resources\MiscUtil.Reflection.cs" />
+    <Compile Include="Resources\Navigation.cs" />
+    <Compile Include="Resources\Player.cs" />
+    <Compile Include="Resources\ProfileUtils.cs" />
+    <Compile Include="Resources\RegexExtensions.cs" />
+    <Compile Include="Resources\RiftHelper.cs" />
+    <Compile Include="Resources\SimpleAES.cs" />
+    <Compile Include="Resources\StackPanelReader.cs" />
+    <Compile Include="Resources\Target.cs" />
+    <Compile Include="Resources\Targetting.cs" />
+    <Compile Include="Resources\Town.cs" />
+    <Compile Include="Resources\UIElementExtensions.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="UI\Components\Behaviors\InputBindingBehavior.cs" />
+    <Compile Include="UI\Components\Behaviors\SelectTextOnFocus.cs" />
+    <Compile Include="UI\Components\Controls\InputBox.cs" />
+    <Compile Include="UI\Components\Converters\BoolToValueConverter.cs" />
+    <Compile Include="UI\Components\Converters\EnumBooleanConverter.cs" />
+    <Compile Include="UI\Components\Converters\IntToStringConverter.cs" />
+    <Compile Include="UI\NotifyBase.cs" />
+    <Compile Include="UI\Tab\TabUI.cs" />
+    <Compile Include="UI\Tab\TabViewModel.cs" />
+    <Compile Include="UI\UILoader.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="UI\Settings\Settings.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Tab\Tab.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Template.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="FollowerCombat.xml" />
+    <Content Include="FollowerPowerLevel.xml" />
+    <Content Include="LeaderManual.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Trinity\TrinityRevo.csproj">
+      <Project>{713ec146-3691-44fb-b3e6-e009bd3c8885}</Project>
+      <Name>TrinityRevo</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
