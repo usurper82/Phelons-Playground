@@ -58,16 +58,16 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
 
             position = Vector3.Zero;
 
-            if (!Skills.Barbarian.FuriousCharge.CanCast() || Skills.Barbarian.FuriousCharge.TimeSinceUse < 500 && Player.PrimaryResourcePct > 0.85 && Skills.Barbarian.AncientSpear.CanCast())
-                return false;
-
             if (Targeting.AnyPlayer(p => p.HitPointsPct < 0.90 && p.Distance < 50f) && Targeting.HealthGlobeExists(35f))
             {
-                position = Targeting.GetBestHealthGlobeClusterPoint(7f, 35f, false, true);
+                position = Targeting.GetBestHealthGlobeClusterPoint(7f, 45f, false, true);
                 Core.Logger.Error(LogCategory.Routine,
                     $"[FuriousCharge] -  On Closest Health Globe: [{position.Distance(Player.Position)}].");
                 return true;
             }
+
+            if (!Skills.Barbarian.FuriousCharge.CanCast() || Skills.Barbarian.FuriousCharge.TimeSinceUse < 500 && Player.PrimaryResourcePct > 0.85 && Skills.Barbarian.AncientSpear.CanCast())
+                return false;
             TrinityActor bestPierce = Targeting.GetBestPierceTarget(45);
             position = bestPierce.Position;
             Core.Logger.Error(LogCategory.Routine,

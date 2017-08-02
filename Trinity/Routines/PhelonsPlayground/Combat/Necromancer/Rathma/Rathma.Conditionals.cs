@@ -40,19 +40,21 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
                 return true;
             }
             return false;
-            //if (!Player.Position.InCriticalAvoidance())
-            //    return false;
 
-            //if (_loiterPosition != Vector3.Zero && !_loiterPosition.InCriticalAvoidance() && _loiterPosition.Distance(Player.Position) < 25f)
-            //{
-            //    position = _loiterPosition;
-            //    return true;
-            //}
+            if (_loiterPosition != Vector3.Zero && !_loiterPosition.InCriticalAvoidance() && _loiterPosition.Distance(Player.Position) < 25f)
+            {
+                position = _loiterPosition;
+                return true;
+            }
+            else
+            {
+                position = Targeting.GetLoiterPosition(Target, 25f);
+                Core.Logger.Error(LogCategory.Routine,
+                    $"[Walk] - To Best Loiter Position.");
+                return true;
+            }
 
-            //position = Targeting.GetLoiterPosition(Target, 25f);
-            //Core.Logger.Error(LogCategory.Routine,
-            //    $"[Walk] - To Best Loiter Position.");
-            //return true;
+            return false;
         }
         public virtual bool ShouldLandOfTheDead()
         {
