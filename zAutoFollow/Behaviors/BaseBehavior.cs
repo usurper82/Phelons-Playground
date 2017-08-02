@@ -26,6 +26,11 @@ using Zeta.TreeSharp;
 
 namespace AutoFollow.Behaviors
 {
+    using Trinity.Components.Adventurer;
+    using Trinity.Components.Adventurer.Coroutines;
+    using Trinity.Components.Adventurer.Game.Actors;
+    using Trinity.Components.Adventurer.Game.Exploration;
+
     public class BaseBehavior : IBehavior
     {
 
@@ -196,6 +201,8 @@ namespace AutoFollow.Behaviors
                 Log.Verbose("Waiting for Trinity to be ready");
                 return true;
             }
+            if (Player.IsInTown && AdvDia.CurrentWorldId != ExplorationData.ActHubWorldIds[Act.A1])
+                return !await WaypointCoroutine.UseWaypoint(WaypointFactory.ActHubs[Act.A1]);
 
             AcceptRiftDialog();
 

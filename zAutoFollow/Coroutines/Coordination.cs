@@ -102,7 +102,7 @@ namespace AutoFollow.Coroutines
         //    return false;
         //}
 
-
+        private static DateTime _partyJoinTimer = DateTime.MinValue;
         /// <summary>
         /// Prevents a greater rift from being started until all bots are ready.
         /// </summary>
@@ -130,9 +130,27 @@ namespace AutoFollow.Coroutines
                     return true;
                 }
 
+                if (ZetaDia.Service.Party.NumPartyMembers < 3)
+                {
+                    if (_partyJoinTimer == DateTime.MinValue)
+                    {
+                        _partyJoinTimer = DateTime.Now.AddMinutes(5);
+                    }
+                    if (DateTime.Now > _partyJoinTimer)
+                    {
+                        Log.Info("Followers took too long to join.  Leaving Game.");
+                        await Party.LeaveGame(true);
+                        await Coroutine.Sleep(10000);
+                        _partyJoinTimer = DateTime.MinValue;
+                        return true;
+                    }
+                    Log.Info("Waiting for followers to join game.");
+                    await Coroutine.Sleep(1000);
+                    return true;
+                }
+
                 if (AutoFollow.CurrentLeader.IsMe && Player.IsInTown &&
-                    (AutoFollow.CurrentFollowers.All(f => f.IsInSameWorld && f.Distance > 65f) ||
-                     ZetaDia.Service.Party.NumPartyMembers < 3))
+                    AutoFollow.CurrentFollowers.All(f => f.IsInSameWorld && f.Distance > 65f))
                 {
                     Log.Info("Waiting for followers to show up.");
                     await Coroutine.Sleep(1000);
