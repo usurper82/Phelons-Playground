@@ -4,6 +4,8 @@ using Trinity.Settings;
 
 namespace Trinity.Components.Combat.Resources
 {
+    using Routines.PhelonsPlayground.Utils;
+
     public static class WeightingUtils
     {
         public static bool ShouldIgnoreGlobe(TrinityItem actor)
@@ -83,6 +85,12 @@ namespace Trinity.Components.Combat.Resources
 
             if (unit.IsTreasureGoblin)
                 return false;
+
+            if (Targeting.AnyPlayer(p => p.IsDead))
+            {
+                reason = "Keep(DeadPlayer)";
+                return false;
+            }
 
             if (Core.Player.IsCastingPortal)
             {
