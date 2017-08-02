@@ -126,16 +126,16 @@ namespace AutoFollow.Coroutines
                 if (AutoFollow.CurrentFollowers.Any(f => f.IsVendoring || f.InDifferentLevelArea))
                 {
                     Log.Info("Waiting for followers to finish vendoring.");
-                    await Coroutine.Sleep(5000);
+                    await Coroutine.Sleep(1000);
                     return true;
                 }
 
                 if (AutoFollow.CurrentLeader.IsMe && Player.IsInTown &&
                     (AutoFollow.CurrentFollowers.All(f => f.IsInSameWorld && f.Distance > 65f) ||
-                     AutoFollow.CurrentFollowers.Count < 3))
+                     ZetaDia.Service.Party.NumPartyMembers < 3))
                 {
                     Log.Info("Waiting for followers to show up.");
-                    await Coroutine.Sleep(5000);
+                    await Coroutine.Sleep(1000);
                     return true;
                 }
             }

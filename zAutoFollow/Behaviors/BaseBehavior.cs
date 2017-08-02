@@ -150,7 +150,7 @@ namespace AutoFollow.Behaviors
 
             AutoFollow.Pulse();
 
-            if (Service.IsConnected && AutoFollow.NumberOfConnectedBots == 0)
+            if (!Player.IsServer && Service.IsConnected && AutoFollow.NumberOfConnectedBots == 0)
             {
                 Log.Info("Waiting for bots to connect... ");
                 await Coroutine.Sleep(500);

@@ -151,19 +151,13 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
             if (!Skills.Monk.CripplingWave.CanCast())
                 return false;
 
-            target = TargetUtil.BestEliteInRange(45, true);
-            if (target != null && target.Distance < 7f)
+            var range = Skills.Monk.Epiphany.TimeSinceUse < 15000 ? 20 : 7f;
+
+            target = TargetUtil.BestAuraUnit(SNOPower.Monk_CripplingWave, range, true) ?? target;
+            if (target != null && target.Distance < range)
                 return true;
 
-            target = TargetUtil.BestAoeUnit(45, true);
-            if (target != null && target.Distance < 7f) //removed resource check here
-                return true;
-
-            target = TargetUtil.BestAuraUnit(SNOPower.Monk_CripplingWave, 7f, true);
-            if (target != null && target.Distance < 7f)
-                return true;
-
-            target = TargetUtil.GetClosestUnit(7f);
+            target = TargetUtil.GetClosestUnit(range);
             return target != null;
         }
 

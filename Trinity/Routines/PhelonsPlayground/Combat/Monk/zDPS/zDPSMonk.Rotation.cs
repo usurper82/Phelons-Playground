@@ -30,14 +30,14 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
             if (ShouldCycloneStrike())
                 return Spells.CycloneStrike();
 
-            if (ShouldEpiphany())
-                return Spells.Epiphany();
-
             if (ShouldInnerSanctuary())
                 return Spells.InnerSanctuary();
 
             if (ShouldBlindingFlash())
                 return Spells.BlindingFlash();
+
+            if (ShouldEpiphany())
+                return Spells.Epiphany();
 
             return TryCripplingWave(out power) ? power : Walk(Target);
         }

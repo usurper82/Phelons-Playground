@@ -65,19 +65,13 @@ namespace AutoFollow.Behaviors
             //    return true;
             //}
 
-            var forcedWaitUntil = ChangeMonitor.LastBotStartedTime + TimeSpan.FromSeconds(10);
-            if (DateTime.UtcNow < forcedWaitUntil)
-            {
-                Log.Info("Waiting after bot has just started. Remaining={0}s", forcedWaitUntil.Subtract(DateTime.UtcNow).TotalSeconds);
-                await Coroutine.Sleep(1000);
-                return true;
-            }
-
-            if (Player.IsFollower)
-            {
-                // Wait out of game.
-                return true;
-            }
+            //var forcedWaitUntil = ChangeMonitor.LastBotStartedTime + TimeSpan.FromSeconds(10);
+            //if (DateTime.UtcNow < forcedWaitUntil)
+            //{
+            //    Log.Info("Waiting after bot has just started. Remaining={0}s", forcedWaitUntil.Subtract(DateTime.UtcNow).TotalSeconds);
+            //    await Coroutine.Sleep(1000);
+            //    return true;
+            //}
 
             // Allow DB to run normal out of game hook to start a new game
             return false;            

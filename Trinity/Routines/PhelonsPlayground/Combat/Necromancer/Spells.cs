@@ -57,8 +57,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
         public static TrinityPower Leech(TrinityActor target, float range = 65f)
             => new TrinityPower(Skills.Necromancer.Leech, range, target.AcdId);
 
-        public static TrinityPower Decrepify(Vector3 target, float range = 65f)
-            => new TrinityPower(Skills.Necromancer.Decrepify, range, target);
+        public static TrinityPower Decrepify(TrinityActor target, float range = 65f)
+            => new TrinityPower(Skills.Necromancer.Decrepify, range, target.AcdId);
 
         public static TrinityPower Revive(Vector3 position, float range = 65f)
             => new TrinityPower(Skills.Necromancer.Revive, range, position);
@@ -69,7 +69,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
         public static TrinityPower SiphonBlood(TrinityActor target, float range = 65f)
             => new TrinityPower(Skills.Necromancer.SiphonBlood, range, target.AcdId);
 
-        public static TrinityPower SkeletalMage(Vector3 position, float range = 65f)
+        public static TrinityPower SkeletalMage(TrinityActor position, float range = 65f)
             => new TrinityPower(Skills.Necromancer.SkeletalMage, range, position);
 
         public static TrinityPower CorpseLance(TrinityActor target, float range = 65f)
