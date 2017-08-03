@@ -45,6 +45,20 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         private static HashSet<SNOPower> Hotbar => Core.Hotbar.ActivePowers;
 
         #endregion Helper fields
+
+        internal static List<TrinityActor> SafeList(bool objectsInAoe = false)
+        {
+            return
+                Core.Targets.Where(x => !x.IsPlayer && !x.IsSummonedByPlayer && (!x.IsUnit || x.IsUnit && x.HitPoints > 0) && x.IsInLineOfSight &&
+                                        (objectsInAoe || !Core.Avoidance.InCriticalAvoidance(x.Position))).ToList();
+        }
+
+        internal static List<TrinityActor> CorpseSafeList(float distance = 60f, bool objectsInAoe = true)
+        {
+            return
+                Core.Targets.Where(x => !x.IsPlayer && x.IsUnit && x.IsDead && x.IsInLineOfSight && x.RadiusDistance < 60f &&
+                                        (objectsInAoe || !Core.Avoidance.InCriticalAvoidance(x.Position))).ToList();
+        }
         internal static TrinityActor Monk
         {
             get
@@ -121,13 +135,6 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
                    CurrentTarget.IsElite
                 ? CurrentTarget
                 : BestAoeUnit(searchRange, true) ?? CurrentTarget;
-        }
-
-        internal static List<TrinityActor> SafeList(bool objectsInAoe = false)
-        {
-            return
-                Core.Targets.Where(x => !x.IsPlayer && !x.IsSummonedByPlayer && (!x.IsUnit || x.IsUnit && x.HitPoints > 0) && x.IsInLineOfSight &&
-                                        (objectsInAoe || !Core.Avoidance.InCriticalAvoidance(x.Position))).ToList();
         }
 
         internal static bool BestBuffPosition(float maxRange, Vector3 fromLocation, bool objectsInAoe, out Vector3 location)

@@ -56,14 +56,23 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
 
             return false;
         }
+
+        public virtual bool ShouldDevour()
+        {
+            return Player.PrimaryResourceMax - Player.PrimaryResource < Targeting.CorpseSafeList().Count * 10 && Targeting.CorpseSafeList().Count >= 5;
+        }
         public virtual bool ShouldLandOfTheDead()
         {
             if (!Skills.Necromancer.LandOfTheDead.CanCast())
                 return false;
-
             var elite = Targeting.BestLOSEliteInRange(65f);
-            if (elite == null || Skills.Necromancer.LandOfTheDead.TimeSinceUse < 10000 || elite.HitPointsPct > 50)
+            if (elite == null || Skills.Necromancer.LandOfTheDead.TimeSinceUse < 10000 || elite.HitPointsPct > 50 || Player.PrimaryResourcePct < 0.90)
                 return false;
+
+            //Trying to alternate cooldowns
+            if (Skills.Necromancer.Frailty.CanCast() && elite.IsChampion)
+                return false;
+
             Core.Logger.Error(LogCategory.Routine,
                 $"[Land of the Dead] - Because of Elite {elite}.");
             return true;
@@ -76,8 +85,31 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
             var elite = Targeting.BestLOSEliteInRange(65f);
             if (elite == null || Skills.Necromancer.Simulacrum.TimeSinceUse < 15000 || elite.HitPointsPct > 50)
                 return false;
+
+            //Trying to alternate cooldowns
+            if (Skills.Necromancer.Frailty.CanCast() && elite.IsChampion || Skills.Necromancer.Decrepify.CanCast() && elite.IsElite)
+                return false;
+
             Core.Logger.Error(LogCategory.Routine,
-                $"[Land of the Dead] - Because of Elite {elite}.");
+                $"[Simulaccrum] - Because of Elite {elite}.");
+            return true;
+        }
+
+        protected virtual bool ShouldFrailty(out TrinityActor target)
+        {
+            target = null;
+            if (!Skills.Necromancer.Frailty.CanCast())
+                return false;
+
+            if (Skills.Necromancer.Frailty.TimeSinceUse < 4000)
+                return false;
+
+            var needsdebuffs = Targeting.BestTargetWithoutDebuff(65f, SNOPower.P6_Necro_Frailty, Player.Position);
+            if (needsdebuffs == null)
+                return false;
+            target = needsdebuffs;
+            Core.Logger.Error(LogCategory.Routine,
+                $"[Frailty] - On {target}.");
             return true;
         }
 
@@ -106,7 +138,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
         protected int LastSkeletonCommandTargetAcdId { get; set; }
         protected virtual bool ShouldCommandSkeletons()
         {
-            if (!Skills.Necromancer.CommandSkeletons.CanCast())
+            if (!Skills.Necromancer.CommandSkeletons.CanCast() || Skills.Necromancer.Simulacrum.TimeSinceUse < 12500)
                 return false;
 
             if (Target.AcdId == LastSkeletonCommandTargetAcdId || Skills.Necromancer.CommandSkeletons.TimeSinceUse < 2500)
