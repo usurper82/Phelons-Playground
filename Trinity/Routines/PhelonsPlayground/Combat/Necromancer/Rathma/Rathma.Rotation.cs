@@ -18,15 +18,19 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
                 return null;
 
             Vector3 location;
+            TrinityActor target;
 
             if (ShouldLandOfTheDead())
                 return Spells.LandOfTheDead();
-            TrinityActor target;
-            if (ShouldDecrepify(out target))
-                return Spells.Decrepify(target);
+
+            if (ShouldSimulacrum())
+                return Spells.Simulacrum(target.Position);
 
             if (ShouldSkeletalMage())
                 return Spells.SkeletalMage(Target);
+
+            if (ShouldDecrepify(out target))
+                return Spells.Decrepify(target);
 
             if (ShouldCommandSkeletons())
                 return Spells.CommandSkeletons(Target);

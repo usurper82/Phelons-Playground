@@ -68,7 +68,19 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
                 $"[Land of the Dead] - Because of Elite {elite}.");
             return true;
         }
-        
+        public virtual bool ShouldSimulacrum()
+        {
+            if (!Skills.Necromancer.Simulacrum.CanCast())
+                return false;
+
+            var elite = Targeting.BestLOSEliteInRange(65f);
+            if (elite == null || Skills.Necromancer.Simulacrum.TimeSinceUse < 15000 || elite.HitPointsPct > 50)
+                return false;
+            Core.Logger.Error(LogCategory.Routine,
+                $"[Land of the Dead] - Because of Elite {elite}.");
+            return true;
+        }
+
         protected virtual bool ShouldDecrepify(out TrinityActor target)
         {
             target = null;
