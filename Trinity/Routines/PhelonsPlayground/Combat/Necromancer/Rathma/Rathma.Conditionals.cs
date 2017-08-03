@@ -59,7 +59,13 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
 
         public virtual bool ShouldDevour()
         {
-            return Player.PrimaryResourceMax - Player.PrimaryResource < Targeting.CorpseSafeList().Count * 10 && Targeting.CorpseSafeList().Count >= 5;
+            var corpseCount = Targeting.CorpseSafeList().Count;
+            if (Player.PrimaryResourceMax - Player.PrimaryResource > corpseCount * 10 ||
+                corpseCount < 5)
+                return false;
+            Core.Logger.Error(LogCategory.Routine,
+                $"[Devour] - ({corpseCount}) Corpses with ({Player.PrimaryResourceMax - Player.PrimaryResource}) Essence Deficit.");
+            return true;
         }
         public virtual bool ShouldLandOfTheDead()
         {
@@ -70,7 +76,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
                 return false;
 
             //Trying to alternate cooldowns
-            if (Skills.Necromancer.Frailty.CanCast() && elite.IsChampion)
+            if (Skills.Necromancer.Frailty.IsActive && elite.IsChampion || Skills.Necromancer.Decrepify.IsActive && elite.IsElite)
                 return false;
 
             Core.Logger.Error(LogCategory.Routine,
@@ -87,7 +93,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
                 return false;
 
             //Trying to alternate cooldowns
-            if (Skills.Necromancer.Frailty.CanCast() && elite.IsChampion || Skills.Necromancer.Decrepify.CanCast() && elite.IsElite)
+            if (Skills.Necromancer.Frailty.IsActive && elite.IsChampion || Skills.Necromancer.Decrepify.IsActive && elite.IsElite)
                 return false;
 
             Core.Logger.Error(LogCategory.Routine,
