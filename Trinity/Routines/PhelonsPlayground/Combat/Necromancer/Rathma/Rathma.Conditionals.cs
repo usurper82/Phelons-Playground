@@ -59,9 +59,9 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
 
         public virtual bool ShouldDevour()
         {
-            var corpseCount = Targeting.CorpseSafeList().Count;
-            if (Player.PrimaryResourceMax - Player.PrimaryResource > corpseCount * 10 ||
-                corpseCount < 5)
+            var corpseCount = Targeting.CorpseCount(60f);
+            if (Player.PrimaryResourceMax - Player.PrimaryResource > corpseCount * 10 && Player.PrimaryResourcePct > 0.65 ||
+                corpseCount < 3)
                 return false;
             Core.Logger.Error(LogCategory.Routine,
                 $"[Devour] - ({corpseCount}) Corpses with ({Player.PrimaryResourceMax - Player.PrimaryResource}) Essence Deficit.");

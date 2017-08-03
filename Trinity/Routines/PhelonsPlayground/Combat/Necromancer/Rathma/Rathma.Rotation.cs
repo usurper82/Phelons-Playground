@@ -50,22 +50,24 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
             return null;
         }
 
-        public static TrinityPower DefensivePower()
+        public TrinityPower DefensivePower()
         {
             return null;
         }
 
-        public static TrinityPower BuffPower()
+        public TrinityPower BuffPower()
         {
+            if (ShouldDevour())
+                return Spells.Devour();
             return null;
         }
 
-        public static TrinityPower DestructiblePower()
+        public TrinityPower DestructiblePower()
         {
             return DefaultPower;
         }
 
-        public static TrinityPower MovementPower(Vector3 destination)
+        public TrinityPower MovementPower(Vector3 destination)
         {
             return null; //return Walk(destination);
         }
