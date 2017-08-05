@@ -39,7 +39,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
                     $"[Walk] - To Best Buff Position.");
                 return true;
             }
-            return false;
+            return CurrentTarget != null && (!Target.IsInLineOfSight || Target.RadiusDistance > 65f);
 
             if (_loiterPosition != Vector3.Zero && !_loiterPosition.InCriticalAvoidance() && _loiterPosition.Distance(Player.Position) < 25f)
             {

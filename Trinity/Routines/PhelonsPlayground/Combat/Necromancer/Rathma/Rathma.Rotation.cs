@@ -20,30 +20,32 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
             Vector3 location;
             TrinityActor target = Target;
 
-            if (ShouldDevour())
-                return Spells.Devour();
+            if (Target.RadiusDistance < 65f)
+            {
+                if (ShouldDevour())
+                    return Spells.Devour();
 
-            if (ShouldLandOfTheDead())
-                return Spells.LandOfTheDead();
+                if (ShouldLandOfTheDead())
+                    return Spells.LandOfTheDead();
 
-            if (ShouldSimulacrum())
-                return Spells.Simulacrum(Target.Position);
+                if (ShouldSimulacrum())
+                    return Spells.Simulacrum(Target.Position);
 
-            if (ShouldSkeletalMage())
-                return Spells.SkeletalMage(Target);
+                if (ShouldSkeletalMage())
+                    return Spells.SkeletalMage(Target);
 
-            if (ShouldFrailty(out target))
-                return Spells.Frailty(target);
+                if (ShouldFrailty(out target))
+                    return Spells.Frailty(target);
 
-            if (ShouldDecrepify(out target))
-                return Spells.Decrepify(target);
+                if (ShouldDecrepify(out target))
+                    return Spells.Decrepify(target);
 
-            if (ShouldCommandSkeletons())
-                return Spells.CommandSkeletons(Target);
+                if (ShouldCommandSkeletons())
+                    return Spells.CommandSkeletons(Target);
 
-            if (ShouldBoneSpikes())
-                return Spells.BoneSpikes(Target);
-
+                if (ShouldBoneSpikes())
+                    return Spells.BoneSpikes(Target);
+            }
             if (ShouldWalk(out location))
                 Walk(location, 3f);
 
