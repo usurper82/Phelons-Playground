@@ -2145,7 +2145,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
                     select u).FirstOrDefault();
         }
 
-        public static TrinityActor BestLOSEliteInRange(float range, bool objectsInAoe = false)
+        public static TrinityActor BestLOSEliteInRange(float range, bool objectsInAoe = true)
         {
             return (from u in SafeList(objectsInAoe)
                 where u.IsUnit &&

@@ -72,11 +72,11 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
             if (!Skills.Necromancer.LandOfTheDead.CanCast())
                 return false;
             var elite = Targeting.BestLOSEliteInRange(65f);
-            if (elite == null || Skills.Necromancer.LandOfTheDead.TimeSinceUse < 10000 || elite.HitPointsPct > 50 || Player.PrimaryResourcePct < 0.90)
+            if (elite == null || Skills.Necromancer.LandOfTheDead.TimeSinceUse < 10000)
                 return false;
 
             //Trying to alternate cooldowns
-            if (Skills.Necromancer.Frailty.IsActive && elite.IsChampion || Skills.Necromancer.Decrepify.IsActive && elite.IsElite)
+            if (Skills.Necromancer.Frailty.CanCast() && elite.IsChampion || Skills.Necromancer.Decrepify.CanCast() && elite.IsElite)
                 return false;
 
             Core.Logger.Error(LogCategory.Routine,
@@ -89,11 +89,11 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
                 return false;
 
             var elite = Targeting.BestLOSEliteInRange(65f);
-            if (elite == null || Skills.Necromancer.Simulacrum.TimeSinceUse < 15000 || elite.HitPointsPct > 50)
+            if (elite == null || Skills.Necromancer.Simulacrum.TimeSinceUse < 10000 || Player.PrimaryResourcePct < 0.60)
                 return false;
 
             //Trying to alternate cooldowns
-            if (Skills.Necromancer.Frailty.IsActive && elite.IsChampion || Skills.Necromancer.Decrepify.IsActive && elite.IsElite)
+            if (Skills.Necromancer.Frailty.CanCast() && elite.IsChampion || Skills.Necromancer.Decrepify.CanCast() && elite.IsElite)
                 return false;
 
             Core.Logger.Error(LogCategory.Routine,

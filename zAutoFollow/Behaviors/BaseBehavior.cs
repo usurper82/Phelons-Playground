@@ -147,8 +147,15 @@ namespace AutoFollow.Behaviors
 
         private async Task<bool> DefaultOutOfGameChecks()
         {
-            if (!AutoFollow.Enabled || !ZetaDia.Service.Hero.IsValid || ZetaDia.Service.Hero.HeroId <= 0)
+            if (!AutoFollow.Enabled)
                 return false;
+
+            if (!IsGameReady || Party.IsLocked)
+            {
+                Log.Verbose("Waiting (Invalid State)");
+                await Coroutine.Sleep(1000);
+                return true;
+            }
 
             // Pulse does not fire while out of game. Need to be very careful how waits are handled.
             // Don't use long Coroutine.Sleeps out of game as it will prevent player updates for the duration.
@@ -169,13 +176,6 @@ namespace AutoFollow.Behaviors
                 return true;
             }
 
-            if (!IsGameReady || ZetaDia.IsInGame || Party.IsLocked || !ZetaDia.Service.IsValid || !ZetaDia.Service.Hero.IsValid)
-            {
-                Log.Verbose("Waiting... (Invalid State)");
-                await Coroutine.Sleep(500);
-                return true;
-            }
-
             GameUI.SafeCheckClickButtons();
             return false;
         }
@@ -190,8 +190,9 @@ namespace AutoFollow.Behaviors
             if (!AutoFollow.Enabled)
                 return false;            
 
-            if (!IsGameReady || !ZetaDia.IsInGame || Party.IsLocked)
+            if (!Core.GameIsReady || Party.IsLocked)
             {
+                await Coroutine.Sleep(1000);
                 Log.Verbose("Waiting (Invalid State)");
                 return true;
             }

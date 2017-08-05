@@ -64,12 +64,12 @@ namespace AutoFollow.Behaviors
         {
             // Returning True => go to next tick immediately, execution starts again from top of the tree.
             // Returning False => allow execution to continue to lower hooks. Such as profiles, Adventurer.
-            
-            if (await Party.LeaveWhenInWrongGame())
-                return Repeat(PartyObjective.LeavingGame);
 
             if (await base.InGameTask())
                 return Repeat(PartyObjective.TownRun);
+
+            if (await Party.LeaveWhenInWrongGame())
+                return Repeat(PartyObjective.LeavingGame);
 
             if (await Questing.UpgradeGems())
                 return Continue(PartyObjective.Quest);
