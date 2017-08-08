@@ -29,6 +29,7 @@ namespace AutoFollow.Behaviors
     using Trinity.Components.Adventurer;
     using Trinity.Components.Adventurer.Coroutines;
     using Trinity.Components.Adventurer.Game.Actors;
+    using Trinity.Components.Adventurer.Game.Events;
     using Trinity.Components.Adventurer.Game.Exploration;
 
     public class BaseBehavior : IBehavior
@@ -164,7 +165,7 @@ namespace AutoFollow.Behaviors
 
             if (!Player.IsServer && Service.IsConnected && AutoFollow.NumberOfConnectedBots == 0)
             {
-                Log.Info("Waiting for bots to connect... ");
+                Log.Info("Waiting for connection initialization. ");
                 await Coroutine.Sleep(500);
                 return true;
             }
@@ -188,7 +189,7 @@ namespace AutoFollow.Behaviors
         public virtual async Task<bool> InGameTask()
         {
             if (!AutoFollow.Enabled)
-                return false;            
+                return false;
 
             if (!Core.GameIsReady || Party.IsLocked)
             {
@@ -202,7 +203,8 @@ namespace AutoFollow.Behaviors
                 Log.Verbose("Waiting for Trinity to be ready");
                 return true;
             }
-            if (Player.IsInTown && AdvDia.CurrentWorldId != ExplorationData.ActHubWorldIds[Act.A1])
+
+            if (Player.IsInTown && AdvDia.CurrentWorldId != ExplorationData.ActHubWorldIds[Act.A1] && PluginEvents.CurrentProfileType != ProfileType.Bounty)
                 return !await WaypointCoroutine.UseWaypoint(WaypointFactory.ActHubs[Act.A1]);
 
             AcceptRiftDialog();

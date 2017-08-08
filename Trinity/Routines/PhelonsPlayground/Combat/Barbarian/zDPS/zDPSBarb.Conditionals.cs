@@ -54,11 +54,9 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
 
         protected virtual bool ShouldFuriousChargeInCombat(out Vector3 position)
         {
-            // Credit: phelon's raekor.
+            position = Target.Position;
 
-            position = Vector3.Zero;
-
-            if (Targeting.AnyPlayer(p => p.HitPointsPct < 0.90 && p.Distance < 50f) && Targeting.HealthGlobeExists(35f))
+            if (Targeting.AnyPlayer(p => p.HitPointsPct < 0.90 && p.Distance < 50f) && Targeting.HealthGlobeExists(45f))
             {
                 position = Targeting.GetBestHealthGlobeClusterPoint(7f, 45f, false, true);
                 Core.Logger.Error(LogCategory.Routine,
@@ -68,8 +66,6 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
 
             if (!Skills.Barbarian.FuriousCharge.CanCast() || Skills.Barbarian.FuriousCharge.TimeSinceUse < 500 && Player.PrimaryResourcePct > 0.85 && Skills.Barbarian.AncientSpear.CanCast())
                 return false;
-            TrinityActor bestPierce = Targeting.GetBestPierceTarget(45);
-            position = bestPierce.Position;
             Core.Logger.Error(LogCategory.Routine,
                 $" [FuriousCharge] - On Best Cluster Target Distance: [{position.Distance(Player.Position)}].");
             return true;

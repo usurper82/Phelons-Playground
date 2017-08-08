@@ -32,7 +32,7 @@ namespace AutoFollow.Resources
             _frameLockRelease = ZetaDia.Memory.ReleaseFrame();
             MemoryHelperState.MemoryHelperLevel++;
 
-            if (ZetaDia.Service.IsInGame)
+            if (ZetaDia.Service.IsInGame && ZetaDia.Me != null && ZetaDia.Me.IsValid)
             {
                 if (!MemoryHelperState.UpdatedActorsThisFrame)
                 {

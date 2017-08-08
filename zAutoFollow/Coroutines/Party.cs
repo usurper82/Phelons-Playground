@@ -176,7 +176,7 @@ namespace AutoFollow.Coroutines
                 Coordination.WaitFor(TimeSpan.FromSeconds(5));
                 return true;
             }
-            if (ZetaDia.IsInGame && Player.IsFollower && !ZetaDia.Globals.IsLoadingWorld)
+            if (ZetaDia.IsInGame && Player.IsClient && !ZetaDia.Globals.IsLoadingWorld)
             {
                 if (Player.NumPlayersInParty < 2)
                 {

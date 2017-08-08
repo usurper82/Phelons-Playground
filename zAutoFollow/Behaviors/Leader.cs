@@ -39,6 +39,9 @@ namespace AutoFollow.Behaviors
 
         public override async Task<bool> OutOfGameTask()
         {
+            if (!Equals(Coordination.PartyJoinTimer, DateTime.MinValue))
+                Coordination.PartyJoinTimer = DateTime.MinValue;
+
             if (await Party.StartGameWhenPartyReady())
                 return true;
 
@@ -90,8 +93,8 @@ namespace AutoFollow.Behaviors
             if (!AutoFollow.CurrentLeader.IsValid)
                 return false;
 
-            if (!Service.IsConnected || AutoFollow.NumberOfConnectedBots == 0)
-                return false;
+            //if (!Service.IsConnected || AutoFollow.NumberOfConnectedBots == 0)
+            //    return false;
 
             if (Player.IsInTown && AdvDia.CurrentWorldId != ExplorationData.ActHubWorldIds[Act.A1])
                 return !await WaypointCoroutine.UseWaypoint(WaypointFactory.ActHubs[Act.A1]);
@@ -113,7 +116,6 @@ namespace AutoFollow.Behaviors
 
             if (await WaitForGemUpgraded())
                 return true;
-
             return false;
         }
 

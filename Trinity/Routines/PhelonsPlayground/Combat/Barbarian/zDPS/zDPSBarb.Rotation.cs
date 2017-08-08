@@ -27,9 +27,6 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
             if (ShouldIgnorePain())
                 return Spells.IgnorePain();
 
-            if (ShouldAncientSpear(out Target))
-                return Spells.AncientSpear(Target);
-
             if (ShouldWarCry())
                 return Spells.WarCry();
 
@@ -38,6 +35,9 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
 
             if (ShouldFuriousChargeInCombat(out position))
                 return Spells.FuriousCharge(position);
+
+            if (ShouldAncientSpear(out Target))
+                return Spells.AncientSpear(Target);
 
             return Walk(Targeting.HealthGlobeExists(25f) ? Targeting.GetBestHealthGlobeClusterPoint(10f, 25f) : 
                 TargetUtil.GetLoiterPosition(TargetUtil.GetBestClusterUnit(), 10f));

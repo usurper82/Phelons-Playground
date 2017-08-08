@@ -34,14 +34,14 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
                 if (ShouldSkeletalMage())
                     return Spells.SkeletalMage(Target);
 
+                if (ShouldCommandSkeletons())
+                    return Spells.CommandSkeletons(Target);
+
                 if (ShouldFrailty(out target))
                     return Spells.Frailty(target);
 
                 if (ShouldDecrepify(out target))
                     return Spells.Decrepify(target);
-
-                if (ShouldCommandSkeletons())
-                    return Spells.CommandSkeletons(Target);
 
                 if (ShouldBoneSpikes())
                     return Spells.BoneSpikes(Target);

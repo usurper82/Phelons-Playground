@@ -12,9 +12,11 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
     using Zeta.Common;
     using Zeta.Game.Internals.Actors;
     using static Spells;
+
     public partial class Rathma
     {
         private Vector3 _loiterPosition = Vector3.Zero;
+
         public virtual bool ShouldWalk(out Vector3 position)
         {
             position = Vector3.Zero;
@@ -41,7 +43,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
             }
             return CurrentTarget != null && (!Target.IsInLineOfSight || Target.RadiusDistance > 65f);
 
-            if (_loiterPosition != Vector3.Zero && !_loiterPosition.InCriticalAvoidance() && _loiterPosition.Distance(Player.Position) < 25f)
+            if (_loiterPosition != Vector3.Zero && !_loiterPosition.InCriticalAvoidance() &&
+                _loiterPosition.Distance(Player.Position) < 25f)
             {
                 position = _loiterPosition;
                 return true;
@@ -60,40 +63,46 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
         public virtual bool ShouldDevour()
         {
             var corpseCount = Targeting.CorpseCount(60f);
-            if (Player.PrimaryResourceMax - Player.PrimaryResource > corpseCount * 10 && Player.PrimaryResourcePct > 0.65 ||
+            if (Player.PrimaryResourceMax - Player.PrimaryResource > corpseCount * 10 &&
+                Player.PrimaryResourcePct > 0.65 ||
                 corpseCount < 3)
                 return false;
             Core.Logger.Error(LogCategory.Routine,
                 $"[Devour] - ({corpseCount}) Corpses with ({Player.PrimaryResourceMax - Player.PrimaryResource}) Essence Deficit.");
             return true;
         }
+
         public virtual bool ShouldLandOfTheDead()
         {
-            if (!Skills.Necromancer.LandOfTheDead.CanCast())
+            if (!Skills.Necromancer.LandOfTheDead.CanCast() || Player.PrimaryResourcePct < 0.90 || 
+                Skills.Necromancer.Simulacrum.IsActive && !Skills.Necromancer.Simulacrum.CanCast())
                 return false;
             var elite = Targeting.BestLOSEliteInRange(65f);
             if (elite == null || Skills.Necromancer.LandOfTheDead.TimeSinceUse < 10000)
                 return false;
 
             //Trying to alternate cooldowns
-            if (Skills.Necromancer.Frailty.CanCast() && elite.IsChampion || Skills.Necromancer.Decrepify.CanCast() && elite.IsElite)
+            if (Skills.Necromancer.Frailty.CanCast() && elite.IsChampion ||
+                Skills.Necromancer.Decrepify.CanCast() && elite.IsElite)
                 return false;
 
             Core.Logger.Error(LogCategory.Routine,
                 $"[Land of the Dead] - Because of Elite {elite}.");
             return true;
         }
+
         public virtual bool ShouldSimulacrum()
         {
             if (!Skills.Necromancer.Simulacrum.CanCast())
                 return false;
 
             var elite = Targeting.BestLOSEliteInRange(65f);
-            if (elite == null || Skills.Necromancer.Simulacrum.TimeSinceUse < 10000 || Player.PrimaryResourcePct < 0.60)
+            if (elite == null || Skills.Necromancer.Simulacrum.TimeSinceUse < 10000 || Player.PrimaryResourcePct < 0.90)
                 return false;
 
             //Trying to alternate cooldowns
-            if (Skills.Necromancer.Frailty.CanCast() && elite.IsChampion || Skills.Necromancer.Decrepify.CanCast() && elite.IsElite)
+            if (Skills.Necromancer.Frailty.CanCast() && elite.IsChampion ||
+                Skills.Necromancer.Decrepify.CanCast() && elite.IsElite)
                 return false;
 
             Core.Logger.Error(LogCategory.Routine,
@@ -142,12 +151,14 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
         }
 
         protected int LastSkeletonCommandTargetAcdId { get; set; }
+
         protected virtual bool ShouldCommandSkeletons()
         {
             if (!Skills.Necromancer.CommandSkeletons.CanCast() || Skills.Necromancer.Simulacrum.TimeSinceUse < 12500)
                 return false;
 
-            if (Target.AcdId == LastSkeletonCommandTargetAcdId || Skills.Necromancer.CommandSkeletons.TimeSinceUse < 2500)
+            if (Target.AcdId == LastSkeletonCommandTargetAcdId ||
+                Skills.Necromancer.CommandSkeletons.TimeSinceUse < 2500)
                 return false;
 
             LastSkeletonCommandTargetAcdId = Target.AcdId;
@@ -163,7 +174,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
             if (!Skills.Necromancer.SkeletalMage.CanCast())
                 return false;
 
-            if (Player.PrimaryResourcePct < 0.75)
+            if (Player.PrimaryResourcePct < 0.95)
                 return false;
 
             Core.Logger.Error(LogCategory.Routine,
@@ -178,6 +189,11 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
             Core.Logger.Error(LogCategory.Routine,
                 $"[Bone Spikes] - On {Target}.");
             return true;
+        }
+
+        public virtual bool ShouldBloodRush()
+        {
+            return false;
         }
     }
 }

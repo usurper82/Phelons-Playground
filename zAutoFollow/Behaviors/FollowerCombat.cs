@@ -25,6 +25,8 @@ using Action = Zeta.TreeSharp.Action;
 
 namespace AutoFollow.Behaviors
 {
+    using Trinity.Components.Adventurer.Game.Events;
+
     public class FollowerCombat : BaseBehavior
     {
         public override BehaviorCategory Category => BehaviorCategory.Follower;
@@ -64,12 +66,14 @@ namespace AutoFollow.Behaviors
         {
             // Returning True => go to next tick immediately, execution starts again from top of the tree.
             // Returning False => allow execution to continue to lower hooks. Such as profiles, Adventurer.
-
             if (await base.InGameTask())
                 return Repeat(PartyObjective.TownRun);
 
             if (await Party.LeaveWhenInWrongGame())
                 return Repeat(PartyObjective.LeavingGame);
+
+            if (PluginEvents.CurrentProfileType == ProfileType.Bounty)
+                return false;
 
             if (await Questing.UpgradeGems())
                 return Continue(PartyObjective.Quest);

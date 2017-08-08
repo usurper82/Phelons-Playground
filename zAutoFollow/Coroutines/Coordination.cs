@@ -102,7 +102,7 @@ namespace AutoFollow.Coroutines
         //    return false;
         //}
 
-        private static DateTime _partyJoinTimer = DateTime.MinValue;
+        public static DateTime PartyJoinTimer = DateTime.MinValue;
         /// <summary>
         /// Prevents a greater rift from being started until all bots are ready.
         /// </summary>
@@ -132,25 +132,27 @@ namespace AutoFollow.Coroutines
 
                 if (ZetaDia.Service.Party.NumPartyMembers < 3)
                 {
-                    if (_partyJoinTimer == DateTime.MinValue)
+                    if (Equals(PartyJoinTimer, DateTime.MinValue))
                     {
-                        _partyJoinTimer = DateTime.Now.AddMinutes(5);
+                        PartyJoinTimer = DateTime.Now.AddMinutes(3);
+                        return true;
                     }
-                    if (DateTime.Now > _partyJoinTimer)
+
+                    if (DateTime.Now > PartyJoinTimer)
                     {
                         Log.Info("Followers took too long to join.  Leaving Game.");
                         await Party.LeaveGame(true);
                         await Coroutine.Sleep(10000);
-                        _partyJoinTimer = DateTime.MinValue;
+                        PartyJoinTimer = DateTime.MinValue;
                         return true;
                     }
                     Log.Info("Waiting for followers to join game.");
-                    await Coroutine.Sleep(1000);
+                    await Coroutine.Sleep(10000);
                     return true;
                 }
 
-                if (AutoFollow.CurrentLeader.IsMe && Player.IsInTown &&
-                    AutoFollow.CurrentFollowers.All(f => f.IsInSameWorld && f.Distance > 65f))
+                if (AutoFollow.CurrentLeader.IsMe && Player.IsInTown && Trinity.Routines.PhelonsPlayground.Utils.Targeting.Players.Count() < 4 &&
+                    AutoFollow.CurrentFollowers.All(f => f.IsInSameWorld && f.Distance > 35f))
                 {
                     Log.Info("Waiting for followers to show up.");
                     await Coroutine.Sleep(1000);
