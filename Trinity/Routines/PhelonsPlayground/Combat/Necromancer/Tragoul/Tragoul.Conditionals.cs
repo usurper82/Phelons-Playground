@@ -169,6 +169,15 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Tragoul
             return true;
         }
 
+        public virtual bool ShouldGrimScythe()
+        {
+            if (!Skills.Necromancer.GrimScythe.CanCast())
+                return false;
+            Core.Logger.Error(LogCategory.Routine,
+                $"[Grim Scythe] - On {Target}.");
+            return true;
+        }
+
         public bool CanPortTo(Vector3 destination)
         {
             var destinationDistance = Player.Position.Distance(destination);

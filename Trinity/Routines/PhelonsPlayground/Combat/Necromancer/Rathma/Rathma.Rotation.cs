@@ -45,6 +45,12 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
 
                 if (ShouldBoneSpikes())
                     return Spells.BoneSpikes(Target);
+
+                if (ShouldSiphonBlood())
+                    return Spells.SiphonBlood(Target);
+
+                if (ShouldGrimScythe(out Target))
+                    return Spells.GrimScythe(Target);
             }
             if (ShouldWalk(out location))
                 Walk(location, 3f);
@@ -72,7 +78,15 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
             if (ShouldCommandSkeletons())
                 return Spells.CommandSkeletons(CurrentTarget);
 
-            return Spells.BoneSpikes(CurrentTarget);
+            if (ShouldBoneSpikes())
+                return Spells.BoneSpikes(Target);
+
+            if (ShouldSiphonBlood())
+                return Spells.SiphonBlood(Target);
+
+            if (ShouldGrimScythe(out Target))
+                return Spells.GrimScythe(Target);
+            return null;
         }
 
         public TrinityPower MovementPower(Vector3 destination)

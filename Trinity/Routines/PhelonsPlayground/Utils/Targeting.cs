@@ -2126,9 +2126,9 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
             return SafeList(true).Where(u => u.IsUnit && petLocations.Any(p => p.Distance(u.Position) <= rangeFromPet));
         }
 
-        public static IEnumerable<TrinityPlayer> Players => Core.Actors.Actors.OfType<TrinityPlayer>();
+        public static IEnumerable<TrinityActor> Players => Core.Actors.Actors.Where(x => x.IsPlayer);
 
-        public static bool AnyPlayer(Func<TrinityPlayer, bool> condition)
+        public static bool AnyPlayer(Func<TrinityActor, bool> condition)
         {
             return Players.Any(condition);
         }

@@ -43,8 +43,14 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Tragoul
                 if (ShouldCorpseLance())
                     return Spells.CorpseLance(Target);
 
-                if (ShouldCorpseLance())
-                    return Spells.CorpseLance(Target);
+                if (ShouldBoneSpikes())
+                    return Spells.BoneSpikes(Target);
+
+                if (ShouldSiphonBlood())
+                    return Spells.SiphonBlood(Target);
+
+                if (ShouldGrimScythe())
+                    return Spells.GrimScythe(Target);
             }
             if (ShouldWalk(15f, out location))
                 Walk(location, 3f);
@@ -66,6 +72,15 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Tragoul
 
         public TrinityPower DestructiblePower()
         {
+
+            if (ShouldBoneSpikes())
+                return Spells.BoneSpikes(Target);
+
+            if (ShouldSiphonBlood())
+                return Spells.SiphonBlood(Target);
+
+            if (ShouldGrimScythe())
+                return Spells.GrimScythe(Target);
             return null;
             //return Spells.SiphonBlood();
         }

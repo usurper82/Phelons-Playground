@@ -62,6 +62,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
 
         public virtual bool ShouldDevour()
         {
+            if (!Skills.Necromancer.Devour.CanCast())
+                return false;
             var corpseCount = Targeting.CorpseCount(60f);
             if (Player.PrimaryResourceMax - Player.PrimaryResource > corpseCount * 10 &&
                 Player.PrimaryResourcePct > 0.65 ||
@@ -188,6 +190,31 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
                 return false;
             Core.Logger.Error(LogCategory.Routine,
                 $"[Bone Spikes] - On {Target}.");
+            return true;
+        }
+
+        public virtual bool ShouldSiphonBlood()
+        {
+            if (!Skills.Necromancer.SiphonBlood.CanCast())
+                return false;
+            Core.Logger.Error(LogCategory.Routine,
+                $"[Siphon Blood] - On {Target}.");
+            return true;
+        }
+
+        public virtual bool ShouldGrimScythe(out TrinityActor target)
+        {
+            target = null;
+            if (!Skills.Necromancer.GrimScythe.CanCast())
+                return false;
+
+            target = (Targeting.BestTargetWithoutDebuff(65f, SNOPower.P6_Necro_Decrepify, Player.Position) ?? 
+                Targeting.BestTargetWithoutDebuff(65f, SNOPower.P6_Necro_Leech, Player.Position) ?? 
+                Targeting.BestTargetWithoutDebuff(65f, SNOPower.P6_Necro_Frailty, Player.Position)) ??
+                Target;
+
+            Core.Logger.Error(LogCategory.Routine,
+                $"[Grim Scythe] - On {target}.");
             return true;
         }
 
