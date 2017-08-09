@@ -1,6 +1,6 @@
 ﻿using Zeta.Game.Internals.Actors;
 
-namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
+namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Tragoul
 {
     using Trinity.Components.Combat.Resources;
     using Trinity.Framework.Actors.ActorTypes;
@@ -8,7 +8,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
     using Trinity.Framework.Reference;
     using Trinity.Routines.PhelonsPlayground.Utils;
     using Zeta.Common;
-    public partial class Rathma
+    public partial class Tragoul
     {
         public static TrinityActor Target = CurrentTarget;
         public TrinityPower OffensivePower()
@@ -22,6 +22,9 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
 
             if (Target.RadiusDistance < 65f)
             {
+                if (ShouldWalk(50f, out location))
+                    return Spells.BloodRush(Target.Position);
+
                 if (ShouldDevour())
                     return Spells.Devour();
 
@@ -31,22 +34,19 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
                 if (ShouldSimulacrum())
                     return Spells.Simulacrum(Target.Position);
 
-                if (ShouldSkeletalMage())
-                    return Spells.SkeletalMage(Target);
-
-                if (ShouldCommandSkeletons())
-                    return Spells.CommandSkeletons(Target);
-
                 if (ShouldFrailty(out target))
                     return Spells.Frailty(target);
 
                 if (ShouldDecrepify(out target))
                     return Spells.Decrepify(target);
 
-                if (ShouldBoneSpikes())
-                    return Spells.BoneSpikes(Target);
+                if (ShouldCorpseLance())
+                    return Spells.CorpseLance(Target);
+
+                if (ShouldCorpseLance())
+                    return Spells.CorpseLance(Target);
             }
-            if (ShouldWalk(out location))
+            if (ShouldWalk(15f, out location))
                 Walk(location, 3f);
 
             return null;
@@ -66,18 +66,19 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
 
         public TrinityPower DestructiblePower()
         {
-            if (ShouldSkeletalMage())
-                return Spells.SkeletalMage(CurrentTarget);
-
-            if (ShouldCommandSkeletons())
-                return Spells.CommandSkeletons(CurrentTarget);
-
-            return Spells.BoneSpikes(CurrentTarget);
+            return null;
+            //return Spells.SiphonBlood();
         }
 
         public TrinityPower MovementPower(Vector3 destination)
         {
-            return null; //return Walk(destination);
+            if (Player.IsInTown)
+                return null;
+
+            if (CanPortTo(destination) && Skills.Necromancer.BloodRush.TimeSinceUse > 500)
+                return Spells.BloodRush(destination);
+
+            return destination.Distance(Player.Position) > 7f ? Walk(destination) : null;
         }
     }
 }

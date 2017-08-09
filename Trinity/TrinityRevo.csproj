@@ -458,9 +458,9 @@
     <Compile Include="Routines\PhelonsPlayground\Combat\Necromancer\Rathma\Rathma.Conditionals.cs" />
     <Compile Include="Routines\PhelonsPlayground\Combat\Necromancer\Rathma\Rathma.cs" />
     <Compile Include="Routines\PhelonsPlayground\Combat\Necromancer\Rathma\Rathma.Rotation.cs" />
-    <Compile Include="Routines\PhelonsPlayground\Combat\Necromancer\Tragoul\Base.cs" />
-    <Compile Include="Routines\PhelonsPlayground\Combat\Necromancer\Tragoul\Conditionals.cs" />
-    <Compile Include="Routines\PhelonsPlayground\Combat\Necromancer\Tragoul\Rotation.cs" />
+    <Compile Include="Routines\PhelonsPlayground\Combat\Necromancer\Tragoul\Tragoul.Conditionals.cs" />
+    <Compile Include="Routines\PhelonsPlayground\Combat\Necromancer\Tragoul\Tragoul.cs" />
+    <Compile Include="Routines\PhelonsPlayground\Combat\Necromancer\Tragoul\Tragoul.Rotation.cs" />
     <Compile Include="Routines\PhelonsPlayground\Utils\Extensions.cs" />
     <Compile Include="Routines\PhelonsPlayground\Utils\Movement.cs" />
     <Compile Include="Routines\PhelonsPlayground\Utils\Targeting.cs" />
@@ -889,6 +889,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Routines\Necromancer\NecromancerDefaultSettings.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Routines\PhelonsPlayground\Settings\TragoulSettings - Copy.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

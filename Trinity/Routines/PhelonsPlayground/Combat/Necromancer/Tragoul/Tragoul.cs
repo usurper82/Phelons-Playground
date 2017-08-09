@@ -7,7 +7,7 @@ using Trinity.Settings;
 using Zeta.Common;
 using Zeta.Game;
 
-namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
+namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Tragoul
 {
     using System.ComponentModel;
     using System.Windows.Controls;
@@ -15,29 +15,24 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
     using UI;
     using Utils;
 
-    public partial class Rathma : RoutineBase, IRoutine
+    public partial class Tragoul : RoutineBase, IRoutine
     {
         #region Definition
 
-        public string DisplayName => "Necromonger";
-        public string Description => "Phelons Playground - Necromancer Rathma Set";
+        public string DisplayName => "BloodLancer";
+        public string Description => "Phelons Playground - Necromancer Tragoul Set";
         public string Author => "Phelon";
-        public string Version => "0.2";
+        public string Version => "0.1";
         public string Url => "https://www.thebuddyforum.com/threads/phelons-playground-4-man-botting-routine.403317/";
         public Build BuildRequirements => new Build
         {
             Sets = new Dictionary<Set, SetBonus>
             {
-                { Sets.BonesOfRathma, SetBonus.Third }
+                { Sets.TragoulsAvatar, SetBonus.Third }
             },
             Skills = new Dictionary<Skill, Rune>
             {
-                { Skills.Necromancer.SkeletalMage, null },
-                { Skills.Necromancer.CommandSkeletons, null },
-                { Skills.Necromancer.LandOfTheDead, null },
-                { Skills.Necromancer.BoneSpikes, null },
-                { Skills.Necromancer.Decrepify, null },
-                { Skills.Necromancer.Devour, null },
+                { Skills.Necromancer.CorpseLance, null }
             },
         };
         public IDynamicSetting RoutineSettings { get; }
@@ -102,7 +97,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
 
         public TrinityPower GetMovementPower(Vector3 destination)
         {
-            return destination.Distance(Player.Position) > 7f ? Walk(destination) : null;
+            return MovementPower(destination);
         }
 
         #endregion
@@ -113,9 +108,9 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
         public override float EmergencyHealthPct => Settings.EmergencyHealthPct;
 
         IDynamicSetting IRoutine.RoutineSettings => Settings;
-        public Rathma.RathmaSettings Settings { get; } = new Rathma.RathmaSettings();
+        public Tragoul.TragoulSettings Settings { get; } = new Tragoul.TragoulSettings();
 
-        public sealed class RathmaSettings : NotifyBase, IDynamicSetting
+        public sealed class TragoulSettings : NotifyBase, IDynamicSetting
         {
             private int _clusterSize;
             private float _emergencyHealthPct;

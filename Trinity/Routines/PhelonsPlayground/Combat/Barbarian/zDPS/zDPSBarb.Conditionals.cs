@@ -56,7 +56,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
         {
             position = Target.Position;
 
-            if (Targeting.AnyPlayer(p => p.HitPointsPct < 0.90 && p.Distance < 50f) && Targeting.HealthGlobeExists(45f))
+            if (Targeting.HealthGlobeExists(45f))
             {
                 position = Targeting.GetBestHealthGlobeClusterPoint(7f, 45f, false, true);
                 Core.Logger.Error(LogCategory.Routine,

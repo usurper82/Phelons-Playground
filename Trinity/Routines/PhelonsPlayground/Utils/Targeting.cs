@@ -38,7 +38,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         }
 
 
-        private static List<TrinityActor> ObjectCache => SafeList();
+        private static List<TrinityActor> ObjectCache => SafeList(true);
         private static PlayerCache Player => Core.Player;
         private static TrinityActor CurrentTarget => TrinityCombat.Targeting.CurrentTarget;
 
