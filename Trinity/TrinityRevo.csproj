@@ -35,25 +35,26 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Demonbuddy">
-      <HintPath>..\..\..\Demonbuddy3\Demonbuddy.exe</HintPath>
+      <HintPath>..\..\..\Desktop\DB\Demonbuddy.exe</HintPath>
     </Reference>
     <Reference Include="GreyMagic">
-      <HintPath>..\..\..\Demonbuddy3\GreyMagic.dll</HintPath>
+      <HintPath>..\..\DB\GreyMagic.dll</HintPath>
     </Reference>
     <Reference Include="IronPython">
-      <HintPath>..\..\..\Demonbuddy3\IronPython.dll</HintPath>
+      <HintPath>..\..\DB\IronPython.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform">
+      <HintPath>..\..\DB\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Dynamic, Version=1.1.0.20, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Microsoft.Dynamic.dll</HintPath>
+    <Reference Include="Microsoft.Dynamic">
+      <HintPath>..\..\DB\Microsoft.Dynamic.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Scripting, Version=1.1.0.20, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Microsoft.Scripting.dll</HintPath>
+    <Reference Include="Microsoft.Scripting">
+      <HintPath>..\..\DB\Microsoft.Scripting.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Scripting.Metadata">
-      <HintPath>..\..\Microsoft.Scripting.Metadata.dll</HintPath>
+      <HintPath>..\..\DB\Microsoft.Scripting.Metadata.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -455,6 +456,9 @@
     <Compile Include="Routines\PhelonsPlayground\Combat\Monk\zDPS\zDPSMonk.Conditionals.cs" />
     <Compile Include="Routines\PhelonsPlayground\Combat\Monk\zDPS\zDPSMonk.cs" />
     <Compile Include="Routines\PhelonsPlayground\Combat\Monk\zDPS\zDPSMonk.Rotation.cs" />
+    <Compile Include="Routines\PhelonsPlayground\Combat\Necromancer\Inarius\Inarius.Conditionals.cs" />
+    <Compile Include="Routines\PhelonsPlayground\Combat\Necromancer\Inarius\Inarius.cs" />
+    <Compile Include="Routines\PhelonsPlayground\Combat\Necromancer\Inarius\Inarius.Rotation.cs" />
     <Compile Include="Routines\PhelonsPlayground\Combat\Necromancer\Rathma\Rathma.Conditionals.cs" />
     <Compile Include="Routines\PhelonsPlayground\Combat\Necromancer\Rathma\Rathma.cs" />
     <Compile Include="Routines\PhelonsPlayground\Combat\Necromancer\Rathma\Rathma.Rotation.cs" />

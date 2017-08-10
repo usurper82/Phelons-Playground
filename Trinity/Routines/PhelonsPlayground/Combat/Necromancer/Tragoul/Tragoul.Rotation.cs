@@ -18,11 +18,10 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Tragoul
                 return null;
 
             Vector3 location;
-            TrinityActor target = Target;
 
             if (Target.RadiusDistance < 65f)
             {
-                if (ShouldWalk(50f, out location))
+                if (ShouldBloodRush(50f, out location))
                     return Spells.BloodRush(Target.Position);
 
                 if (ShouldDevour())
@@ -34,11 +33,11 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Tragoul
                 if (ShouldSimulacrum())
                     return Spells.Simulacrum(Target.Position);
 
-                if (ShouldFrailty(out target))
-                    return Spells.Frailty(target);
+                if (ShouldFrailty(out Target))
+                    return Spells.Frailty(Target);
 
-                if (ShouldDecrepify(out target))
-                    return Spells.Decrepify(target);
+                if (ShouldDecrepify(out Target))
+                    return Spells.Decrepify(Target);
 
                 if (ShouldCorpseLance())
                     return Spells.CorpseLance(Target);
@@ -52,7 +51,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Tragoul
                 if (ShouldGrimScythe())
                     return Spells.GrimScythe(Target);
             }
-            if (ShouldWalk(15f, out location))
+            if (ShouldBloodRush(15f, out location))
                 Walk(location, 3f);
 
             return null;

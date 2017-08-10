@@ -2184,6 +2184,9 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
             return Vector3.Zero;
         }
 
+        public static int CorpseCountNearLocation(Vector3 location, float radius)
+            => Core.Actors.Count(a => GameData.NecroCorpseSnoIds.Contains(a.ActorSnoId) && a.Position.Distance(location) <= radius);
+
         public static int CorpseCount(float radius)
             => Core.Actors.Count(a => GameData.NecroCorpseSnoIds.Contains(a.ActorSnoId) && a.Distance <= radius);
 

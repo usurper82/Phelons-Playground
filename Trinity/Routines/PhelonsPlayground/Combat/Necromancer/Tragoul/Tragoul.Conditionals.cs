@@ -19,7 +19,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Tragoul
     {
         private Vector3 _loiterPosition = Vector3.Zero;
 
-        public virtual bool ShouldWalk(float distance, out Vector3 position)
+        public virtual bool ShouldBloodRush(float distance, out Vector3 position)
         {
             position = Vector3.Zero;
 
@@ -106,7 +106,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Tragoul
         protected virtual bool ShouldFrailty(out TrinityActor target)
         {
             target = null;
-            if (!Skills.Necromancer.Frailty.CanCast())
+            if (!Skills.Necromancer.Frailty.CanCast() || Runes.Necromancer.AuraOfFrailty.IsActive)
                 return false;
 
             if (Skills.Necromancer.Frailty.TimeSinceUse < 4000)
