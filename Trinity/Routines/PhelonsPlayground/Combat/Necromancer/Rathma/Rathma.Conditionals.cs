@@ -28,6 +28,9 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
                 return true;
             }
 
+            if (Target == null)
+                return false;
+
             if (!Target.IsInLineOfSight)
             {
                 position = Target.Position;

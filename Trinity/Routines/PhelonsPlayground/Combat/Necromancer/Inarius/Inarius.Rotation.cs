@@ -5,6 +5,8 @@ using Zeta.Common;
 
 namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
 {
+    using Framework.Reference;
+
     public partial class Inarius
     {
         public static TrinityActor Target = CurrentTarget;
@@ -42,8 +44,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
                 if (ShouldDecrepify(out Target))
                     return Spells.Decrepify(Target);
 
-                if (ShouldBoneArmor())
-                    return Spells.BoneSpear(Target);
+                if (ShouldBoneSpirit())
+                    return Spells.BoneSpirit(Target);
 
                 if (ShouldCorpseExplosion())
                     return Spells.CorpseExplosion(Target.Position);
@@ -63,6 +65,9 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
         {
             if (ShouldDevour())
                 return Spells.Devour();
+
+            if (ShouldBoneArmor())
+                return Spells.BoneArmor();
             return null;
         }
 
@@ -73,7 +78,13 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
 
         public TrinityPower MovementPower(Vector3 destination)
         {
-            return null; //return Walk(destination);
+            if (Player.IsInTown)
+                return null;
+
+            if (Skills.Necromancer.BloodRush.TimeSinceUse > 500)
+                return Spells.BloodRush(destination);
+
+            return destination.Distance(Player.Position) > 7f ? Walk(destination) : null;
         }
     }
 }

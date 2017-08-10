@@ -13,12 +13,12 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
 {
     public partial class Inarius
     {
-        public virtual bool ShouldBoneSpear()
+        public virtual bool ShouldBoneSpirit()
         {
-            if (!Skills.Necromancer.BoneSpear.CanCast())
+            if (!Skills.Necromancer.BoneSpirit.CanCast())
                 return false;
             Core.Logger.Error(LogCategory.Routine,
-                $"[BoneSpear] - On {Target}.");
+                $"[BoneSpirit] - On {Target}.");
             return true;
         }
 
@@ -26,7 +26,10 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
         {
             if (!Skills.Necromancer.BoneArmor.CanCast())
                 return false;
-            var unitsNearMe = Targeting.NearbyUnitsWithinDistance(Core.Player.Actor, 25f);
+            var unitsNearMe = Targeting.NearbyUnitsWithinDistance(Core.Player.Actor, 15f);
+
+            if (unitsNearMe < 1)
+                return false;
 
             if (unitsNearMe < Skills.Necromancer.BoneArmor.BuffStacks)
                 return false;
@@ -219,6 +222,9 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
                 position = closestGlobe.Position;
                 return true;
             }
+
+            if (Target == null)
+                return false;
 
             if (!Target.IsInLineOfSight)
             {
