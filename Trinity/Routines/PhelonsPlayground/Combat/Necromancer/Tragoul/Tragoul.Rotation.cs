@@ -51,7 +51,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Tragoul
                 if (ShouldGrimScythe())
                     return Spells.GrimScythe(Target);
             }
-            if (ShouldBloodRush(15f, out location))
+            if (ShouldWalk(15f, out location))
                 Walk(location, 3f);
 
             return null;

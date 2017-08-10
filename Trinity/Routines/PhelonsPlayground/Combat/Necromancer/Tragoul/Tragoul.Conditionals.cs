@@ -19,7 +19,48 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Tragoul
     {
         private Vector3 _loiterPosition = Vector3.Zero;
 
-        public virtual bool ShouldBloodRush(float distance, out Vector3 position)
+
+        public bool ShouldBloodRush(float distance, out Vector3 position)
+        {
+            position = Vector3.Zero;
+            var closestGlobe = Targeting.ClosestGlobe(distance);
+            if (Player.CurrentHealthPct < 0.50 && Player.Position.EasyNavToPosition(closestGlobe.Position))
+            {
+                position = closestGlobe.Position;
+                Core.Logger.Error(LogCategory.Routine,
+                    $"[Blood Rush] - To get Health Globe.");
+                return true;
+            }
+
+            if (Target == null)
+                return false;
+
+            if (!Target.IsInLineOfSight)
+            {
+                position = Target.Position;
+                Core.Logger.Error(LogCategory.Routine,
+                    $"[Blood Rush] - Monster is not in LoS.");
+                return true;
+            }
+
+            if (Targeting.BestBuffPosition(distance, Player.Position, true, out position) &&
+                Target.Position.Distance(position) > 5 && Target.Position.Distance(position) < 12.5f)
+            {
+                Core.Logger.Error(LogCategory.Routine,
+                    $"[Blood Rush] - To Best Buff Position.");
+                return true;
+            }
+
+            if (Target.Position.Distance(position) > 12.5f)
+            {
+                position = Target.Position;
+                Core.Logger.Error(LogCategory.Routine,
+                    $"[Blood Rush] - Monster is too far away.");
+                return true;
+            }
+            return false;
+        }
+        public virtual bool ShouldWalk(float distance, out Vector3 position)
         {
             position = Vector3.Zero;
 

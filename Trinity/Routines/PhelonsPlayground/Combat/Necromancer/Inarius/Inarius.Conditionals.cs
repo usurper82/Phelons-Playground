@@ -13,51 +13,6 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
 {
     public partial class Inarius
     {
-        private Vector3 _loiterPosition = Vector3.Zero;
-
-        public virtual bool ShouldWalk(out Vector3 position)
-        {
-            position = Vector3.Zero;
-
-            var closestGlobe = Targeting.ClosestGlobe(15f);
-            if (Player.CurrentHealthPct < 0.50 && Player.Position.EasyNavToPosition(closestGlobe.Position))
-            {
-                position = closestGlobe.Position;
-                return true;
-            }
-
-            if (!Target.IsInLineOfSight)
-            {
-                position = Target.Position;
-                return true;
-            }
-
-            if (Targeting.BestBuffPosition(10f, Player.Position, false, out position) &&
-                Player.Position.Distance(position) > 5 && position.EasyNavToPosition(Player.Position))
-            {
-                Core.Logger.Error(LogCategory.Routine,
-                    $"[Walk] - To Best Buff Position.");
-                return true;
-            }
-            return CurrentTarget != null && (!Target.IsInLineOfSight || Target.RadiusDistance > 65f);
-
-            if (_loiterPosition != Vector3.Zero && !_loiterPosition.InCriticalAvoidance() &&
-                _loiterPosition.Distance(Player.Position) < 25f)
-            {
-                position = _loiterPosition;
-                return true;
-            }
-            else
-            {
-                position = Targeting.GetLoiterPosition(Target, 25f);
-                Core.Logger.Error(LogCategory.Routine,
-                    $"[Walk] - To Best Loiter Position.");
-                return true;
-            }
-
-            return false;
-        }
-
         public virtual bool ShouldBoneSpear()
         {
             if (!Skills.Necromancer.BoneSpear.CanCast())
@@ -119,7 +74,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
 
         public virtual bool ShouldLandOfTheDead()
         {
-            if (!Skills.Necromancer.LandOfTheDead.CanCast() || Player.PrimaryResourcePct < 0.90 || 
+            if (!Skills.Necromancer.LandOfTheDead.CanCast() || Player.PrimaryResourcePct < 0.90 ||
                 Skills.Necromancer.Simulacrum.IsActive && !Skills.Necromancer.Simulacrum.CanCast())
                 return false;
             var elite = Targeting.BestLOSEliteInRange(65f);
@@ -213,34 +168,88 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
         }
 
         public bool ShouldBloodRush(float distance, out Vector3 position)
+        {
+            position = Vector3.Zero;
+            var closestGlobe = Targeting.ClosestGlobe(distance);
+            if (Player.CurrentHealthPct < 0.50 && Player.Position.EasyNavToPosition(closestGlobe.Position))
             {
-                position = Vector3.Zero;
-
-                var closestGlobe = Targeting.ClosestGlobe(distance);
-                if (Player.CurrentHealthPct < 0.50 && Player.Position.EasyNavToPosition(closestGlobe.Position))
-                {
-                    position = closestGlobe.Position;
-                    Core.Logger.Error(LogCategory.Routine,
-                        $"[Blood Rush] - To get Health Globe.");
+                position = closestGlobe.Position;
+                Core.Logger.Error(LogCategory.Routine,
+                    $"[Blood Rush] - To get Health Globe.");
                 return true;
-                }
-
-                if (Target != null && (!Target.IsInLineOfSight || Target.RadiusDistance > 55f))
-                {
-                    position = Target.Position;
-                    Core.Logger.Error(LogCategory.Routine,
-                        $"[Blood Rush] - Monster is not in LoS.");
-                return true;
-                }
-
-                if (Targeting.BestBuffPosition(distance, Player.Position, true, out position) &&
-                    Player.Position.Distance(position) > 5 && position.EasyNavToPosition(Player.Position))
-                {
-                    Core.Logger.Error(LogCategory.Routine,
-                        $"[Blood Rush] - To Best Buff Position.");
-                    return true;
-                }
-                return false;
             }
+
+            if (Target == null)
+                return false;
+
+            if (!Target.IsInLineOfSight)
+            {
+                position = Target.Position;
+                Core.Logger.Error(LogCategory.Routine,
+                    $"[Blood Rush] - Monster is not in LoS.");
+                return true;
+            }
+
+            if (Targeting.BestBuffPosition(distance, Player.Position, true, out position) &&
+                Target.Position.Distance(position) > 5 && Target.Position.Distance(position) < 12.5f)
+            {
+                Core.Logger.Error(LogCategory.Routine,
+                    $"[Blood Rush] - To Best Buff Position.");
+                return true;
+            }
+
+            if (Target.Position.Distance(position) > 12.5f)
+            {
+                position = Target.Position;
+                Core.Logger.Error(LogCategory.Routine,
+                    $"[Blood Rush] - Monster is too far away.");
+                return true;
+            }
+            return false;
+        }
+        private Vector3 _loiterPosition = Vector3.Zero;
+
+        public virtual bool ShouldWalk(out Vector3 position)
+        {
+            position = Vector3.Zero;
+
+            var closestGlobe = Targeting.ClosestGlobe(15f);
+            if (Player.CurrentHealthPct < 0.50 && Player.Position.EasyNavToPosition(closestGlobe.Position))
+            {
+                position = closestGlobe.Position;
+                return true;
+            }
+
+            if (!Target.IsInLineOfSight)
+            {
+                position = Target.Position;
+                return true;
+            }
+
+            if (Targeting.BestBuffPosition(10f, Player.Position, false, out position) &&
+                Player.Position.Distance(position) > 5 && position.EasyNavToPosition(Player.Position))
+            {
+                Core.Logger.Error(LogCategory.Routine,
+                    $"[Walk] - To Best Buff Position.");
+                return true;
+            }
+            return CurrentTarget != null && (!Target.IsInLineOfSight || Target.RadiusDistance > 65f);
+
+            if (_loiterPosition != Vector3.Zero && !_loiterPosition.InCriticalAvoidance() &&
+                _loiterPosition.Distance(Player.Position) < 25f)
+            {
+                position = _loiterPosition;
+                return true;
+            }
+            else
+            {
+                position = Targeting.GetLoiterPosition(Target, 25f);
+                Core.Logger.Error(LogCategory.Routine,
+                    $"[Walk] - To Best Loiter Position.");
+                return true;
+            }
+
+            return false;
+        }
     }
 }
