@@ -25,6 +25,9 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
                 if (ShouldBloodRush(50f, out location))
                     return Spells.BloodRush(Target.Position);
 
+                if (ShouldBoneArmor())
+                    return Spells.BoneArmor();
+
                 if (ShouldDevour())
                     return Spells.Devour();
 

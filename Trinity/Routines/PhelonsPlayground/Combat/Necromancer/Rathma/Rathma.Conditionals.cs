@@ -63,6 +63,38 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
             return false;
         }
 
+        public virtual bool ShouldBoneArmor()
+        {
+            if (!Skills.Necromancer.BoneArmor.CanCast())
+                return false;
+
+            var unitsNearMe = Targeting.NearbyTargets(Core.Player.Actor, 15f).Count();
+
+            if (unitsNearMe < 1)
+                return false;
+
+            if (unitsNearMe <= Skills.Necromancer.BoneArmor.BuffStacks)
+            {
+                //Core.Logger.Error(LogCategory.Routine,
+                //$"[BoneArmor] - Skipping Bone Armor. I have {Skills.Necromancer.BoneArmor.BuffStacks} stacks with {unitsNearMe} mobs near me.");
+                return false;
+            }
+
+            if (!Skills.Necromancer.BoneArmor.IsBuffActive)
+            {
+                Core.Logger.Error(LogCategory.Routine,
+                    $"[BoneArmor] - Missing Buff.");
+                return true;
+            }
+            if (Skills.Necromancer.BoneArmor.BuffStacks < 10)
+            {
+                Core.Logger.Error(LogCategory.Routine,
+                    $"[BoneArmor] - Buff stacks less than 10.");
+                return true;
+            }
+            return false;
+        }
+
         public virtual bool ShouldDevour()
         {
             if (!Skills.Necromancer.Devour.CanCast())
