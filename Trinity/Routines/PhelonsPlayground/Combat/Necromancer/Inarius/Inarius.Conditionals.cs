@@ -75,23 +75,21 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
             if (unitsNearMe < 1)
                 return false;
 
-            if (unitsNearMe <= Skills.Necromancer.BoneArmor.BuffStacks)
-            {
-                //Core.Logger.Error(LogCategory.Routine,
-                    //$"[BoneArmor] - Skipping Bone Armor. I have {Skills.Necromancer.BoneArmor.BuffStacks} stacks with {unitsNearMe} mobs near me.");
-                return false;
-            }
-
-            if (!Skills.Necromancer.BoneArmor.IsBuffActive)
+            if (!Skills.Necromancer.BoneArmor.IsBuffActive && unitsNearMe > 0)
             {
                 Core.Logger.Error(LogCategory.Routine,
                     $"[BoneArmor] - Missing Buff.");
                 return true;
             }
-            if (Skills.Necromancer.BoneArmor.BuffStacks < 10)
+
+            if (unitsNearMe <= Skills.Necromancer.BoneArmor.BuffStacks)
+            {
+                return false;
+            }
+            else
             {
                 Core.Logger.Error(LogCategory.Routine,
-                    $"[BoneArmor] - Buff stacks less than 10.");
+                $"[BoneArmor] - I have {Skills.Necromancer.BoneArmor.BuffStacks} stacks with {unitsNearMe} mobs near me.");
                 return true;
             }
             return false;
