@@ -11,6 +11,8 @@ using Zeta.Game.Internals.Actors;
 
 namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
 {
+    using System.Linq;
+
     public partial class Inarius
     {
         public virtual bool ShouldBoneSpirit()
@@ -22,17 +24,63 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
             return true;
         }
 
+        protected int LastSkeletonCommandTargetAcdId { get; set; }
+
+        protected virtual bool ShouldCommandSkeletons()
+        {
+            if (!Skills.Necromancer.CommandSkeletons.CanCast() || Skills.Necromancer.Simulacrum.TimeSinceUse < 12500)
+                return false;
+
+            if (Target.AcdId == LastSkeletonCommandTargetAcdId ||
+                Skills.Necromancer.CommandSkeletons.TimeSinceUse < 2500)
+                return false;
+
+            LastSkeletonCommandTargetAcdId = Target.AcdId;
+
+            Core.Logger.Error(LogCategory.Routine,
+                $"[Command Skeletons] - On {Target}.");
+            return true;
+        }
+
+        protected virtual bool ShouldSkeletalMage()
+        {
+
+            if (!Skills.Necromancer.SkeletalMage.CanCast())
+                return false;
+
+            if (Player.PrimaryResourcePct < 0.95)
+                return false;
+
+            Core.Logger.Error(LogCategory.Routine,
+                $"[Skeletal Mage] - On {Target}.");
+            return true;
+        }
+
+        public virtual bool ShouldBoneSpikes()
+        {
+            if (!Skills.Necromancer.BoneSpikes.CanCast())
+                return false;
+            Core.Logger.Error(LogCategory.Routine,
+                $"[Bone Spikes] - On {Target}.");
+            return true;
+        }
+
         public virtual bool ShouldBoneArmor()
         {
             if (!Skills.Necromancer.BoneArmor.CanCast())
                 return false;
-            var unitsNearMe = Targeting.NearbyUnitsWithinDistance(Core.Player.Actor, 15f);
+
+            var unitsNearMe = Targeting.NearbyTargets(Core.Player.Actor, 15f).Count();
 
             if (unitsNearMe < 1)
                 return false;
 
-            if (unitsNearMe < Skills.Necromancer.BoneArmor.BuffStacks)
+            if (unitsNearMe <= Skills.Necromancer.BoneArmor.BuffStacks)
+            {
+                //Core.Logger.Error(LogCategory.Routine,
+                    //$"[BoneArmor] - Skipping Bone Armor. I have {Skills.Necromancer.BoneArmor.BuffStacks} stacks with {unitsNearMe} mobs near me.");
                 return false;
+            }
 
             if (!Skills.Necromancer.BoneArmor.IsBuffActive)
             {
@@ -53,8 +101,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
         {
             if (!Skills.Necromancer.CorpseExplosion.CanCast())
                 return false;
-            var corpseCount = Targeting.CorpseCountNearLocation(Target.Position, 60f);
-            if (corpseCount < 5)
+            var corpseCount = Targeting.CorpseCountNearLocation(Target.Position, 20f);
+            if (corpseCount < 1)
                 return false;
             Core.Logger.Error(LogCategory.Routine,
                 $"[CorpseExplosion] - ({corpseCount}) Corpses to Explode.");
@@ -170,9 +218,22 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
             return true;
         }
 
+        public virtual bool ShouldGrimScythe()
+        {
+            if (!Skills.Necromancer.GrimScythe.CanCast() && Target.Distance < 12)
+                return false;
+            Core.Logger.Error(LogCategory.Routine,
+                $"[Grim Scythe] - On {Target}.");
+            return true;
+        }
+
         public bool ShouldBloodRush(float distance, out Vector3 position)
         {
             position = Vector3.Zero;
+
+            if (!Skills.Necromancer.BloodRush.CanCast())
+                return false;
+
             var closestGlobe = Targeting.ClosestGlobe(distance);
             if (Player.CurrentHealthPct < 0.50 && Player.Position.EasyNavToPosition(closestGlobe.Position))
             {

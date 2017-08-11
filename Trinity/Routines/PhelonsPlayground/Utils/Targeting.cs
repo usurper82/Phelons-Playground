@@ -399,12 +399,8 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         {
             //[1FABA194] Type: ClientEffect Name: p2_itemPassive_unique_ring_017_dome-58267 ActorSnoId: 433966, Distance: 24.701
 
-            return
-            (from u in SafeList(objectsInAoe)
-                where fromLocation.Distance2D(u.Position) <= range &&
-                      u.ActorSnoId == 433966
-                orderby u.Distance
-                select u).ToList();
+            return SafeList(objectsInAoe).Where(u => fromLocation.Distance2D(u.Position) <= range &&
+                                               u.ActorSnoId == 433966).OrderBy(u => u.Distance).ToList();
         }
 
         internal static Vector3 ClosestSancAndOcc(float maxRange, Vector3 fromLocation, bool objectsInAoe = false)

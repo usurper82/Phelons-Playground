@@ -187,6 +187,18 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
             return true;
         }
 
+        public virtual bool ShouldCorpseExplosion()
+        {
+            if (!Skills.Necromancer.CorpseExplosion.CanCast())
+                return false;
+            var corpseCount = Targeting.CorpseCountNearLocation(Target.Position, 20f);
+            if (corpseCount < 1)
+                return false;
+            Core.Logger.Error(LogCategory.Routine,
+                $"[CorpseExplosion] - ({corpseCount}) Corpses to Explode.");
+            return true;
+        }
+
         public virtual bool ShouldBoneSpikes()
         {
             if (!Skills.Necromancer.BoneSpikes.CanCast())
@@ -221,8 +233,48 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
             return true;
         }
 
-        public virtual bool ShouldBloodRush()
+        public bool ShouldBloodRush(float distance, out Vector3 position)
         {
+            position = Vector3.Zero;
+
+            if (!Skills.Necromancer.BloodRush.CanCast())
+                return false;
+
+            var closestGlobe = Targeting.ClosestGlobe(distance);
+            if (Player.CurrentHealthPct < 0.50 && Player.Position.EasyNavToPosition(closestGlobe.Position))
+            {
+                position = closestGlobe.Position;
+                Core.Logger.Error(LogCategory.Routine,
+                    $"[Blood Rush] - To get Health Globe.");
+                return true;
+            }
+
+            if (Target == null)
+                return false;
+
+            if (!Target.IsInLineOfSight)
+            {
+                position = Target.Position;
+                Core.Logger.Error(LogCategory.Routine,
+                    $"[Blood Rush] - Monster is not in LoS.");
+                return true;
+            }
+
+            if (Targeting.BestBuffPosition(distance, Player.Position, true, out position) &&
+                Target.Position.Distance(position) > 5 && Target.Position.Distance(position) < 12.5f)
+            {
+                Core.Logger.Error(LogCategory.Routine,
+                    $"[Blood Rush] - To Best Buff Position.");
+                return true;
+            }
+
+            if (Target.Position.Distance(position) > 12.5f)
+            {
+                position = Target.Position;
+                Core.Logger.Error(LogCategory.Routine,
+                    $"[Blood Rush] - Monster is too far away.");
+                return true;
+            }
             return false;
         }
     }

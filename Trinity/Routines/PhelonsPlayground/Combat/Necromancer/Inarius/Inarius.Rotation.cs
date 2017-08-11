@@ -5,11 +5,13 @@ using Zeta.Common;
 
 namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
 {
+    using DbProvider;
     using Framework.Reference;
 
     public partial class Inarius
     {
-        public static TrinityActor Target = CurrentTarget;
+        public static TrinityActor Target = null;
+
         public TrinityPower OffensivePower()
         {
             Target = Targeting.BestAoeUnit();
@@ -44,11 +46,24 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
                 if (ShouldDecrepify(out Target))
                     return Spells.Decrepify(Target);
 
+                Target = Targeting.BestAoeUnit();
                 if (ShouldBoneSpirit())
                     return Spells.BoneSpirit(Target);
 
+                if (ShouldSkeletalMage())
+                    return Spells.SkeletalMage(Target);
+
+                if (ShouldCommandSkeletons())
+                    return Spells.CommandSkeletons(Target);
+
                 if (ShouldCorpseExplosion())
                     return Spells.CorpseExplosion(Target.Position);
+
+                if (ShouldGrimScythe())
+                    return Spells.GrimScythe(Target);
+
+                if (ShouldBoneSpikes())
+                    return Spells.BoneSpikes(Target);
             }
             if (ShouldWalk(out location))
                 Walk(location, 3f);
@@ -81,7 +96,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
             if (Player.IsInTown)
                 return null;
 
-            if (Skills.Necromancer.BloodRush.TimeSinceUse > 500)
+            if (PlayerMover.IsBlocked ||
+                destination.Distance(Player.Position) > 30 && Skills.Necromancer.BloodRush.TimeSinceUse > 500)
                 return Spells.BloodRush(destination);
 
             return destination.Distance(Player.Position) > 7f ? Walk(destination) : null;
