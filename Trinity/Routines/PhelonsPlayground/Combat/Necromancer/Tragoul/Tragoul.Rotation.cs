@@ -13,11 +13,12 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Tragoul
         public static TrinityActor Target = CurrentTarget;
         public TrinityPower OffensivePower()
         {
-            Target = Targeting.BestAoeUnit();
+            Target = Targeting.BestRangedAoeUnit(45);
             if (Target == null)
                 return null;
 
             Vector3 location;
+            TrinityActor target = Target;
 
             if (Target.RadiusDistance < 65f)
             {
@@ -33,11 +34,11 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Tragoul
                 if (ShouldSimulacrum())
                     return Spells.Simulacrum(Target.Position);
 
-                if (ShouldFrailty(out Target))
-                    return Spells.Frailty(Target);
+                if (ShouldFrailty(out target))
+                    return Spells.Frailty(target);
 
-                if (ShouldDecrepify(out Target))
-                    return Spells.Decrepify(Target);
+                if (ShouldDecrepify(out target))
+                    return Spells.Decrepify(target);
 
                 if (ShouldCorpseLance())
                     return Spells.CorpseLance(Target);
@@ -48,8 +49,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Tragoul
                 if (ShouldSiphonBlood())
                     return Spells.SiphonBlood(Target);
 
-                if (ShouldGrimScythe())
-                    return Spells.GrimScythe(Target);
+                if (ShouldGrimScythe(out target))
+                    return Spells.GrimScythe(target);
             }
             if (ShouldWalk(15f, out location))
                 Walk(location, 3f);
@@ -71,14 +72,13 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Tragoul
 
         public TrinityPower DestructiblePower()
         {
-
             if (ShouldBoneSpikes())
                 return Spells.BoneSpikes(Target);
 
             if (ShouldSiphonBlood())
                 return Spells.SiphonBlood(Target);
 
-            if (ShouldGrimScythe())
+            if (ShouldGrimScythe(out Target))
                 return Spells.GrimScythe(Target);
             return null;
             //return Spells.SiphonBlood();

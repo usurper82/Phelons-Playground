@@ -494,12 +494,6 @@ namespace Trinity.Components.Combat
                                             break;
                                         }
                                     }
-                                    if (TargetUtil.AnyPlayer(x => x.IsDead))
-                                    {
-                                        cacheObject.Weight = MaxWeight / 2;
-                                        cacheObject.WeightInfo += $"Kill All for Dead Player (Radius={TrinityCombat.KillAllRadius})";
-                                        break;
-                                    }
 
                                     if (WeightingUtils.ShouldIgnoreTrash(cacheObject, out reason))
                                     {

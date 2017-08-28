@@ -440,7 +440,7 @@ namespace Trinity.Routines.Necromancer
         protected virtual bool ShouldFrailty(out TrinityActor target)
         {
             target = null;
-            if (!Skills.Necromancer.Frailty.CanCast() || Runes.Necromancer.AuraOfFrailty.IsActive)
+            if (!Skills.Necromancer.Frailty.CanCast())
                 return false;
 
 

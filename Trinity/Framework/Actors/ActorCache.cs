@@ -416,8 +416,7 @@ namespace Trinity.Framework.Actors
             CurrentRActorIds.Clear();
             _acdToRActorIndex.Clear();
             ActivePlayerRActorId = 0;
-            //Me = null;
-            //Update();
+            Me = null;
         }
 
         public T RActorByAcdId<T>(int acdId) where T : TrinityActor

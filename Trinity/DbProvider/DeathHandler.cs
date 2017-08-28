@@ -18,9 +18,6 @@ using Zeta.Game.Internals.SNO;
 
 namespace Trinity.DbProvider
 {
-    using Components.Combat.Resources;
-    using Routines.PhelonsPlayground.Utils;
-
     public static class DeathHandler
     {
         private static bool _isDead;
@@ -182,14 +179,6 @@ namespace Trinity.DbProvider
             var safespot = Core.Avoidance.GridEnricher.SafeNodeLayer.Positions.OrderBy(d =>
                 d.Distance(Core.Avoidance.GridEnricher.MonsterCentroid) +
                 d.Distance(Core.Avoidance.GridEnricher.AvoidanceCentroid)).FirstOrDefault();
-
-            var playerNear = Routines.PhelonsPlayground.Utils.Targeting.Players.OrderBy(x => x.RadiusDistance)
-                .FirstOrDefault(x => !x.IsDead && x.AcdId != ZetaDia.Me.ACDId);
-
-            if (playerNear != null)
-            {
-                safespot = playerNear.Position;
-            }
 
             if (safespot == Vector3.Zero)
             {

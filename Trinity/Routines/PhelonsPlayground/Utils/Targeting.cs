@@ -124,7 +124,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         public static TrinityActor BestAoeUnit(float range = 45, bool includeInAoE = false)
         {
             return BestEliteInRange(range, includeInAoE) ??
-                   GetBestClusterUnit(7, range, false, includeInAoE) ??
+                   GetBestClusterUnit(7, range, true, includeInAoE) ??
                    CurrentTarget;
         }
 

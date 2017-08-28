@@ -210,12 +210,19 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Tragoul
             return true;
         }
 
-        public virtual bool ShouldGrimScythe()
+        public virtual bool ShouldGrimScythe(out TrinityActor target)
         {
+            target = null;
             if (!Skills.Necromancer.GrimScythe.CanCast())
                 return false;
+
+            target = (Targeting.BestTargetWithoutDebuff(12f, SNOPower.P6_Necro_Decrepify, Player.Position) ??
+                Targeting.BestTargetWithoutDebuff(12f, SNOPower.P6_Necro_Leech, Player.Position) ??
+                Targeting.BestTargetWithoutDebuff(12f, SNOPower.P6_Necro_Frailty, Player.Position)) ??
+                Target;
+
             Core.Logger.Error(LogCategory.Routine,
-                $"[Grim Scythe] - On {Target}.");
+                $"[Grim Scythe] - On {target}.");
             return true;
         }
 

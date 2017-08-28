@@ -990,7 +990,7 @@ namespace Trinity.Components.Adventurer.Game.Quests
                 WaypointLevelAreaId = 19954,
                 Coroutines = new List<ISubroutine>
                 {
-                    new GuardedGizmoCoroutine(430723, Int32.MaxValue)
+                    new GuardedGizmoCoroutine(430723, (int)SNOActor.px_Wilderness_Camp_TemplarPrisoners)
                 }
             });
 
@@ -1194,25 +1194,24 @@ namespace Trinity.Components.Adventurer.Game.Quests
                 WorldId = 82313,
                 QuestType = BountyQuestType.SpecialEvent,
                 Coroutines = new List<ISubroutine>
-                    {
-                        new MoveToMapMarkerCoroutine(344488, 71150, 497382903),
+                {
 
-                        new EnterLevelAreaCoroutine (344488, 71150, 82076, 497382903, 175482),
- 
-                        //Navigation appears to be busted on this level
-                        //new EnterLevelAreaCoroutine (344488, 71150, 82076, 497382903, 175482),
+                    new EnterLevelAreaCoroutine (344488, 71150, 82076, 497382903, 175482),
 
-                        new EnterLevelAreaCoroutine (344488, 82076, 82313, 497382904, 176001, true),
-                        new WaitCoroutine(344488, 82076, 3000),
-                        new InteractWithUnitCoroutine(344488, 82313, 81609, 0, 3),
+                    // Navigation appears to be busted on this level
+                    // Move a little to make sure it loads the adjecent scene or it will get stuck.
+                    new ExplorationCoroutine(new HashSet<int>() { 82326 }, breakCondition: () => (Core.Player.LevelAreaId != 82326 || BountyHelpers.ScanForMarker(497382904, 50) != null)),
+                    new EnterLevelAreaCoroutine (344488, 82076, 82313, 497382904, 176001, true),
 
-                        new MoveToActorCoroutine(344488, 82313, 222404),
-                        new InteractWithGizmoCoroutine(344488, 82313, 222404, 0, 5),
-                        new ClearAreaForNSecondsCoroutine(344488, 10, 222404, 0, 20, false),
+                    new WaitCoroutine(344488, 82076, 3000),
+                    new InteractWithUnitCoroutine(344488, 82313, 81609, 0, 3),
+                    new MoveToActorCoroutine(344488, 82313, 222404),
 
-                        new MoveToActorCoroutine(344488, 82313, 81609),
-                        new InteractWithUnitCoroutine(344488, 82313, 81609, 0, 5),
-                    }
+                    new InteractWithGizmoCoroutine(344488, 82313, 222404, 0, 5),
+                    new ClearAreaForNSecondsCoroutine(344488, 10, 222404, 0, 20, false),
+                    new MoveToActorCoroutine(344488, 82313, 81609),
+                    new InteractWithUnitCoroutine(344488, 82313, 81609, 0, 5),
+                }
             });
 
             // A1 - Bounty: Apothecary's Brother (350529)
@@ -1489,7 +1488,7 @@ namespace Trinity.Components.Adventurer.Game.Quests
                 Act = Act.A5,
                 WorldId = 271235,
                 QuestType = BountyQuestType.SpecialEvent,
-                WaypointNumber = 60,
+                WaypointLevelAreaId = 459863,
                 Coroutines = new List<ISubroutine>
                 {
                     new MoveToMapMarkerCoroutine(363402, 271235, 2912417),
@@ -1500,8 +1499,7 @@ namespace Trinity.Components.Adventurer.Game.Quests
                     new MoveToScenePositionCoroutine(363402, 271235, "x1_fortress_SW_01_B", new Vector3(92.48651f, 131.3251f, -9.900016f)),
                     new MoveToScenePositionCoroutine(363402, 271235, "x1_fortress_SW_01_B", new Vector3(95.55377f, 115.0262f, -9.900017f)),
                     new MoveToScenePositionCoroutine(363402, 271235, "x1_fortress_SW_01_B", new Vector3(105.3384f, 146.7679f, -9.900017f)),
-					
-//                    new ClearAreaForNSecondsCoroutine(363402, 60, 2912417, 0, 30, false),
+                    new InteractWithUnitCoroutine(363402, 271235, (int)SNOActor.Angel_Trooper_A, 0, 5),
                 }
             });
 
@@ -1539,37 +1537,34 @@ namespace Trinity.Components.Adventurer.Game.Quests
                 }
             });
 
-            // A1 - 현상금 사냥: 죽음을 부르는 자 카둘 처치 (344490)
+            // A1 - Bounty: Kill Cadhul the Deathcaller (344490)
             Bounties.Add(new BountyData
             {
                 QuestId = 344490,
                 Act = Act.A1,
                 WorldId = 71150, // Enter the final worldId here
                 QuestType = BountyQuestType.SpecialEvent,
-                WaypointNumber = 13,
+                WaypointLevelAreaId = 19940,
                 Coroutines = new List<ISubroutine>
                 {
-//					new MoveToMapMarkerCoroutine(344490, 71150, 1928482775),
-					
+                    //new MoveToMapMarkerCoroutine(344490, 71150, 1928482775),
 					new MoveToScenePositionCoroutine(344490, 71150, "trOut_Highlands_Sub240_LeoricBattlements_A", new Vector3(133.3196f, 129.1948f, 9.915271f)),
                     new MoveToScenePositionCoroutine(344490, 71150, "trOut_Highlands_Sub240_LeoricBattlements_A", new Vector3(130.6052f, 98.22607f, 9.915272f)),
                     new MoveToScenePositionCoroutine(344490, 71150, "trOut_Highlands_Sub240_LeoricBattlements_A", new Vector3(155.8533f, 125.9028f, 9.915272f)),
                     new MoveToScenePositionCoroutine(344490, 71150, "trOut_Highlands_Sub240_LeoricBattlements_A", new Vector3(133.0754f, 148.5098f, 9.915272f)),
                     new MoveToScenePositionCoroutine(344490, 71150, "trOut_Highlands_Sub240_LeoricBattlements_A", new Vector3(119.749f, 125.9014f, 9.915271f)),
-
-                    new ClearAreaForNSecondsCoroutine(344490, 60, 0, 0, 45),
-                    new ClearLevelAreaCoroutine (344490)
+                    new ClearLevelAreaCoroutine(344490)
                 }
             });
 
-            // A5 - 현상금 사냥: 숲의 기도 방해 (444397)
+            // A5 - Bounty: The Forest Prayer Disturbed (444397)
             Bounties.Add(new BountyData
             {
                 QuestId = 444397,
                 Act = Act.A5,
                 WorldId = 408254,
                 QuestType = BountyQuestType.SpecialEvent,
-                WaypointNumber = 59,
+                WaypointLevelAreaId = 427763,
                 Coroutines = new List<ISubroutine>
                 {
                     new MoveToMapMarkerCoroutine(444397, 408254, 2912417),
@@ -4050,31 +4045,7 @@ namespace Trinity.Components.Adventurer.Game.Quests
                         new MoveToMapMarkerCoroutine (369851, 189910, 2912417),
                         new MoveToScenePositionCoroutine(369851, 189910, "a3dun_iceCaves_EW_01", new Vector3(91.36786f, 135.6528f, 0.1000028f)),
                         new InteractWithGizmoCoroutine (369851,189910, (int)SNOActor.x1_Global_Chest_CursedChest_B, 2912417, 5),
-
-                        new MoveToScenePositionCoroutine(369851, 189910, "a3dun_iceCaves_EW_01", new Vector3(91.36786f, 135.6528f, 0.1000028f)),
-                        new WaitCoroutine(369851, 189910, 5000),
-                        new MoveToScenePositionCoroutine(369851, 189910, "a3dun_iceCaves_EW_01", new Vector3(97.97012f, 105.6096f, 0.2187943f)),
-                        new WaitCoroutine(369851, 189910, 5000),
-                        new MoveToScenePositionCoroutine(369851, 189910, "a3dun_iceCaves_EW_01", new Vector3(99.60431f, 158.5022f, 0.1000038f)),
-                        new WaitCoroutine(369851, 189910, 5000),
-                        new MoveToScenePositionCoroutine(369851, 189910, "a3dun_iceCaves_EW_01", new Vector3(112.0791f, 139.3915f, 0.6401573f)),
-                        new WaitCoroutine(369851, 189910, 5000),
-                        new MoveToScenePositionCoroutine(369851, 189910, "a3dun_iceCaves_EW_01", new Vector3(97.97012f, 105.6096f, 0.2187943f)),
-                        new WaitCoroutine(369851, 189910, 5000),
-                        new MoveToScenePositionCoroutine(369851, 189910, "a3dun_iceCaves_EW_01", new Vector3(99.60431f, 158.5022f, 0.1000038f)),
-                        new WaitCoroutine(369851, 189910, 5000),
-                        new MoveToScenePositionCoroutine(369851, 189910, "a3dun_iceCaves_EW_01", new Vector3(112.0791f, 139.3915f, 0.6401573f)),
-                        new WaitCoroutine(369851, 189910, 5000),
-                        new MoveToScenePositionCoroutine(369851, 189910, "a3dun_iceCaves_EW_01", new Vector3(97.97012f, 105.6096f, 0.2187943f)),
-                        new WaitCoroutine(369851, 189910, 5000),
-                        new MoveToScenePositionCoroutine(369851, 189910, "a3dun_iceCaves_EW_01", new Vector3(99.60431f, 158.5022f, 0.1000038f)),
-                        new WaitCoroutine(369851, 189910, 5000),
-                        new MoveToScenePositionCoroutine(369851, 189910, "a3dun_iceCaves_EW_01", new Vector3(112.0791f, 139.3915f, 0.6401573f)),
-                        new WaitCoroutine(369851, 189910, 5000),
-                        new MoveToScenePositionCoroutine(369851, 189910, "a3dun_iceCaves_EW_01", new Vector3(91.36786f, 135.6528f, 0.1000028f)),
-                        new WaitCoroutine(369851, 189910, 5000),
-
- //                       new ClearAreaForNSecondsCoroutine (369851, 60, (int)SNOActor.x1_Global_Chest_CursedChest_B, 2912417, 30)
+                        new ClearAreaForNSecondsCoroutine (369851, 60, (int)SNOActor.x1_Global_Chest_CursedChest_B, 2912417, 30)
                     }
             });
 
@@ -4559,14 +4530,14 @@ namespace Trinity.Components.Adventurer.Game.Quests
 
         private static void AddBounties()
         {
-            // A5 - 현상금 사냥: 톨리퍼 최후의 저항 (359426)
+            // A5 - Bounty: Tollifer's Last Stand (359426)
             Bounties.Add(new BountyData
             {
                 QuestId = 359426,
                 Act = Act.A5,
                 WorldId = 261712,
                 QuestType = BountyQuestType.SpecialEvent,
-                WaypointNumber = 51,
+                WaypointLevelAreaId = 261758,
                 Coroutines = new List<ISubroutine>
                 {
                     new MoveToMapMarkerCoroutine(359426, 261712, 2912417),
@@ -4588,18 +4559,17 @@ namespace Trinity.Components.Adventurer.Game.Quests
 				}
             });
 
-            // A5 - 현상금 사냥: 쥐잡기 (368613)
+            // A5 - Bounty: Pest Problems (368613)
             Bounties.Add(new BountyData
             {
                 QuestId = 368613,
                 Act = Act.A5,
-                WorldId = 263494, // Enter the final worldId here
-                QuestType = BountyQuestType.SpecialEvent,
-                WaypointNumber = 53,
+                WorldId = 263494,
+                QuestType = BountyQuestType.ClearZone,
+                WaypointLevelAreaId = 263493,
                 Coroutines = new List<ISubroutine>
                 {
-//					new MoveToMapMarkerCoroutine(368613, 263494, -1883144025),
-					new EnterLevelAreaCoroutine(368613, 263494, 0, -1883144025, 333736),
+					new EnterLevelAreaCoroutine(368613, 263494, 263494, -1883144025, 333736),
                     new ClearLevelAreaCoroutine(368613),
                 }
             });
@@ -4607,17 +4577,17 @@ namespace Trinity.Components.Adventurer.Game.Quests
 
 
 
-            // A5 - 현상금 사냥: 헤드 몬 톤 처치 (428251)
+            // A5 - Bounty: Kill Hed Monh Ton (428251)
             Bounties.Add(new BountyData
             {
                 QuestId = 428251,
                 Act = Act.A5,
                 WorldId = 408254,
                 QuestType = BountyQuestType.KillMonster,
-                WaypointNumber = 59,
+                WaypointLevelAreaId = 427763,
                 Coroutines = new List<ISubroutine>
                 {
-                    new KillUniqueMonsterCoroutine (428251,408254, 435470, 0),
+                    new KillUniqueMonsterCoroutine (428251, 408254, 435470, 0),
                     new ClearLevelAreaCoroutine(428251),
                 }
             });
@@ -4970,6 +4940,7 @@ namespace Trinity.Components.Adventurer.Game.Quests
                 Coroutines = new List<ISubroutine>
                     {
                         new MoveToMapMarkerCoroutine(346088, 70885, 1028158260),
+                        new MoveToSceneCoroutine(346088, 70885, "caOut_Boneyard_Sub80_WormCaveEntrance_01"),
                         new ClearAreaForNSecondsCoroutine(346088, 20, 0, 1028158260, 20),
                         new EnterLevelAreaCoroutine(346088, 70885, 0, 1028158260, 175501),
                         new EnterLevelAreaCoroutine(346088, 111666, 0, 1028158261, 176001),
@@ -7886,7 +7857,7 @@ namespace Trinity.Components.Adventurer.Game.Quests
                 Act = Act.A1,
                 WorldId = 71150,
                 QuestType = BountyQuestType.SpecialEvent,
-                WaypointNumber = 18,
+                WaypointLevelAreaId = 19943,
                 Coroutines = new List<ISubroutine>
                 {
                    new EnterLevelAreaCoroutine(449835, 71150, 0, -1019926638, 176001),
@@ -8147,16 +8118,14 @@ namespace Trinity.Components.Adventurer.Game.Quests
                 }
             });
 
-
-
-            // A5 - Bounty: The Cursed Wood (445158)
+            // A5 - ??? (445158)
             Bounties.Add(new BountyData
             {
                 QuestId = 445158,
                 Act = Act.A5,
                 WorldId = 408254,
                 QuestType = BountyQuestType.SpecialEvent,
-                //WaypointNumber = 60,
+                WaypointLevelAreaId = 427763,
                 Coroutines = new List<ISubroutine>
                 {
                     new MoveToMapMarkerCoroutine(445158, 408254, 2912417), 
@@ -8165,7 +8134,6 @@ namespace Trinity.Components.Adventurer.Game.Quests
                     new ClearAreaForNSecondsCoroutine(445158, 60, (int)SNOActor.x1_Global_Chest_CursedChest_B, 2912417, 30),
                 }
             });
-
 
             // A3 - Bounty: Kill Garan (436276)
             Bounties.Add(new BountyData
@@ -8179,7 +8147,7 @@ namespace Trinity.Components.Adventurer.Game.Quests
                 {
                     new MoveToMapMarkerCoroutine(436276, 428493, 1052019909),
                     // P4_Ruins_CannibalBarbarian_C_Unique (435879) Distance: 46.67881
- //                 new MoveToActorCoroutine(436276, 428493, 435879),
+                    //new MoveToActorCoroutine(436276, 428493, 435879),
                     new ClearLevelAreaCoroutine(436276),
                 }
             });
@@ -8260,10 +8228,10 @@ namespace Trinity.Components.Adventurer.Game.Quests
                 Act = Act.A1,
                 WorldId = 71150,
                 QuestType = BountyQuestType.KillMonster,
-                //WaypointNumber = 6,
+                WaypointLevelAreaId = 19954,
                 Coroutines = new List<ISubroutine>
                 {
-                    new MoveToMapMarkerCoroutine(449864, 71150, 883191128),
+                    new KillUniqueMonsterCoroutine(449864, 71150, (int)SNOActor.ZombieFemale_B_Unique001, 883191128),
                     new ClearLevelAreaCoroutine(449864),
                 }
             });
@@ -8305,14 +8273,14 @@ namespace Trinity.Components.Adventurer.Game.Quests
                 }
             });
 
-            // A5 - 현상금 사냥: 저주받은 숲 (445139)
+            // A5 - Bounty: The Cursed Wood (445139)
             Bounties.Add(new BountyData
             {
                 QuestId = 445139,
                 Act = Act.A5,
                 WorldId = 408254, // Enter the final worldId here
                 QuestType = BountyQuestType.SpecialEvent,
-                WaypointNumber = 59,
+                WaypointLevelAreaId = 427763,
                 Coroutines = new List<ISubroutine>
                 {
                     new MoveToMapMarkerCoroutine(445139, 408254, 2912417),
@@ -8610,12 +8578,12 @@ namespace Trinity.Components.Adventurer.Game.Quests
                 Act = Act.A5,
                 WorldId = 338600, // Enter the final worldId here
                 QuestType = BountyQuestType.SpecialEvent,
-                WaypointNumber = 58,
+                WaypointLevelAreaId = 338602,
                 Coroutines = new List<ISubroutine>
                 {
                     //ActorId: 176004, Type: Gizmo, Name: g_Portal_RectangleTall_Blue-47533, Distance2d: 10.84147, 
 					new MoveToMapMarkerCoroutine(367904, 338600, -1551729968),
-//                    new EnterLevelAreaCoroutine(367904, 338600, 357656, -1551729968, 176002),
+                    //new EnterLevelAreaCoroutine(367904, 338600, 357656, -1551729968, 176002),
 					new EnterLevelAreaCoroutine(367904, 338600, 0, -1551729968, 0),
 
 
@@ -8643,7 +8611,7 @@ namespace Trinity.Components.Adventurer.Game.Quests
                 Act = Act.A5,
                 WorldId = 338944,
                 QuestType = BountyQuestType.SpecialEvent,
-                WaypointNumber = 52,
+                WaypointLevelAreaId = 338946,
                 Coroutines = new List<ISubroutine>
                 {
                     new MoveToMapMarkerCoroutine(359101, 338944, 2912417),
@@ -8672,7 +8640,7 @@ namespace Trinity.Components.Adventurer.Game.Quests
                 Act = Act.A5,
                 WorldId = 338944,
                 QuestType = BountyQuestType.SpecialEvent,
-                WaypointNumber = 52,
+                WaypointLevelAreaId = 338946,
                 Coroutines = new List<ISubroutine>
                 {
                     new MoveToMapMarkerCoroutine(359079, 338944, 2912417),
@@ -8874,9 +8842,9 @@ namespace Trinity.Components.Adventurer.Game.Quests
                 Coroutines = new List<ISubroutine>
                 {
                     new MoveToMapMarkerCoroutine(469699, 460372, 2912417),
+                    new MoveToSceneCoroutine(469699, 460372, "p6_Moor_NSEW_01"),
                     new WaitCoroutine(469699, 460372, 5000),
-                    // : P6_Friendly_Adventurer-465 ActorSnoId: 462095
-                    new ClearAreaForNSecondsCoroutine(469699, 60, (int)SNOActor.P6_Friendly_Adventurer, 0, 50)
+                    new ClearAreaForNSecondsCoroutine(469699, 60, 0, 0, 50)
                 }
             });
 
@@ -8998,12 +8966,14 @@ namespace Trinity.Components.Adventurer.Game.Quests
             {
                 QuestId = 471712,
                 Act = Act.A2,
-                WorldId = 0, // Enter the final worldId here
+                WorldId = 460372, // Enter the final worldId here
                 QuestType = BountyQuestType.KillMonster,
-                WaypointLevelAreaId = 109538,
+                WaypointLevelAreaId = 460671,
                 Coroutines = new List<ISubroutine>
                 {
-                    // Coroutines goes here
+                     // Name: p6_TempleCultist_Caster_Unique_A-747 ActorSnoId: 471616
+                   new KillUniqueMonsterCoroutine(471712, 460372, (int)SNOActor.P6_Werewolf_White_Unique_B, -840003353),
+                   new ClearLevelAreaCoroutine(471712)
                 }
             });
 
@@ -9461,6 +9431,21 @@ namespace Trinity.Components.Adventurer.Game.Quests
                     new MoveToMapMarkerCoroutine(359939, 271233, 2912417),
                     new ClearAreaForNSecondsCoroutine(359939, 90, 0, 0, 45)
 
+                }
+            });
+
+            // A5 - Bounty: Ancient Prison (363392)
+            Bounties.Add(new BountyData
+            {
+                QuestId = 363392,
+
+                Act = Act.A5,
+                WorldId = 0, // Enter the final worldId here
+                QuestType = BountyQuestType.SpecialEvent,
+                WaypointLevelAreaId = 459863,
+                Coroutines = new List<ISubroutine>
+                {
+                    // Coroutines goes here
                 }
             });
         }

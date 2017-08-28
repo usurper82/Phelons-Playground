@@ -56,15 +56,6 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
             return true;
         }
 
-        public virtual bool ShouldBoneSpikes()
-        {
-            if (!Skills.Necromancer.BoneSpikes.CanCast())
-                return false;
-            Core.Logger.Error(LogCategory.Routine,
-                $"[Bone Spikes] - On {Target}.");
-            return true;
-        }
-
         public virtual bool ShouldBoneArmor()
         {
             if (!Skills.Necromancer.BoneArmor.CanCast())
@@ -78,7 +69,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
             if (!Skills.Necromancer.BoneArmor.IsBuffActive && unitsNearMe > 0)
             {
                 Core.Logger.Error(LogCategory.Routine,
-                    $"[BoneArmor] - Missing Buff.");
+                    $"[Bone Armor] - Missing Buff.");
                 return true;
             }
 
@@ -89,7 +80,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
             else
             {
                 Core.Logger.Error(LogCategory.Routine,
-                $"[BoneArmor] - I have {Skills.Necromancer.BoneArmor.BuffStacks} stacks with {unitsNearMe} mobs near me.");
+                $"[Bone Armor] - I have {Skills.Necromancer.BoneArmor.BuffStacks} stacks with {unitsNearMe} mobs near me.");
                 return true;
             }
             return false;
@@ -99,8 +90,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
         {
             if (!Skills.Necromancer.CorpseExplosion.CanCast())
                 return false;
-            var corpseCount = Targeting.CorpseCountNearLocation(Target.Position, 20f);
-            if (corpseCount < 1)
+            var corpseCount = Targeting.CorpseCountNearLocation(Target.Position, 10f);
+            if (corpseCount < 3 || Skills.Necromancer.CorpseExplosion.TimeSinceUse < 2000)
                 return false;
             Core.Logger.Error(LogCategory.Routine,
                 $"[CorpseExplosion] - ({corpseCount}) Corpses to Explode.");
@@ -216,12 +207,37 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
             return true;
         }
 
-        public virtual bool ShouldGrimScythe()
+        public virtual bool ShouldBoneSpikes()
         {
-            if (!Skills.Necromancer.GrimScythe.CanCast() && Target.Distance < 12)
+            if (!Skills.Necromancer.BoneSpikes.CanCast())
                 return false;
             Core.Logger.Error(LogCategory.Routine,
-                $"[Grim Scythe] - On {Target}.");
+                $"[Bone Spikes] - On {Target}.");
+            return true;
+        }
+
+        public virtual bool ShouldSiphonBlood()
+        {
+            if (!Skills.Necromancer.SiphonBlood.CanCast())
+                return false;
+            Core.Logger.Error(LogCategory.Routine,
+                $"[Siphon Blood] - On {Target}.");
+            return true;
+        }
+
+        public virtual bool ShouldGrimScythe(out TrinityActor target)
+        {
+            target = null;
+            if (!Skills.Necromancer.GrimScythe.CanCast())
+                return false;
+
+            target = (Targeting.BestTargetWithoutDebuff(12f, SNOPower.P6_Necro_Decrepify, Player.Position) ??
+                Targeting.BestTargetWithoutDebuff(12f, SNOPower.P6_Necro_Leech, Player.Position) ??
+                Targeting.BestTargetWithoutDebuff(12f, SNOPower.P6_Necro_Frailty, Player.Position)) ??
+                Target;
+
+            Core.Logger.Error(LogCategory.Routine,
+                $"[Grim Scythe] - On {target}.");
             return true;
         }
 
@@ -260,7 +276,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
                 return true;
             }
 
-            if (Target.Position.Distance(position) > 12.5f)
+            if (Target.Position.Distance(position) > 15f)
             {
                 position = Target.Position;
                 Core.Logger.Error(LogCategory.Routine,

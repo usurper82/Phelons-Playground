@@ -14,11 +14,12 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
 
         public TrinityPower OffensivePower()
         {
-            Target = Targeting.BestAoeUnit();
+            Target = Targeting.BestRangedAoeUnit(45);
             if (Target == null)
                 return null;
 
             Vector3 location;
+            TrinityActor target = Target;
 
             if (Target.RadiusDistance < 65f)
             {
@@ -37,16 +38,15 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
                 if (ShouldSimulacrum())
                     return Spells.Simulacrum(Target.Position);
 
-                if (ShouldLeech(out Target))
-                    return Spells.Leech(Target);
+                if (ShouldLeech(out target))
+                    return Spells.Leech(target);
 
-                if (ShouldFrailty(out Target))
-                    return Spells.Frailty(Target);
+                if (ShouldFrailty(out target))
+                    return Spells.Frailty(target);
 
-                if (ShouldDecrepify(out Target))
-                    return Spells.Decrepify(Target);
+                if (ShouldDecrepify(out target))
+                    return Spells.Decrepify(target);
 
-                Target = Targeting.BestAoeUnit();
                 if (ShouldBoneSpirit())
                     return Spells.BoneSpirit(Target);
 
@@ -59,11 +59,14 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
                 if (ShouldCorpseExplosion())
                     return Spells.CorpseExplosion(Target.Position);
 
-                if (ShouldGrimScythe())
-                    return Spells.GrimScythe(Target);
-
                 if (ShouldBoneSpikes())
                     return Spells.BoneSpikes(Target);
+
+                if (ShouldSiphonBlood())
+                    return Spells.SiphonBlood(Target);
+
+                if (ShouldGrimScythe(out target))
+                    return Spells.GrimScythe(target);
             }
             if (ShouldWalk(out location))
                 Walk(location, 3f);
@@ -88,7 +91,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
 
         public TrinityPower DestructiblePower()
         {
-            return Spells.BoneArmor();
+            return null;
         }
 
         public TrinityPower MovementPower(Vector3 destination)
