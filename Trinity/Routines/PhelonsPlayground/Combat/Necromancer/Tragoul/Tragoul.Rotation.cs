@@ -13,7 +13,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Tragoul
         public static TrinityActor Target = CurrentTarget;
         public TrinityPower OffensivePower()
         {
-            Target = Targeting.BestRangedAoeUnit(45);
+            Target = Targeting.BestAoeUnit();
             if (Target == null)
                 return null;
 

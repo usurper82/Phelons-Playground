@@ -14,7 +14,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
 
         public TrinityPower OffensivePower()
         {
-            Target = Targeting.BestRangedAoeUnit(45);
+            Target = Targeting.BestAoeUnit(45);
             if (Target == null)
                 return null;
 

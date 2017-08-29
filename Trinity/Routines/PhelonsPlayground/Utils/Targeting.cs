@@ -804,8 +804,6 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         {
             if (radius < 5f)
                 radius = 5f;
-            if (maxRange > 30f)
-                maxRange = 30f;
 
             Vector3 bestClusterPoint;
             var clusterUnits =
