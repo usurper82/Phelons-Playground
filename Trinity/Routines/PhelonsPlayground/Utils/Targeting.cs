@@ -147,12 +147,12 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
                 return true;
             }
             var closestSanc = ClosestSanctuary(maxRange, fromLocation, objectsInAoe);
-            if (closestSanc != Vector3.Zero && Core.Avoidance.Grid.CanRayCast(fromLocation, closestSanc))
+            var closestOcc = ClosestOcculous(maxRange, fromLocation, objectsInAoe);
+            if ((AnyElitesInRange(45f) || closestOcc == Vector3.Zero) && closestSanc != Vector3.Zero && Core.Avoidance.Grid.CanRayCast(fromLocation, closestSanc))
             {
                 location = closestSanc;
                 return true;
             }
-            var closestOcc = ClosestOcculous(maxRange, fromLocation, objectsInAoe);
             if (closestOcc != Vector3.Zero && Core.Avoidance.Grid.CanRayCast(fromLocation, closestOcc))
             {
                 location = closestOcc;
