@@ -13,7 +13,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
         public static TrinityActor Target = CurrentTarget;
         public TrinityPower OffensivePower()
         {
-            Target = Targeting.BestAoeUnit(45f);
+            Target = Targeting.BestAoeUnit(45f, true);
             if (Target == null)
                 return null;
 

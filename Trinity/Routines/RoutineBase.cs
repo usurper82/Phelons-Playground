@@ -434,8 +434,13 @@ namespace Trinity.Routines
                     }
 
                     if (CurrentPower.SNOPower != SNOPower.Walk &&
-                        CurrentPower.TargetPosition.Distance(Core.Player.Position) > TrinityCombat.Targeting.MaxTargetDistance)
+                        CurrentPower.TargetPosition.Distance(Core.Player.Position) >
+                        TrinityCombat.Targeting.MaxTargetDistance)
+                    {
+                        Core.Logger.Verbose(LogCategory.Targetting,
+                            $"Player is too far away from Target: {target?.Distance} and Power: {CurrentPower}");
                         return false;
+                    }
                 }
             }
 

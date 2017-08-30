@@ -247,7 +247,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
 
             var buffPosition = Targeting.BestBuffPosition(distance, Target.Position, Player.CurrentHealthPct > 0.35, out position);
 
-            if (buffPosition && Player.Position.Distance2D(position) > 5)
+            if (buffPosition && Player.Position.Distance2D(position) > 7)
             {
                 Core.Logger.Error(LogCategory.Routine,
                     $"[Blood Rush] - To Best Buff Position: {position} Distance: {Player.Position.Distance2D(position)}");
@@ -265,7 +265,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
 
             var buffPosition = Targeting.BestBuffPosition(15f, Player.Position, Player.CurrentHealthPct > 0.65, out position);
 
-            if (buffPosition && Player.Position.Distance2D(position) > 5 && position.EasyNavToPosition(Player.Position))
+            if (buffPosition && Player.Position.Distance2D(position) > 7 && position.EasyNavToPosition(Player.Position))
             {
                 Core.Logger.Error(LogCategory.Routine,
                     $"[WalkToBuff] - To Best Buff Position: {position} Distance: {Player.Position.Distance2D(position)}");

@@ -18,7 +18,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
         public static TrinityActor Target = CurrentTarget;
         public TrinityPower OffensivePower()
         {
-            Target = Targeting.BestAoeUnit();
+            Target = Targeting.BestAoeUnit(25f, true);
             if (Target == null)
                 return null;
 
