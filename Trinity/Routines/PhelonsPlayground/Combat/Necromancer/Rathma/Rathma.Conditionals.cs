@@ -245,7 +245,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
             //    return true;
             //}
 
-            var buffPosition = Targeting.BestBuffPosition(25f, Player.Position, Player.CurrentHealthPct > 0.35, out position);
+            var buffPosition = Targeting.BestBuffPosition(distance, Player.Position, Player.CurrentHealthPct > 0.35, out position);
 
             if (buffPosition && Player.Position.Distance2D(position) > 3)
             {

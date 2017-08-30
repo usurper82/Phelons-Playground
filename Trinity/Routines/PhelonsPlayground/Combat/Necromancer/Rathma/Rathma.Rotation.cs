@@ -20,13 +20,14 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
             Vector3 location;
             TrinityActor target = Target;
 
+            if (ShouldBloodRush(50f, out location))
+                return Spells.BloodRush(Target.Position);
+
             if (ShouldWalkToBuff(out location))
                 return Walk(location, 3f);
 
             if (Target.RadiusDistance < 65f)
             {
-                if (ShouldBloodRush(50f, out location))
-                    return Spells.BloodRush(Target.Position);
 
                 if (ShouldBoneArmor())
                     return Spells.BoneArmor();
