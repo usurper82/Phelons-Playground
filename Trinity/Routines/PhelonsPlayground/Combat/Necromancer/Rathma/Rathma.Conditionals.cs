@@ -234,7 +234,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
                 return true;
             }
 
-            if (Target == null || Skills.Necromancer.BloodRush.TimeSinceUse < 3500)
+            if (Target == null || Skills.Necromancer.BloodRush.TimeSinceUse < 2500)
                 return false;
 
             //if (!Target.IsInLineOfSight)
@@ -245,9 +245,9 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
             //    return true;
             //}
 
-            var buffPosition = Targeting.BestBuffPosition(distance, Player.Position, Player.CurrentHealthPct > 0.35, out position);
+            var buffPosition = Targeting.BestBuffPosition(distance, Target.Position, Player.CurrentHealthPct > 0.35, out position);
 
-            if (buffPosition && Player.Position.Distance2D(position) > 3)
+            if (buffPosition && Player.Position.Distance2D(position) > 5)
             {
                 Core.Logger.Error(LogCategory.Routine,
                     $"[Blood Rush] - To Best Buff Position: {position} Distance: {Player.Position.Distance2D(position)}");
@@ -265,10 +265,10 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
 
             var buffPosition = Targeting.BestBuffPosition(15f, Player.Position, Player.CurrentHealthPct > 0.65, out position);
 
-            if (buffPosition && Player.Position.Distance2D(position) > 3 && position.EasyNavToPosition(Player.Position))
+            if (buffPosition && Player.Position.Distance2D(position) > 5 && position.EasyNavToPosition(Player.Position))
             {
                 Core.Logger.Error(LogCategory.Routine,
-                    $"[Walk] - To Best Buff Position: {position} Distance: {Player.Position.Distance2D(position)}");
+                    $"[WalkToBuff] - To Best Buff Position: {position} Distance: {Player.Position.Distance2D(position)}");
                 return true;
             }
             return false;
@@ -299,15 +299,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
                 position = Target.Position;
                 return true;
             }
-
-            if (Targeting.BestBuffPosition(10f, Player.Position, false, out position) &&
-                Player.Position.Distance(position) > 5 && position.EasyNavToPosition(Player.Position))
-            {
-                Core.Logger.Error(LogCategory.Routine,
-                    $"[Walk] - To Best Buff Position.");
-                return true;
-            }
-            if (CurrentTarget != null && Target.RadiusDistance > 65f)
+            if (Target != null && Target.RadiusDistance > 50f)
             {
                 Core.Logger.Error(LogCategory.Routine,
                     $"[Walk] - To get into Range with Target.");

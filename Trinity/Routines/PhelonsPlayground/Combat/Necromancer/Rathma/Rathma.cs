@@ -103,7 +103,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
 
         public TrinityPower GetMovementPower(Vector3 destination)
         {
-            return PlayerMover.IsBlocked && Skills.Necromancer.BloodRush.CanCast() ? Spells.BloodRush(destination) : Walk(destination);
+            return PlayerMover.IsBlocked && Target == null && Skills.Necromancer.BloodRush.CanCast() ? Spells.BloodRush(destination) : null;
         }
 
         #endregion

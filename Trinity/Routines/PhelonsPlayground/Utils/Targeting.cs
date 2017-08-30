@@ -49,7 +49,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         internal static List<TrinityActor> SafeList(bool objectsInAoe = false)
         {
             return
-                Core.Targets.Where(x => !x.IsPlayer && !x.IsSummonedByPlayer && (!x.IsUnit || x.IsUnit && x.HitPoints > 0) && x.IsInLineOfSight &&
+                Core.Targets.Where(x => !x.IsPlayer && !x.IsSummonedByPlayer && (!x.IsUnit || x.IsUnit && x.HitPoints > 0) && //x.IsInLineOfSight &&
                                         (objectsInAoe || !Core.Avoidance.InCriticalAvoidance(x.Position))).ToList();
         }
 
@@ -140,15 +140,15 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         internal static bool BestBuffPosition(float maxRange, Vector3 fromLocation, bool objectsInAoe, out Vector3 location)
         {
             location = Vector3.Zero;
-            var closestSancAndOcc = ClosestSancAndOcc(maxRange, fromLocation, objectsInAoe);
-            if (closestSancAndOcc != Vector3.Zero && Core.Avoidance.Grid.CanRayCast(fromLocation, closestSancAndOcc))
-            {
-                location = closestSancAndOcc;
-                return true;
-            }
+            //var closestSancAndOcc = ClosestSancAndOcc(maxRange, fromLocation, objectsInAoe);
+            //if (closestSancAndOcc != Vector3.Zero && Core.Avoidance.Grid.CanRayCast(fromLocation, closestSancAndOcc))
+            //{
+            //    location = closestSancAndOcc;
+            //    return true;
+            //}
             var closestSanc = ClosestSanctuary(maxRange, fromLocation, objectsInAoe);
             var closestOcc = ClosestOcculous(maxRange, fromLocation, objectsInAoe);
-            if ((AnyElitesInRange(45f) || closestOcc == Vector3.Zero || Player.CurrentHealthPct < 0.55) && closestSanc != Vector3.Zero && Core.Avoidance.Grid.CanRayCast(fromLocation, closestSanc))
+            if ((closestOcc == Vector3.Zero || Player.CurrentHealthPct < 0.55) && closestSanc != Vector3.Zero && Core.Avoidance.Grid.CanRayCast(fromLocation, closestSanc)) //AnyElitesInRange(45f) || 
             {
                 location = closestSanc;
                 return true;
@@ -388,8 +388,8 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
 
         internal static Vector3 ClosestOcculous(float maxRange, Vector3 fromLocation, bool objectsInAoe = false)
         {
-            var TrinityActor = GetOculusBuffDiaObjects(maxRange, fromLocation, objectsInAoe).OrderBy(x => x.Distance).FirstOrDefault();
-            return TrinityActor?.Position ?? Vector3.Zero;
+            var trinityActor = GetOculusBuffDiaObjects(maxRange, fromLocation, objectsInAoe).OrderBy(x => x.Distance).FirstOrDefault();
+            return trinityActor?.Position ?? Vector3.Zero;
         }
 
         internal static List<TrinityActor> GetOculusBuffDiaObjects(float range, Vector3 fromLocation, bool objectsInAoe = false)
