@@ -148,7 +148,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
             }
             var closestSanc = ClosestSanctuary(maxRange, fromLocation, objectsInAoe);
             var closestOcc = ClosestOcculous(maxRange, fromLocation, objectsInAoe);
-            if ((AnyElitesInRange(45f) || closestOcc == Vector3.Zero) && closestSanc != Vector3.Zero && Core.Avoidance.Grid.CanRayCast(fromLocation, closestSanc))
+            if ((AnyElitesInRange(45f) || closestOcc == Vector3.Zero || Player.CurrentHealthPct < 0.55) && closestSanc != Vector3.Zero && Core.Avoidance.Grid.CanRayCast(fromLocation, closestSanc))
             {
                 location = closestSanc;
                 return true;
@@ -1092,14 +1092,11 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         /// <returns></returns>
         internal static bool AnyElitesInRange(float range = 10f)
         {
-            if (Core.Settings.Weighting.EliteWeighting == SettingMode.Disabled)
-                return false;
-
             if (range < 5f)
                 range = 5f;
             return (from o in ObjectCache
                 where o.IsUnit &&
-                      o.IsElite &&
+                      (o.IsElite || o.IsChampion || o.IsBoss || o.IsMinion) &&
                       o.RadiusDistance <= range
                 select o).Any();
         }
