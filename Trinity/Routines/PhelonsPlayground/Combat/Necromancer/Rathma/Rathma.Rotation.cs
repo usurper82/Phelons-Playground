@@ -20,6 +20,9 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
             Vector3 location;
             TrinityActor target = Target;
 
+            if (ShouldWalkToBuff(out location))
+                return Walk(location, 3f);
+
             if (Target.RadiusDistance < 65f)
             {
                 if (ShouldBloodRush(50f, out location))
@@ -27,15 +30,6 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
 
                 if (ShouldBoneArmor())
                     return Spells.BoneArmor();
-
-                if (ShouldDevour())
-                    return Spells.Devour();
-
-                if (ShouldFrailty(out target))
-                    return Spells.Frailty(target);
-
-                if (ShouldDecrepify(out target))
-                    return Spells.Decrepify(target);
 
                 if (ShouldLandOfTheDead())
                     return Spells.LandOfTheDead();
@@ -48,6 +42,15 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
 
                 if (ShouldCommandSkeletons())
                     return Spells.CommandSkeletons(Target);
+
+                if (ShouldDevour())
+                    return Spells.Devour();
+
+                if (ShouldFrailty(out target))
+                    return Spells.Frailty(target);
+
+                if (ShouldDecrepify(out target))
+                    return Spells.Decrepify(target);
 
                 if (ShouldCorpseExplosion())
                     return Spells.CorpseExplosion(Target.Position);
@@ -62,7 +65,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
                     return Spells.GrimScythe(target);
             }
             if (ShouldWalk(out location))
-                Walk(location, 3f);
+                return Walk(location, 3f);
 
             return null;
         }

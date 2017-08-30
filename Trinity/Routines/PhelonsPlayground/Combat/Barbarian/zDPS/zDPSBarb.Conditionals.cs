@@ -56,9 +56,9 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
         {
             position = Target.Position;
 
-            if (Targeting.HealthGlobeExists(45f))
+            if (Targeting.HealthGlobeExists(55f))
             {
-                position = Targeting.GetBestHealthGlobeClusterPoint(7f, 45f, false);
+                position = Targeting.GetBestHealthGlobeClusterPoint(7f, 55f, false);
                 Core.Logger.Error(LogCategory.Routine,
                     $"[FuriousCharge] -  On Closest Health Globe: [{position.Distance(Player.Position)}].");
                 return true;

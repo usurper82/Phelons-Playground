@@ -146,16 +146,16 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
                 location = closestSancAndOcc;
                 return true;
             }
-            var closestOcc = ClosestOcculous(maxRange, fromLocation, objectsInAoe);
-            if (closestOcc != Vector3.Zero && Core.Avoidance.Grid.CanRayCast(fromLocation, closestOcc))
-            {
-                location = closestOcc;
-                return true;
-            }
             var closestSanc = ClosestSanctuary(maxRange, fromLocation, objectsInAoe);
             if (closestSanc != Vector3.Zero && Core.Avoidance.Grid.CanRayCast(fromLocation, closestSanc))
             {
                 location = closestSanc;
+                return true;
+            }
+            var closestOcc = ClosestOcculous(maxRange, fromLocation, objectsInAoe);
+            if (closestOcc != Vector3.Zero && Core.Avoidance.Grid.CanRayCast(fromLocation, closestOcc))
+            {
+                location = closestOcc;
                 return true;
             }
             return false;
@@ -294,14 +294,12 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
                 : pierceUnit;
         }
 
-        internal static List<TrinityActor> TargetsInFrontOfMe(float maxRange, bool ignoreUnitsInAoE = false,
-            bool ignoreElites = false)
+        internal static List<TrinityActor> TargetsInFrontOfMe(float maxRange, bool ignoreUnitsInAoE = false)
         {
-            return (from u in SafeList(ignoreElites)
+            return (from u in SafeList(true)
                 where u.IsUnit &&
                       u.Distance <= maxRange && u.IsInLineOfSight &&
-                      !(ignoreUnitsInAoE && u.IsInAvoidance) &&
-                      !(ignoreElites && u.IsElite)
+                      !(ignoreUnitsInAoE && u.IsInAvoidance)
                 orderby u.CountUnitsInFront() descending
                 select u).ToList();
         }
@@ -309,22 +307,21 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         public static List<TrinityActor> UnitsBetweenLocations(Vector3 fromLocation, Vector3 toLocation)
         {
             return
-            (from u in SafeList()
+            (from u in SafeList(true)
                 where u.IsUnit &&
                       MathUtil.IntersectsPath(u.Position, u.Radius, fromLocation, toLocation)
                 select u).ToList();
         }
 
-        internal static TrinityActor GetBestPierceTarget(float maxRange, bool ignoreUnitsInAoE = false,
-            bool ignoreElites = false)
+        internal static TrinityActor GetBestPierceTarget(float maxRange, bool ignoreUnitsInAoE = false)
         {
-            var result = TargetsInFrontOfMe(maxRange, ignoreUnitsInAoE, ignoreElites).FirstOrDefault();
+            var result = TargetsInFrontOfMe(maxRange, ignoreUnitsInAoE).FirstOrDefault();
             return result ?? GetBestClusterUnit(maxRange);
         }
 
-        internal static Vector3 GetBestPiercePoint(float maxRange, bool ignoreUnitsInAoE = false, bool ignoreElites = false)
+        internal static Vector3 GetBestPiercePoint(float maxRange, bool ignoreUnitsInAoE = false)
         {
-            var unit = GetBestPierceTarget(maxRange, ignoreUnitsInAoE, ignoreElites);
+            var unit = GetBestPierceTarget(maxRange, ignoreUnitsInAoE);
             return unit?.Position ?? Vector3.Zero;
         }
 
@@ -409,7 +406,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
             {
                 var occPoint = GetOculusBuffDiaObjects(maxRange, fromLocation, objectsInAoe).OrderBy(x => x.Distance)
                     .Select(y => y.Position)
-                    .FirstOrDefault(z => z.Distance2D(item) < 3);
+                    .FirstOrDefault(z => z.Distance2D(item) < 7);
                 if (occPoint != Vector3.Zero)
                     return MathEx.CalculatePointFrom(item, occPoint, item.Distance2D(occPoint) / 2);
             }
@@ -2179,19 +2176,19 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         }
 
         public static int CorpseCountNearLocation(Vector3 location, float radius)
-            => Core.Actors.Count(a => GameData.NecroCorpseSnoIds.Contains(a.ActorSnoId) && a.Position.Distance(location) <= radius);
+            => Core.Actors.Count(a => GameData.NecroCorpseSnoIds.Contains(a.ActorSnoId) && a.Position.Distance(location) <= radius && a.IsInLineOfSight);
 
         public static int CorpseCount(float radius)
-            => Core.Actors.Count(a => GameData.NecroCorpseSnoIds.Contains(a.ActorSnoId) && a.Distance <= radius);
+            => Core.Actors.Count(a => GameData.NecroCorpseSnoIds.Contains(a.ActorSnoId) && a.Distance <= radius && a.IsInLineOfSight);
 
         public static int CorpseCount(float radius, Vector3 position)
-            => Core.Actors.Count(a => GameData.NecroCorpseSnoIds.Contains(a.ActorSnoId) && a.Position.Distance(position) <= radius);
+            => Core.Actors.Count(a => GameData.NecroCorpseSnoIds.Contains(a.ActorSnoId) && a.Position.Distance(position) <= radius && a.IsInLineOfSight);
 
         public static IEnumerable<TrinityActor> GetCorpses(float radius)
-            => Core.Actors.Where(a => GameData.NecroCorpseSnoIds.Contains(a.ActorSnoId) && a.Distance <= radius);
+            => Core.Actors.Where(a => GameData.NecroCorpseSnoIds.Contains(a.ActorSnoId) && a.Distance <= radius && a.IsInLineOfSight);
 
         public static IEnumerable<TrinityActor> GetCorpses(float radius, Vector3 position)
-            => Core.Actors.Where(a => GameData.NecroCorpseSnoIds.Contains(a.ActorSnoId) && a.Position.Distance(position) <= radius);
+            => Core.Actors.Where(a => GameData.NecroCorpseSnoIds.Contains(a.ActorSnoId) && a.Position.Distance(position) <= radius && a.IsInLineOfSight);
 
 
     }

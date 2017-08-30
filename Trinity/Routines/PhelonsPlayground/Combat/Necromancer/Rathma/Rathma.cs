@@ -11,6 +11,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
 {
     using System.ComponentModel;
     using System.Windows.Controls;
+    using DbProvider;
     using Framework.Helpers;
     using UI;
     using Utils;
@@ -102,7 +103,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
 
         public TrinityPower GetMovementPower(Vector3 destination)
         {
-            return destination.Distance(Player.Position) > 7f ? Walk(destination) : null;
+            return PlayerMover.IsBlocked && Skills.Necromancer.BloodRush.CanCast() ? Spells.BloodRush(destination) : Walk(destination);
         }
 
         #endregion
