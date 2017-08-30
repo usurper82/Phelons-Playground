@@ -288,7 +288,7 @@ namespace Trinity.Components.Combat
                             continue;
                         }
 
-                        if (PlayerMover.IsCompletelyBlocked)
+                        if (PlayerMover.IsCompletelyBlocked && TrinityCombat.Targeting.CurrentTarget?.Distance > 12f)
                         {
                             cacheObject.WeightInfo += "PlayerBlocked";
 

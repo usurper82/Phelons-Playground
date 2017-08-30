@@ -10,6 +10,9 @@ using Trinity.Framework.Objects;
 
 namespace Trinity.Modules
 {
+    using Zeta.Game;
+    using Zeta.Game.Internals.Actors;
+
     /// <summary>
     /// Checks the space in front of the player for monsters and other blocking objects
     /// </summary>
@@ -21,7 +24,7 @@ namespace Trinity.Modules
         {
             MoveSpeed = Core.PlayerHistory.GetYardsPerSecond();
 
-            if (PlayerMover.CanMoveUnhindered)
+            if (PlayerMover.CanMoveUnhindered && !ZetaDia.Actors.GetActorsOfType<DiaPlayer>(true).Any(x => x.ACDId != Core.Player.AcdId))
                 return;
 
             Nodes = Core.Grids.Avoidance.GetNodesInRadius(Core.Player.Position, 10f)

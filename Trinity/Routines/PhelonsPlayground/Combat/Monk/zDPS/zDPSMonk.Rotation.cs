@@ -46,8 +46,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
         {
             if (Player.IsInTown || TrinityTownRun.IsTryingToTownPortal())
                 return null;
-            if (Skills.Monk.CycloneStrike.TimeSinceUse > 3000 && Player.PrimaryResource > 45 && Targeting.NumMobsInRange(22f) > 3)
-                return Spells.CycloneStrike();
+            //if (Skills.Monk.CycloneStrike.TimeSinceUse > 3000 && Player.PrimaryResource > 45 && Targeting.NumMobsInRange(22f) > 3)
+            //    return Spells.CycloneStrike();
             return null;
         }
 
