@@ -406,7 +406,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
             {
                 var occPoint = GetOculusBuffDiaObjects(maxRange, fromLocation, objectsInAoe).OrderBy(x => x.Distance)
                     .Select(y => y.Position)
-                    .FirstOrDefault(z => z.Distance2D(item) < 7);
+                    .FirstOrDefault(z => z.Distance2D(item) < 3);
                 if (occPoint != Vector3.Zero)
                     return MathEx.CalculatePointFrom(item, occPoint, item.Distance2D(occPoint) / 2);
             }
