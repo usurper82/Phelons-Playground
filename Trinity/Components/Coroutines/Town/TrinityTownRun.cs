@@ -23,6 +23,8 @@ using Zeta.Game.Internals.SNO;
 
 namespace Trinity.Components.Coroutines.Town
 {
+    using Settings;
+
     public class TrinityTownRun
     {
         public static bool StartedOutOfTown { get; set; }
@@ -112,7 +114,6 @@ namespace Trinity.Components.Coroutines.Town
                 Core.Logger.Debug("Started Town Run Loop");
 
                 var checkCycles = 2;
-
                 while (!Core.Player.IsInventoryLockedForGreaterRift)
                 {
                     Core.Inventory.Backpack.ForEach(i => Core.Logger.Debug($"Backpack Item: {i.Name} ({i.ActorSnoId} / {i.InternalName}) RawItemType={i.RawItemType} TrinityItemType={i.TrinityItemType}"));
@@ -147,6 +148,9 @@ namespace Trinity.Components.Coroutines.Town
                         () => StashItems.Execute(true),
                         SellItems.Execute,
                         SalvageItems.Execute))
+                        continue;
+
+                    if (!await VacuumItems.Execute(!TrinitySettings.Settings.Items.DontPickupInTown))
                         continue;
 
                     checkCycles--;
