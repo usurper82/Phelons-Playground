@@ -15,9 +15,6 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
 
     public partial class Rathma
     {
-        private Vector3 _loiterPosition = Vector3.Zero;
-        
-
         protected virtual bool ShouldCommandSkeletons()
         {
             if (!Skills.Necromancer.CommandSkeletons.CanCast() || Skills.Necromancer.Simulacrum.TimeSinceUse < 12500)

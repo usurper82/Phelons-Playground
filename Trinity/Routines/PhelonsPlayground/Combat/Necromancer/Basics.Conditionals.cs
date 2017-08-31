@@ -155,7 +155,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
                     return false;
 
                 //Trying to alternate cooldowns
-                if (Targeting.Players.Any() && (Skills.Necromancer.Frailty.CanCast() && elite.IsChampion ||
+                if (!Skills.Necromancer.CorpseLance.IsActive && 
+					Targeting.Players.Any() && (Skills.Necromancer.Frailty.CanCast() && elite.IsChampion ||
                                                 Skills.Necromancer.Decrepify.CanCast() && elite.IsElite))
                     return false;
 
@@ -175,7 +176,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
                     return false;
 
                 //Trying to alternate cooldowns
-                if (Targeting.Players.Any() && (Skills.Necromancer.Frailty.CanCast() && elite.IsChampion ||
+                if (!Skills.Necromancer.CorpseLance.IsActive &&
+                    Targeting.Players.Any() && (Skills.Necromancer.Frailty.CanCast() && elite.IsChampion ||
                                                 Skills.Necromancer.Decrepify.CanCast() && elite.IsElite))
                     return false;
 

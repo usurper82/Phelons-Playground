@@ -1516,7 +1516,9 @@ namespace Trinity.Settings.ItemList
             {new KeyValuePair<TrinityItemType, ActorClass>(TrinityItemType.Shoulder, ActorClass.Crusader), Skills.Crusader.FallingSword},
             {new KeyValuePair<TrinityItemType, ActorClass>(TrinityItemType.Shoulder, ActorClass.Crusader), Skills.Crusader.HeavensFury},
             {new KeyValuePair<TrinityItemType, ActorClass>(TrinityItemType.Shoulder, ActorClass.Crusader), Skills.Crusader.Condemn},
-            {new KeyValuePair<TrinityItemType, ActorClass>(TrinityItemType.Shoulder, ActorClass.Crusader), Skills.Crusader.Bombardment},
+            {new KeyValuePair<TrinityItemType, ActorClass>(TrinityItemType.Shoulder, ActorClass.Crusader), Skills.Crusader.Bombardment},			
+			
+            {new KeyValuePair<TrinityItemType, ActorClass>(TrinityItemType.Shoulder, ActorClass.Necromancer), Skills.Necromancer.CorpseLance},
 
             // Chest
 
@@ -1565,6 +1567,8 @@ namespace Trinity.Settings.ItemList
             {new KeyValuePair<TrinityItemType, ActorClass>(TrinityItemType.Chest, ActorClass.Crusader), Skills.Crusader.HeavensFury},
             {new KeyValuePair<TrinityItemType, ActorClass>(TrinityItemType.Chest, ActorClass.Crusader), Skills.Crusader.Bombardment},
             {new KeyValuePair<TrinityItemType, ActorClass>(TrinityItemType.Chest, ActorClass.Crusader), Skills.Crusader.Condemn},
+			
+            {new KeyValuePair<TrinityItemType, ActorClass>(TrinityItemType.Chest, ActorClass.Necromancer), Skills.Necromancer.CorpseLance},
 
             // Belt
 
@@ -1737,6 +1741,8 @@ namespace Trinity.Settings.ItemList
             {new KeyValuePair<TrinityItemType, ActorClass>(TrinityItemType.CrusaderShield, ActorClass.Crusader), Skills.Crusader.SweepAttack},
             {new KeyValuePair<TrinityItemType, ActorClass>(TrinityItemType.CrusaderShield, ActorClass.Crusader), Skills.Crusader.Punish},
             {new KeyValuePair<TrinityItemType, ActorClass>(TrinityItemType.CrusaderShield, ActorClass.Crusader), Skills.Crusader.BlessedHammer},
+			
+            {new KeyValuePair<TrinityItemType, ActorClass>(TrinityItemType.Phylactery, ActorClass.Necromancer), Skills.Necromancer.CorpseLance},
 
             // One Hand Weapon
 

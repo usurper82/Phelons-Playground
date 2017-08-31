@@ -14,6 +14,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Tragoul
     using Framework.Helpers;
     using UI;
     using Utils;
+    using static Basics;
 
     public partial class Tragoul : RoutineBase, IRoutine
     {
@@ -71,23 +72,12 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Tragoul
 
         public TrinityPower GetDefensivePower()
         {
-            return null;
+            return DefensivePower();
         }
-
-        private int _lastTarget;
+        
         public TrinityPower GetBuffPower()
         {
-            //if (CurrentTarget != null)
-            //    return null;
-            //var closestTarget = Targeting.ClosestUnit(35f);
-            //if (closestTarget == null)
-            //    return null;
-            //if (Skills.Necromancer.CommandSkeletons.TimeSinceUse < closestTarget.Distance*1000 && Player.PrimaryResourcePct < 0.50 &&
-            //    closestTarget.AcdId != _lastTarget)
-            //    return null;
-            //_lastTarget = closestTarget.AcdId;
-            //return Spells.CommandSkeletons(closestTarget);
-            return null;
+            return BuffPower();
         }
 
         public TrinityPower GetDestructiblePower()

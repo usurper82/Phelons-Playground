@@ -8,14 +8,16 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Tragoul
     using Trinity.Framework.Reference;
     using Trinity.Routines.PhelonsPlayground.Utils;
     using Zeta.Common;
+    using static Basics;
+    using static Basics.Conditionals;
     using static Basics.Spells;
+    using static Movement;
 
     public partial class Tragoul
     {
-        public static TrinityActor Target = CurrentTarget;
         public TrinityPower OffensivePower()
         {
-            Target = Targeting.BestAoeUnit();
+            Target = Targeting.BestAoeUnit(45f, true);
             if (Target == null)
                 return null;
 
@@ -54,47 +56,10 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Tragoul
                 if (ShouldGrimScythe(out target))
                     return GrimScythe(target);
             }
-            if (ShouldWalk(15f, out location))
+            if (ShouldWalk(out location))
                 Walk(location, 3f);
 
             return null;
-        }
-
-        public TrinityPower DefensivePower()
-        {
-            return null;
-        }
-
-        public TrinityPower BuffPower()
-        {
-            if (ShouldDevour())
-                return Devour();
-            return null;
-        }
-
-        public TrinityPower DestructiblePower()
-        {
-            if (ShouldBoneSpikes())
-                return BoneSpikes(Target);
-
-            if (ShouldSiphonBlood())
-                return SiphonBlood(Target);
-
-            if (ShouldGrimScythe(out Target))
-                return GrimScythe(Target);
-            return null;
-            //return Spells.SiphonBlood();
-        }
-
-        public TrinityPower MovementPower(Vector3 destination)
-        {
-            if (Player.IsInTown)
-                return null;
-
-            if (CanPortTo(destination) && Skills.Necromancer.BloodRush.TimeSinceUse > 500)
-                return BloodRush(destination);
-
-            return destination.Distance(Player.Position) > 7f ? Walk(destination) : null;
         }
     }
 }
