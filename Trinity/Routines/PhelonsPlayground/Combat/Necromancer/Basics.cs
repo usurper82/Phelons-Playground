@@ -13,6 +13,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
     using Framework.Actors.ActorTypes;
     using Framework.Reference;
     using Modules;
+    using Utils;
     using Zeta.Common;
     using Zeta.Game.Internals.Actors;
     using static Basics.Conditionals;
@@ -31,7 +32,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
 
         public static TrinityPower BuffPower()
         {
-            if (ShouldDevour())
+            if (Targeting.CorpseCount(60f) > 3)
                 return Spells.Devour();
             return null;
         }

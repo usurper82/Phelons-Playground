@@ -92,9 +92,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
                 if (!Skills.Necromancer.Devour.CanCast())
                     return false;
                 var corpseCount = Targeting.CorpseCount(60f);
-                if (Player.PrimaryResourceMax - Player.PrimaryResource > corpseCount * 10 &&
-                    Player.PrimaryResourcePct > 0.65 ||
-                    corpseCount < 3 && CurrentTarget != null)
+                if (CurrentTarget != null && Player.PrimaryResourceMax - Player.PrimaryResource > corpseCount * 10 ||
+                    Player.PrimaryResourcePct > 0.85 || corpseCount < 1)
                     return false;
                 Core.Logger.Error(LogCategory.Routine,
                     $"[Devour] - ({corpseCount}) Corpses with ({Player.PrimaryResourceMax - Player.PrimaryResource}) Essence Deficit.");
