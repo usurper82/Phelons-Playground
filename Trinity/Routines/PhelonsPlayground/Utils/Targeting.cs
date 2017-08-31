@@ -148,12 +148,12 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
             //}
             var closestSanc = ClosestSanctuary(maxRange, fromLocation, objectsInAoe);
             var closestOcc = ClosestOcculous(maxRange, fromLocation, objectsInAoe);
-            if ((closestOcc == Vector3.Zero || Player.CurrentHealthPct < 0.55) && closestSanc != Vector3.Zero && Core.Avoidance.Grid.CanRayCast(fromLocation, closestSanc)) //AnyElitesInRange(45f) || 
+            if ((closestOcc == Vector3.Zero || Player.CurrentHealthPct < 0.55 || CurrentTarget != null && CurrentTarget.MonsterAffixes.HasFlag(MonsterAffixes.Frozen)) && closestSanc != Vector3.Zero) //AnyElitesInRange(45f) || 
             {
                 location = closestSanc;
                 return true;
             }
-            if (closestOcc != Vector3.Zero && Core.Avoidance.Grid.CanRayCast(fromLocation, closestOcc))
+            if (closestOcc != Vector3.Zero)
             {
                 location = closestOcc;
                 return true;
@@ -396,7 +396,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         {
             //[1FABA194] Type: ClientEffect Name: p2_itemPassive_unique_ring_017_dome-58267 ActorSnoId: 433966, Distance: 24.701
 
-            return SafeList(objectsInAoe).Where(u => fromLocation.Distance2D(u.Position) <= range &&
+            return SafeList(objectsInAoe).Where(u => fromLocation.Distance2D(u.Position) <= range && Core.Avoidance.Grid.CanRayCast(fromLocation, u.Position) && 
                                                u.ActorSnoId == 433966).OrderBy(u => u.Distance).ToList();
         }
 
@@ -424,7 +424,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         {
             return
             (from u in SafeList(objectsInAoe)
-                where fromLocation.Distance2D(u.Position) <= range &&
+                where fromLocation.Distance2D(u.Position) <= range && Core.Avoidance.Grid.CanRayCast(fromLocation, u.Position) &&
                       u.ActorSnoId == 320136
                 orderby u.Distance
                 select u).ToList();

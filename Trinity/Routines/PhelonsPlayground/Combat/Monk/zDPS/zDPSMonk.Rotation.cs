@@ -22,6 +22,9 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
             if (Target == null)
                 return null;
 
+            if (Target.Distance > 12f)
+                Walk(Target);
+
             TrinityPower power;
 
             if (TryMantra(out power))

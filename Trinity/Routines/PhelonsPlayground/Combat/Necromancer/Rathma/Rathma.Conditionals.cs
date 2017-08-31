@@ -54,7 +54,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
             var corpseCount = Targeting.CorpseCount(60f);
             if (Player.PrimaryResourceMax - Player.PrimaryResource > corpseCount * 10 &&
                 Player.PrimaryResourcePct > 0.65 ||
-                corpseCount < 3)
+                corpseCount < 3 && CurrentTarget != null)
                 return false;
             Core.Logger.Error(LogCategory.Routine,
                 $"[Devour] - ({corpseCount}) Corpses with ({Player.PrimaryResourceMax - Player.PrimaryResource}) Essence Deficit.");

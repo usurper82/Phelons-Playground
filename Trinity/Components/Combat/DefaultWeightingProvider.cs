@@ -287,8 +287,8 @@ namespace Trinity.Components.Combat
                             cacheObject.WeightInfo += "ProfileSceneSetting-AlwaysRayWalk";
                             continue;
                         }
-
-                        if (PlayerMover.IsCompletelyBlocked && TrinityCombat.Targeting.CurrentTarget?.Distance > 12f)
+                        var spellRange = Core.Player.IsMelee ? 12f : 65f;
+                        if (PlayerMover.IsCompletelyBlocked && TrinityCombat.Targeting.CurrentTarget?.Distance > spellRange)
                         {
                             cacheObject.WeightInfo += "PlayerBlocked";
 
