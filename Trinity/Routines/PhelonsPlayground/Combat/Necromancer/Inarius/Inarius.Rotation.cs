@@ -7,11 +7,11 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
 {
     using DbProvider;
     using Framework.Reference;
+    using static Basics;
+    using static Basics.Spells;
 
     public partial class Inarius
     {
-        public static TrinityActor Target = null;
-
         public TrinityPower OffensivePower()
         {
             Target = Targeting.BestAoeUnit(45);
@@ -24,49 +24,49 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
             if (Target.RadiusDistance < 65f)
             {
                 if (ShouldBloodRush(50f, out location))
-                    return Spells.BloodRush(Target.Position);
+                    return BloodRush(Target.Position);
 
                 if (ShouldBoneArmor())
-                    return Spells.BoneArmor();
+                    return BoneArmor();
 
                 if (ShouldDevour())
-                    return Spells.Devour();
+                    return Devour();
 
                 if (ShouldLandOfTheDead())
-                    return Spells.LandOfTheDead();
+                    return LandOfTheDead();
 
                 if (ShouldSimulacrum())
-                    return Spells.Simulacrum(Target.Position);
+                    return Simulacrum(Target.Position);
 
                 if (ShouldLeech(out target))
-                    return Spells.Leech(target);
+                    return Leech(target);
 
                 if (ShouldFrailty(out target))
-                    return Spells.Frailty(target);
+                    return Frailty(target);
 
                 if (ShouldDecrepify(out target))
-                    return Spells.Decrepify(target);
+                    return Decrepify(target);
 
                 if (ShouldBoneSpirit())
-                    return Spells.BoneSpirit(Target);
+                    return BoneSpirit(Target);
 
                 if (ShouldSkeletalMage())
-                    return Spells.SkeletalMage(Target);
+                    return SkeletalMage(Target);
 
                 if (ShouldCommandSkeletons())
-                    return Spells.CommandSkeletons(Target);
+                    return CommandSkeletons(Target);
 
                 if (ShouldCorpseExplosion())
-                    return Spells.CorpseExplosion(Target.Position);
+                    return CorpseExplosion(Target.Position);
 
                 if (ShouldBoneSpikes())
-                    return Spells.BoneSpikes(Target);
+                    return BoneSpikes(Target);
 
                 if (ShouldSiphonBlood())
-                    return Spells.SiphonBlood(Target);
+                    return SiphonBlood(Target);
 
                 if (ShouldGrimScythe(out target))
-                    return Spells.GrimScythe(target);
+                    return GrimScythe(target);
             }
             if (ShouldWalk(out location))
                 Walk(location, 3f);
@@ -82,10 +82,10 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
         public TrinityPower BuffPower()
         {
             if (ShouldDevour())
-                return Spells.Devour();
+                return Devour();
 
             if (ShouldBoneArmor())
-                return Spells.BoneArmor();
+                return BoneArmor();
             return null;
         }
 
@@ -101,7 +101,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
 
             if (PlayerMover.IsBlocked ||
                 destination.Distance(Player.Position) > 30 && Skills.Necromancer.BloodRush.TimeSinceUse > 500)
-                return Spells.BloodRush(destination);
+                return BloodRush(destination);
 
             return destination.Distance(Player.Position) > 7f ? Walk(destination) : null;
         }

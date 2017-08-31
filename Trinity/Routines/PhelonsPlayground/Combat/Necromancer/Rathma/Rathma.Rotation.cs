@@ -8,9 +8,12 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
     using Trinity.Framework.Reference;
     using Trinity.Routines.PhelonsPlayground.Utils;
     using Zeta.Common;
+    using static Basics;
+    using static Basics.Conditionals;
+    using static Movement;
+
     public partial class Rathma
     {
-        public static TrinityActor Target = CurrentTarget;
         public TrinityPower OffensivePower()
         {
             Target = Targeting.BestAoeUnit(45f, true);
@@ -21,7 +24,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
             TrinityActor target = Target;
 
             if (ShouldBloodRush(35f, out location))
-                return Spells.BloodRush(Target.Position);
+                return Spells.BloodRush(location);
 
             if (ShouldWalkToBuff(out location))
                 return Walk(location, 3f);
@@ -69,42 +72,6 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
                 return Walk(location, 3f);
 
             return null;
-        }
-
-        public TrinityPower DefensivePower()
-        {
-            return null;
-        }
-
-        public TrinityPower BuffPower()
-        {
-            if (ShouldDevour())
-                return Spells.Devour();
-            return null;
-        }
-
-        public TrinityPower DestructiblePower()
-        {
-            if (ShouldSkeletalMage())
-                return Spells.SkeletalMage(CurrentTarget);
-
-            if (ShouldCommandSkeletons())
-                return Spells.CommandSkeletons(CurrentTarget);
-
-            if (ShouldBoneSpikes())
-                return Spells.BoneSpikes(Target);
-
-            if (ShouldSiphonBlood())
-                return Spells.SiphonBlood(Target);
-
-            if (ShouldGrimScythe(out Target))
-                return Spells.GrimScythe(Target);
-            return null;
-        }
-
-        public TrinityPower MovementPower(Vector3 destination)
-        {
-            return null; //return Walk(destination);
         }
     }
 }

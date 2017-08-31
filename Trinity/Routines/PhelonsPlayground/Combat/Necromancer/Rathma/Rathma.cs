@@ -15,6 +15,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
     using Framework.Helpers;
     using UI;
     using Utils;
+    using static Basics;
+    using static Basics.Conditionals;
 
     public partial class Rathma : RoutineBase, IRoutine
     {
@@ -23,7 +25,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
         public string DisplayName => "Necromonger";
         public string Description => "Phelons Playground - Necromancer Rathma Set";
         public string Author => "Phelon";
-        public string Version => "0.2";
+        public string Version => "1.0";
         public string Url => "https://www.thebuddyforum.com/threads/phelons-playground-4-man-botting-routine.403317/";
         public Build BuildRequirements => new Build
         {
@@ -83,16 +85,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
         private int _lastTarget;
         public TrinityPower GetBuffPower()
         {
-            //if (CurrentTarget != null)
-            //    return null;
-            //var closestTarget = Targeting.ClosestUnit(35f);
-            //if (closestTarget == null)
-            //    return null;
-            //if (Skills.Necromancer.CommandSkeletons.TimeSinceUse < closestTarget.Distance*1000 && Player.PrimaryResourcePct < 0.50 &&
-            //    closestTarget.AcdId != _lastTarget)
-            //    return null;
-            //_lastTarget = closestTarget.AcdId;
-            //return Spells.CommandSkeletons(closestTarget);
+            if (ShouldDevour())
+                return Spells.Devour();
             return null;
         }
 
@@ -103,7 +97,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
 
         public TrinityPower GetMovementPower(Vector3 destination)
         {
-            return PlayerMover.IsBlocked && Target == null && Skills.Necromancer.BloodRush.CanCast() ? Spells.BloodRush(destination) : null;
+            return MovementPower(destination);
         }
 
         #endregion

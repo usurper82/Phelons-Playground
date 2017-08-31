@@ -8,6 +8,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Tragoul
     using Trinity.Framework.Reference;
     using Trinity.Routines.PhelonsPlayground.Utils;
     using Zeta.Common;
+    using static Basics.Spells;
+
     public partial class Tragoul
     {
         public static TrinityActor Target = CurrentTarget;
@@ -23,34 +25,34 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Tragoul
             if (Target.RadiusDistance < 65f)
             {
                 if (ShouldBloodRush(50f, out location))
-                    return Spells.BloodRush(Target.Position);
+                    return BloodRush(Target.Position);
 
                 if (ShouldDevour())
-                    return Spells.Devour();
+                    return Devour();
 
                 if (ShouldLandOfTheDead())
-                    return Spells.LandOfTheDead();
+                    return LandOfTheDead();
 
                 if (ShouldSimulacrum())
-                    return Spells.Simulacrum(Target.Position);
+                    return Simulacrum(Target.Position);
 
                 if (ShouldFrailty(out target))
-                    return Spells.Frailty(target);
+                    return Frailty(target);
 
                 if (ShouldDecrepify(out target))
-                    return Spells.Decrepify(target);
+                    return Decrepify(target);
 
                 if (ShouldCorpseLance())
-                    return Spells.CorpseLance(Target);
+                    return CorpseLance(Target);
 
                 if (ShouldBoneSpikes())
-                    return Spells.BoneSpikes(Target);
+                    return BoneSpikes(Target);
 
                 if (ShouldSiphonBlood())
-                    return Spells.SiphonBlood(Target);
+                    return SiphonBlood(Target);
 
                 if (ShouldGrimScythe(out target))
-                    return Spells.GrimScythe(target);
+                    return GrimScythe(target);
             }
             if (ShouldWalk(15f, out location))
                 Walk(location, 3f);
@@ -66,20 +68,20 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Tragoul
         public TrinityPower BuffPower()
         {
             if (ShouldDevour())
-                return Spells.Devour();
+                return Devour();
             return null;
         }
 
         public TrinityPower DestructiblePower()
         {
             if (ShouldBoneSpikes())
-                return Spells.BoneSpikes(Target);
+                return BoneSpikes(Target);
 
             if (ShouldSiphonBlood())
-                return Spells.SiphonBlood(Target);
+                return SiphonBlood(Target);
 
             if (ShouldGrimScythe(out Target))
-                return Spells.GrimScythe(Target);
+                return GrimScythe(Target);
             return null;
             //return Spells.SiphonBlood();
         }
@@ -90,7 +92,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Tragoul
                 return null;
 
             if (CanPortTo(destination) && Skills.Necromancer.BloodRush.TimeSinceUse > 500)
-                return Spells.BloodRush(destination);
+                return BloodRush(destination);
 
             return destination.Distance(Player.Position) > 7f ? Walk(destination) : null;
         }

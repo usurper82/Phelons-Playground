@@ -13,7 +13,6 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Tragoul
     using Framework.Reference;
     using Zeta.Common;
     using Zeta.Game.Internals.Actors;
-    using static Spells;
 
     public partial class Tragoul
     {

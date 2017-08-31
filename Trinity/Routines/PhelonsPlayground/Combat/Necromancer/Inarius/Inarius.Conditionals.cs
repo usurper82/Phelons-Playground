@@ -12,6 +12,7 @@ using Zeta.Game.Internals.Actors;
 namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
 {
     using System.Linq;
+    using static Basics;
 
     public partial class Inarius
     {

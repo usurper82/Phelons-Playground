@@ -457,9 +457,11 @@
     <Compile Include="Routines\PhelonsPlayground\Combat\Monk\zDPS\zDPSMonk.Conditionals.cs" />
     <Compile Include="Routines\PhelonsPlayground\Combat\Monk\zDPS\zDPSMonk.cs" />
     <Compile Include="Routines\PhelonsPlayground\Combat\Monk\zDPS\zDPSMonk.Rotation.cs" />
+    <Compile Include="Routines\PhelonsPlayground\Combat\Necromancer\Basics.cs" />
     <Compile Include="Routines\PhelonsPlayground\Combat\Necromancer\Inarius\Inarius.Conditionals.cs" />
     <Compile Include="Routines\PhelonsPlayground\Combat\Necromancer\Inarius\Inarius.cs" />
     <Compile Include="Routines\PhelonsPlayground\Combat\Necromancer\Inarius\Inarius.Rotation.cs" />
+    <Compile Include="Routines\PhelonsPlayground\Combat\Necromancer\Movement.cs" />
     <Compile Include="Routines\PhelonsPlayground\Combat\Necromancer\Rathma\Rathma.Conditionals.cs" />
     <Compile Include="Routines\PhelonsPlayground\Combat\Necromancer\Rathma\Rathma.cs" />
     <Compile Include="Routines\PhelonsPlayground\Combat\Necromancer\Rathma\Rathma.Rotation.cs" />
@@ -1038,7 +1040,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <Compile Include="Routines\PhelonsPlayground\Combat\Necromancer\Spells.cs" />
+    <Compile Include="Routines\PhelonsPlayground\Combat\Necromancer\Basics.Spells.cs" />
+    <Compile Include="Routines\PhelonsPlayground\Combat\Necromancer\Basics.Conditionals.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Routines\PhelonsPlayground\Combat\Necromancer\Speed\" />
