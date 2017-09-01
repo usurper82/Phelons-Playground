@@ -1,29 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
-using Trinity.Components.Combat.Resources;
-using Trinity.Framework.Objects;
-using Trinity.Framework.Reference;
-using Trinity.Settings;
-using Zeta.Common;
-using Zeta.Game;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
+namespace Trinity.Routines.PhelonsPlayground.Combat.Witchdoctor.LoN
 {
     using System.ComponentModel;
     using System.Windows.Controls;
-    using DbProvider;
+    using Components.Combat.Resources;
     using Framework.Helpers;
+    using Framework.Objects;
+    using Framework.Reference;
+    using Necromancer;
+    using Settings;
     using UI;
-    using Utils;
+    using Zeta.Common;
+    using Zeta.Game;
     using static Basics;
-    using static Basics.Conditionals;
 
-    public partial class Rathma : RoutineBase, IRoutine
+    public partial class LoN : RoutineBase, IRoutine
     {
         #region Definition
 
-        public string DisplayName => "Necromonger";
-        public string Description => "Phelons Playground - Necromancer Rathma Set";
+        public string DisplayName => "LoN Barrage";
+        public string Description => "Phelons Playground - Witch doctor LoN Set";
         public string Author => "Phelon";
         public string Version => "1.0";
         public string Url => "https://www.thebuddyforum.com/threads/phelons-playground-4-man-botting-routine.403317/";
@@ -31,21 +32,23 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
         {
             Sets = new Dictionary<Set, SetBonus>
             {
-                { Sets.BonesOfRathma, SetBonus.Third }
+                { Sets.LegacyOfNightmares, SetBonus.First }
             },
             Skills = new Dictionary<Skill, Rune>
             {
-                //{ Skills.Necromancer.SkeletalMage, null },
-                //{ Skills.Necromancer.CommandSkeletons, null },
-                //{ Skills.Necromancer.LandOfTheDead, null },
-                //{ Skills.Necromancer.BoneSpikes, null },
-                //{ Skills.Necromancer.Decrepify, null },
-                //{ Skills.Necromancer.Devour, null },
+                { Skills.WitchDoctor.LocustSwarm, null },
+                { Skills.WitchDoctor.Haunt, null },
+                { Skills.WitchDoctor.Sacrifice, null },
+                { Skills.WitchDoctor.GraspOfTheDead, null },
+                { Skills.WitchDoctor.SoulHarvest, null },
+                { Skills.WitchDoctor.SpiritBarrage, null }
             },
         };
         public IDynamicSetting RoutineSettings { get; }
 
         #endregion
+
+
 
         #region IRoutine Defaults
 
@@ -78,15 +81,12 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
 
         public TrinityPower GetDefensivePower()
         {
-            return null;
+            return DefensivePower();
         }
 
-        private int _lastTarget;
         public TrinityPower GetBuffPower()
         {
-            if (ShouldDevour())
-                return Spells.Devour();
-            return null;
+            return BuffPower();
         }
 
         public TrinityPower GetDestructiblePower()
@@ -107,9 +107,9 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
         public override float EmergencyHealthPct => Settings.EmergencyHealthPct;
 
         IDynamicSetting IRoutine.RoutineSettings => Settings;
-        public Rathma.RathmaSettings Settings { get; } = new Rathma.RathmaSettings();
+        public LoN.LoNSettings Settings { get; } = new LoN.LoNSettings();
 
-        public sealed class RathmaSettings : NotifyBase, IDynamicSetting
+        public sealed class LoNSettings : NotifyBase, IDynamicSetting
         {
             private int _clusterSize;
             private float _emergencyHealthPct;

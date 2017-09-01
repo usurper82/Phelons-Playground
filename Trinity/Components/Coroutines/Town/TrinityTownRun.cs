@@ -150,7 +150,7 @@ namespace Trinity.Components.Coroutines.Town
                         SalvageItems.Execute))
                         continue;
 
-                    if (!await VacuumItems.Execute(!TrinitySettings.Settings.Items.DontPickupInTown))
+                    if (await VacuumItems.Execute(!TrinitySettings.Settings.Items.DontPickupInTown))
                         continue;
 
                     checkCycles--;

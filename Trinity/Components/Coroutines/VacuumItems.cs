@@ -28,7 +28,7 @@ namespace Trinity.Components.Coroutines
         /* Should be able to wait for finishing this task While doing something.
          * Otherwise we see the bot locks in dilemma between going to Quest/Rift
          * or Vacuuming nearby items -Seq */
-        public async static Task<bool> Execute(bool inTown = false)
+        public static async Task<bool> Execute(bool inTown = false)
         {
 
             bool isVacuuming = false;
@@ -40,22 +40,19 @@ namespace Trinity.Components.Coroutines
             // Items that shouldn't be picked up are currently excluded from cache.
             // a pickup evaluation should be added here if that changes.
 
-            foreach (var item in Core.Targets.OfType<TrinityItem>())
+            foreach (var item in Core.Targets.OfType<TrinityItem>().OrderBy(x => x.Distance))
             {
-                bool validApproach = Core.Grids.Avoidance.IsIntersectedByFlags(Core.Player.Position, item.Position, AvoidanceFlags.NavigationBlocking, AvoidanceFlags.NavigationImpairing) && !Core.Player.IsFacing(item.Position, 90);
+                var validApproach = Core.Grids.Avoidance.IsIntersectedByFlags(Core.Player.Position, item.Position, AvoidanceFlags.NavigationBlocking, AvoidanceFlags.NavigationImpairing) && !Core.Player.IsFacing(item.Position, 90);
 
                 var lootedItem = InventoryManager.Backpack.FirstOrDefault(i => VacuumedAcdIds.Contains(item.AcdId));
-                if (Core.Player.IsInTown && inTown && lootedItem == null && !validApproach)
+                if (Core.Player.IsInTown && inTown && lootedItem == null && validApproach)
                 {
                     while (item.Distance > 7f && item.IsValid)
                     {
                         await Navigator.MoveTo(item.Position);
-                        await Coroutine.Yield();
                     }
                     if (!ZetaDia.Me.UsePower(SNOPower.Axe_Operate_Gizmo, item.Position, Core.Player.WorldDynamicId, item.AcdId))
-                    {
                         Core.Logger.Warn($"Failed to vacuum town item {item.Name} AcdId={item.AcdId}");
-                    }
                 }
                 else
                 {

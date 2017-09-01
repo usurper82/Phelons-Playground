@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
+﻿namespace Trinity.Routines.PhelonsPlayground.Combat.Witchdoctor
 {
     using Framework;
     using Framework.Helpers;
@@ -15,46 +9,6 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
 
     public class Movement
     {
-
-        public static bool ShouldBloodRush(float distance, out Vector3 position)
-        {
-            position = Vector3.Zero;
-
-            if (!Skills.Necromancer.BloodRush.CanCast())
-                return false;
-
-            var closestGlobe = Targeting.ClosestGlobe(distance);
-            if (Player.CurrentHealthPct < 0.50 && closestGlobe != null)
-            {
-                position = closestGlobe.Position;
-                Core.Logger.Error(LogCategory.Routine,
-                    $"[Blood Rush] - To get Health Globe.");
-                return true;
-            }
-
-            if (Target == null || Skills.Necromancer.BloodRush.TimeSinceUse < 2500)
-                return false;
-
-            //if (!Target.IsInLineOfSight)
-            //{
-            //    position = Target.Position;
-            //    Core.Logger.Error(LogCategory.Routine,
-            //        $"[Blood Rush] - Monster is not in LoS.");
-            //    return true;
-            //}
-
-            var buffPosition = Targeting.BestBuffPosition(distance, Target.Position, Player.CurrentHealthPct > 0.35, out position);
-
-            if (buffPosition && Player.Position.Distance2D(position) > 7)
-            {
-                Core.Logger.Error(LogCategory.Routine,
-                    $"[Blood Rush] - To Best Buff Position: {position} Distance: {Player.Position.Distance2D(position)}");
-                return true;
-            }
-            if (!(Target.Distance > distance)) return false;
-            position = Target.Position;
-            return true;
-        }
 
         public static bool ShouldWalkToBuff(out Vector3 buffposition, Vector3 fromPosition, float distance = 15f)
         {

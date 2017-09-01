@@ -16,24 +16,26 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
     {
         public TrinityPower OffensivePower()
         {
-            Target = Targeting.BestAoeUnit(45f, true);
+            var castDistance = Skills.Necromancer.GrimScythe.IsActive ? 12f : 45f;
+
+            Target = Targeting.BestAoeUnit(castDistance, true);
             if (Target == null)
                 return null;
 
             Vector3 location;
             TrinityActor target = Target;
 
-            if (ShouldBloodRush(35f, out location))
+            if (ShouldBoneArmor())
+                return Spells.BoneArmor();
+
+            if (ShouldBloodRush(castDistance, out location))
                 return Spells.BloodRush(location);
 
-            if (ShouldWalkToBuff(out location))
+            if (ShouldWalkToBuff(out location, Target.Position, castDistance))
                 return Walk(location, 3f);
 
-            if (Target.RadiusDistance < 50f)
+            if (Target.RadiusDistance < castDistance)
             {
-
-                if (ShouldBoneArmor())
-                    return Spells.BoneArmor();
 
                 if (ShouldLandOfTheDead())
                     return Spells.LandOfTheDead();
@@ -68,7 +70,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
                 if (ShouldGrimScythe(out target))
                     return Spells.GrimScythe(target);
             }
-            if (ShouldWalk(out location))
+            if (ShouldWalk(out location, castDistance))
                 return Walk(location, 3f);
 
             return null;

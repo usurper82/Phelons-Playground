@@ -117,11 +117,6 @@ namespace AutoFollow.Coroutines
                 //    await Coroutine.Sleep(5000);
                 //    return true;
                 //}
-                var obelisk = Town.Actors.RiftObelisk;
-                if (obelisk != null)
-                {
-                    await Movement.MoveTo(obelisk.Position);
-                }
 
                 if (AutoFollow.CurrentFollowers.Any(f => f.IsVendoring || f.InDifferentLevelArea))
                 {
@@ -157,6 +152,12 @@ namespace AutoFollow.Coroutines
                     Log.Info("Waiting for followers to show up.");
                     await Coroutine.Sleep(1000);
                     return true;
+                }
+
+                var obelisk = Town.Actors.RiftObelisk;
+                if (obelisk != null && AutoFollow.CurrentLeader.IsMe)
+                {
+                    await Movement.MoveTo(obelisk.Position);
                 }
             }
             return false;

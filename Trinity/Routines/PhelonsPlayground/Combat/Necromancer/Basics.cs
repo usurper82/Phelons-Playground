@@ -55,7 +55,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
 
         public static TrinityPower MovementPower(Vector3 destination)
         {
-            return PlayerMover.IsCompletelyBlocked && Target == null && Skills.Necromancer.BloodRush.CanCast() ? Spells.BloodRush(destination) : null;
+            return (PlayerMover.IsCompletelyBlocked && Target == null || destination.Distance(Player.Position) > 25) && Skills.Necromancer.BloodRush.CanCast() ? Spells.BloodRush(destination) : null;
         }
     }
 }
