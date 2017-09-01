@@ -40,32 +40,26 @@ namespace Trinity.Components.Coroutines
             // Items that shouldn't be picked up are currently excluded from cache.
             // a pickup evaluation should be added here if that changes.
 
-            foreach (var item in Core.Targets.OfType<TrinityItem>().OrderBy(x => x.Distance))
+            foreach (var item in Core.Targets.OfType<TrinityItem>().OrderBy(x => x.Distance).Where(x => !VacuumedAcdIds.Contains(x.AcdId)))
             {
                 var validApproach = Core.Grids.Avoidance.IsIntersectedByFlags(Core.Player.Position, item.Position, AvoidanceFlags.NavigationBlocking, AvoidanceFlags.NavigationImpairing) && !Core.Player.IsFacing(item.Position, 90);
-
-                var lootedItem = InventoryManager.Backpack.FirstOrDefault(i => VacuumedAcdIds.Contains(item.AcdId));
-                if (Core.Player.IsInTown && inTown && lootedItem == null && validApproach)
+                
+                if (inTown)
                 {
-                    isVacuuming = true;
-                    //if (!await MoveToAndInteract.Execute(item.Position, item.AcdId))
-                    //{
-                    //    Core.Logger.Error($"[TownLoot] Failed to move to item ({item.Name}) to pick up items :(");
-                    //    return false;
-                    //}
                     Core.Logger.Warn($"Moving to vacuum town item {item.Name} AcdId={item.AcdId}");
-                    while (item.Distance > 7f && item.IsValid)
+                    if (!await MoveToAndInteract.Execute(item.Position, item.AcdId, 5f) && !ZetaDia.Me.UsePower(SNOPower.Axe_Operate_Gizmo, item.Position, Core.Player.WorldDynamicId,
+                            item.AcdId))
                     {
-                        await Navigator.MoveTo(item.Position);
-                        await Coroutine.Sleep(1000);
-                    }
-                    if (!ZetaDia.Me.UsePower(SNOPower.Axe_Operate_Gizmo, item.Position, Core.Player.WorldDynamicId, item.AcdId))
                         Core.Logger.Warn($"Failed to vacuum town item {item.Name} AcdId={item.AcdId}");
+                        VacuumedAcdIds.Add(item.AcdId);
+                        continue;
+                    }
+                    await Coroutine.Sleep((int)item.Distance * 150);
                 }
                 else
                 {
                     /* Added checkpoints to avoid approach stuck -Seq */
-                    if (item.Distance > 8f || VacuumedAcdIds.Contains(item.AcdId) && !validApproach)
+                    if (item.Distance > 8f || !validApproach)
                         //Core.Logger.Debug("Vacuuming is valid");
                         continue;
                     if (!ZetaDia.Me.UsePower(SNOPower.Axe_Operate_Gizmo, item.Position, Core.Player.WorldDynamicId, item.AcdId))
@@ -85,9 +79,15 @@ namespace Trinity.Components.Coroutines
             {
                 Core.Logger.Verbose($"Vacuumed {count} items");
             }
+            else
+            {
+                if (Core.Player.IsInTown && inTown)
+                    Core.Logger.Verbose($"[VacuumItems] Nothing to Vacuum.");
+            }
 
             if (VacuumedAcdIds.Count > 1000)
             {
+                Core.Logger.Verbose($"[VacuumItems] Clearing Vacuum.");
                 VacuumedAcdIds.Clear();
             }
             return isVacuuming;

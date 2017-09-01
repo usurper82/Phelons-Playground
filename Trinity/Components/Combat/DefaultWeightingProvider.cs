@@ -43,7 +43,7 @@ namespace Trinity.Components.Combat
 
                     if (actor.IsElite && !actor.IsBoss)
                         return ShouldIgnoreElite(actor);
-                    else if (actor.IsTrashMob && !actor.IsQuestMonster)
+                    if (actor.IsTrashMob && !actor.IsQuestMonster)
                         return WeightingUtils.ShouldIgnoreTrash(actor);
 
                     break;
@@ -332,7 +332,7 @@ namespace Trinity.Components.Combat
                             continue;
                         }
 
-                        if (cacheObject.IsUnit && cacheObject.Distance < 35f)
+                        if (cacheObject.IsUnit && cacheObject.Distance < 55f)
                         {
                             if (!cacheObject.HasBeenInLoS && !cacheObject.IsHidden && !GameData.HidingUnits.Contains(cacheObject.ActorSnoId))
                             {

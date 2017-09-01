@@ -156,16 +156,29 @@ namespace AutoFollow.Behaviors
 
         private static async Task<bool> FollowLeader()
         {
-            if (!AutoFollow.CurrentLeader.IsInSameGame)
+            if (!AutoFollow.CurrentLeader.IsInSameGame || Player.IsInTown)
                 return false;
 
+            var catchUpDistance = AutoFollow.CurrentLeader.CurrentTarget != null ? Settings.Coordination.CatchUpDistance : Settings.Coordination.FollowDistance;
             switch (State)
             {
                 case FollowMode.FollowLeader:
+                    if (AutoFollow.CurrentLeader.Distance > catchUpDistance)
+                    {
+                        Log.Info("Moving to Follow Leader.");
+                        await Navigator.MoveTo(AutoFollow.CurrentLeader.Destination);
+                        return true;
+                    }
+                    break;
                 case FollowMode.ChaseLeader:
-                    await Navigator.MoveTo(AutoFollow.CurrentLeader.Destination);
-                    return true;
-                
+                    if (AutoFollow.CurrentLeader.Distance > catchUpDistance)
+                    {
+                        Log.Info("Moving to Chase Leader.");
+                        await Navigator.MoveTo(AutoFollow.CurrentLeader.Destination);
+                        return true;
+                    }
+                    break;
+
                 case FollowMode.MoveToRiftExit:
                     await Movement.MoveToGreaterRiftExitPortal();
                     return true;

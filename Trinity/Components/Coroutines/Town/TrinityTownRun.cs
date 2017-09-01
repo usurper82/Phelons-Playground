@@ -146,12 +146,13 @@ namespace Trinity.Components.Coroutines.Town
                     if (await Any(
                         DropItems.Execute,
                         () => StashItems.Execute(true),
+                        () => VacuumItems.Execute(true),
                         SellItems.Execute,
                         SalvageItems.Execute))
                         continue;
 
-                    if (await VacuumItems.Execute(!TrinitySettings.Settings.Items.DontPickupInTown))
-                        continue;
+                    //if (await VacuumItems.Execute(true))//!TrinitySettings.Settings.Items.DontPickupInTown
+                    //    continue;
 
                     checkCycles--;
                     if (checkCycles == 0)
@@ -163,7 +164,7 @@ namespace Trinity.Components.Coroutines.Town
                 await StashItems.Execute();
                 await RepairItems.Execute();
 
-                Core.Logger.Log("Finished Town Run woo!");
+                Core.Logger.Log("Finished Town Run!");
                 DontAttemptTownRunUntil = DateTime.UtcNow + TimeSpan.FromSeconds(15);
 
                 if (StartedOutOfTown)

@@ -157,6 +157,7 @@ namespace AutoFollow.Coroutines
                 var obelisk = Town.Actors.RiftObelisk;
                 if (obelisk != null && AutoFollow.CurrentLeader.IsMe)
                 {
+                    Log.Info("Moving to Obelisk.");
                     await Movement.MoveTo(obelisk.Position);
                 }
             }
