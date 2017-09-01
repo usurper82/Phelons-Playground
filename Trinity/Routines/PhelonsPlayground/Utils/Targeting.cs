@@ -120,7 +120,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
                     .OrderByDescending(u => u.Distance).ToList();
         }
 
-        public static TrinityActor BestAoeUnit(float range = 45, bool includeInAoE = false)
+        public static TrinityActor BestAoeUnit(float range = 45f, bool includeInAoE = false)
         {
             return BestEliteInRange(range, includeInAoE) ??
                    GetBestClusterUnit(7, range, true, includeInAoE) ??
@@ -358,16 +358,16 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
 
         public static TrinityActor BestEliteInRange(float range, bool objectsInAoe = false)
         {
-            return SafeList(objectsInAoe).Where(u => u.IsUnit &&
-                                                      (u.IsElite || u.IsChampion || u.IsBoss || u.IsMinion) &&
-                                                      u.Distance <= range)
-                .OrderByDescending(u => u.NearbyUnitsWithinDistance(15))
-                .ThenByDescending(u => u.HitPointsPct).FirstOrDefault();
+            return
+                SafeList(objectsInAoe)
+                    .OrderBy(u => u.HitPointsPct)
+                    .FirstOrDefault(
+                        u => u.IsUnit && (u.IsElite || u.IsChampion || u.IsBoss) && u.RadiusDistance <= range);
         }
 
         internal static Vector3 ClosestOcculous(float maxRange, Vector3 fromLocation, bool objectsInAoe = false)
         {
-            var trinityActor = GetOculusBuffDiaObjects(maxRange, fromLocation, objectsInAoe).OrderBy(x => x.Distance).FirstOrDefault();
+            var trinityActor = GetOculusBuffDiaObjects(maxRange, fromLocation, objectsInAoe).OrderBy(x => x.IsSafeSpot).FirstOrDefault();
             return trinityActor?.Position ?? Vector3.Zero;
         }
 
@@ -383,7 +383,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         {
             foreach (var item in GetInnerSanctuaryDiaObjects(maxRange, fromLocation, objectsInAoe).Select(x => x.Position).ToList())
             {
-                var occPoint = GetOculusBuffDiaObjects(maxRange, fromLocation, objectsInAoe).OrderBy(x => x.Distance)
+                var occPoint = GetOculusBuffDiaObjects(maxRange, fromLocation, objectsInAoe).OrderBy(x => x.IsSafeSpot)
                     .Select(y => y.Position)
                     .FirstOrDefault(z => z.Distance2D(item) < 3);
                 if (occPoint != Vector3.Zero)
@@ -394,7 +394,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
 
         internal static Vector3 ClosestSanctuary(float maxRange, Vector3 fromLocation, bool objectsInAoe = false)
         {
-            var TrinityActor = GetInnerSanctuaryDiaObjects(maxRange, fromLocation, objectsInAoe).OrderBy(x => x.Distance).FirstOrDefault();
+            var TrinityActor = GetInnerSanctuaryDiaObjects(maxRange, fromLocation, objectsInAoe).OrderBy(x => x.IsSafeSpot).FirstOrDefault();
             return TrinityActor?.Position ?? Vector3.Zero;
         }
 

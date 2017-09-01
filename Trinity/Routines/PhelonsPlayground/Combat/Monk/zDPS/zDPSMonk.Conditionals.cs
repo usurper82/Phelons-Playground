@@ -146,14 +146,16 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
 
         protected virtual bool ShouldCripplingWave(out TrinityActor target)
         {
-            target = null;
+            target = Target;
 
             if (!Skills.Monk.CripplingWave.CanCast())
                 return false;
 
             var range = Skills.Monk.Epiphany.TimeSinceUse < 15000 ? 20 : 7f;
+            if (target.Distance > 7f && range > 7f)
+                return true;
 
-            target = TargetUtil.BestAuraUnit(SNOPower.Monk_CripplingWave, range, true) ?? target;
+            target = TargetUtil.BestAuraUnit(SNOPower.Monk_CripplingWave, 10f, true) ?? target;
             if (target != null && target.Distance < range)
                 return true;
 
@@ -180,7 +182,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
             if (!Skills.Monk.CycloneStrike.CanCast())
                 return false;
 
-            if (Player.PrimaryResource < PrimaryEnergyReserve || Skills.Monk.CycloneStrike.TimeSinceUse < 5000)
+            if (Player.PrimaryResource < PrimaryEnergyReserve || Skills.Monk.CycloneStrike.TimeSinceUse < 1250)
                 return false;
 
             var targetIsCloseElite = CurrentTarget.IsElite && CurrentTarget.Distance < CycloneStrikeRange;      //Checks for elites first

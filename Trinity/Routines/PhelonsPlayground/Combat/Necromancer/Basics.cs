@@ -34,6 +34,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
         {
             if (Targeting.CorpseCount(60f) > 3)
                 return Spells.Devour();
+            if (ShouldBoneArmor())
+                return Spells.BoneArmor();
             return null;
         }
 

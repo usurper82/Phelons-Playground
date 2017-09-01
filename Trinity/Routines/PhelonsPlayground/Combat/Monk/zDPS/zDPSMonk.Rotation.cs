@@ -18,12 +18,12 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
         public static TrinityActor Target = CurrentTarget;
         public TrinityPower OffensivePower()
         {
-            Target = Targeting.BestAoeUnit(25f, true);
+            Target = Targeting.BestAoeUnit(45f, true);
             if (Target == null)
                 return null;
 
-            if (Target.Distance > 12f)
-                Walk(Target);
+            if (Target.Distance > 10f)
+                return Walk(Target);
 
             TrinityPower power;
 

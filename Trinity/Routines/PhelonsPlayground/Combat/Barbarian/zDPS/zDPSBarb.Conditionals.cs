@@ -54,22 +54,27 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
 
         protected virtual bool ShouldFuriousChargeInCombat(out Vector3 position)
         {
-            if (Targeting.HealthGlobeExists(55f))
+            position = Vector3.Zero;
+
+            if (!Skills.Barbarian.FuriousCharge.CanCast() ||
+                Skills.Barbarian.FuriousCharge.TimeSinceUse < 500 && Skills.Barbarian.AncientSpear.TimeSinceUse > 1500 &&
+                Player.PrimaryResourcePct > 0.65 && Skills.Barbarian.AncientSpear.CanCast())
+                return false;
+
+            if (Targeting.HealthGlobeExists(40f))
             {
-                position = Targeting.GetBestHealthGlobeClusterPoint(7f, 55f, false);
+                position = Targeting.GetBestHealthGlobeClusterPoint(7f, 40f, false);
                 Core.Logger.Error(LogCategory.Routine,
                     $"[FuriousCharge] -  On Closest Health Globe: [{position.Distance(Player.Position)}].");
                 return true;
             }
-            position = Targeting.GetFarthestClusterUnit(Target.Position, 15f, 40f, 3)?.Position ?? Target.Position;
-            if (!Skills.Barbarian.FuriousCharge.CanCast() || Skills.Barbarian.FuriousCharge.TimeSinceUse < 500 && Player.PrimaryResourcePct > 0.85 && Skills.Barbarian.AncientSpear.CanCast())
-                return false;
+            position = Targeting.GetFarthestClusterUnit(Target.Position, 15f, 40f)?.Position ?? Target.Position;
 
             Core.Logger.Error(LogCategory.Routine,
                 $" [FuriousCharge] - On Best Cluster Target Distance: [{position.Distance(Player.Position)}].");
             return true;
         }
-        
+
         protected virtual bool ShouldAncientSpear(out TrinityActor target)
         {
             target = Target;

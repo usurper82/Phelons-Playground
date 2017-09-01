@@ -47,14 +47,23 @@ namespace Trinity.Components.Coroutines
                 if (inTown)
                 {
                     Core.Logger.Warn($"Moving to vacuum town item {item.Name} AcdId={item.AcdId}");
-                    if (!await MoveToAndInteract.Execute(item.Position, item.AcdId, 5f) && !ZetaDia.Me.UsePower(SNOPower.Axe_Operate_Gizmo, item.Position, Core.Player.WorldDynamicId,
+                    if (!await MoveToAndInteract.Execute(item.Position, item.AcdId))
+                    {
+                        Core.Logger.Error($"[TownLoot] Failed to move to item ({item.Name}) to pick up items :(");
+                    }
+                    await Coroutine.Sleep((int)item.RadiusDistance * 250);
+                    //if (item.Distance > 7f && item.IsValid)
+                    //{
+                    //    await Navigator.MoveTo(item.Position);
+                    //    return true;
+                    //}
+                    if (!ZetaDia.Me.UsePower(SNOPower.Axe_Operate_Gizmo, item.Position, Core.Player.WorldDynamicId,
                             item.AcdId))
                     {
                         Core.Logger.Warn($"Failed to vacuum town item {item.Name} AcdId={item.AcdId}");
                         VacuumedAcdIds.Add(item.AcdId);
                         continue;
                     }
-                    await Coroutine.Sleep((int)item.Distance * 150);
                 }
                 else
                 {

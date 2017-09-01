@@ -159,10 +159,10 @@ namespace AutoFollow.Behaviors
             if (!AutoFollow.CurrentLeader.IsInSameGame || Player.IsInTown)
                 return false;
 
-            var catchUpDistance = AutoFollow.CurrentLeader.CurrentTarget != null ? Settings.Coordination.CatchUpDistance : Settings.Coordination.FollowDistance;
             switch (State)
             {
                 case FollowMode.FollowLeader:
+                    var catchUpDistance = AutoFollow.CurrentLeader.CurrentTarget != null ? Settings.Coordination.CatchUpDistance : Settings.Coordination.FollowDistance;
                     if (AutoFollow.CurrentLeader.Distance > catchUpDistance)
                     {
                         Log.Info("Moving to Follow Leader.");
@@ -171,7 +171,7 @@ namespace AutoFollow.Behaviors
                     }
                     break;
                 case FollowMode.ChaseLeader:
-                    if (AutoFollow.CurrentLeader.Distance > catchUpDistance)
+                    if (AutoFollow.CurrentLeader.Distance > Settings.Coordination.CatchUpDistance)
                     {
                         Log.Info("Moving to Chase Leader.");
                         await Navigator.MoveTo(AutoFollow.CurrentLeader.Destination);

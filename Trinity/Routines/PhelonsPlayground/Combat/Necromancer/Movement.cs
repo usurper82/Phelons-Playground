@@ -23,7 +23,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
             if (!Skills.Necromancer.BloodRush.CanCast())
                 return false;
 
-            var closestGlobe = Targeting.ClosestGlobe(distance);
+            var closestGlobe = Targeting.ClosestGlobe();
             if (Player.CurrentHealthPct < 0.50 && closestGlobe != null)
             {
                 position = closestGlobe.Position;
@@ -51,7 +51,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
                     $"[Blood Rush] - To Best Buff Position: {position} Distance: {Player.Position.Distance2D(position)}");
                 return true;
             }
-            if (!(Target.Distance > distance)) return false;
+            if (Target.Distance < distance) return false;
+
             position = Target.Position;
             return true;
         }

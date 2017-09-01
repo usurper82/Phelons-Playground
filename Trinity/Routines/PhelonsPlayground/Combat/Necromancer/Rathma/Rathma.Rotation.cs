@@ -2,6 +2,7 @@
 
 namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
 {
+    using System;
     using Trinity.Components.Combat.Resources;
     using Trinity.Framework.Actors.ActorTypes;
     using Trinity.Framework.Objects;
@@ -31,7 +32,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
             if (ShouldBloodRush(castDistance, out location))
                 return Spells.BloodRush(location);
 
-            if (ShouldWalkToBuff(out location, Target.Position, castDistance))
+            if (ShouldWalkToBuff(out location, Target.Position, Math.Min(castDistance, 25f)))
                 return Walk(location, 3f);
 
             if (Target.RadiusDistance < castDistance)
