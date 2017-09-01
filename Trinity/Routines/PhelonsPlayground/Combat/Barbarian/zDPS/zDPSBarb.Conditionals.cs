@@ -61,7 +61,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
                     $"[FuriousCharge] -  On Closest Health Globe: [{position.Distance(Player.Position)}].");
                 return true;
             }
-            position = Targeting.GetFarthestClusterUnit(Target.Position, 15f, 55f, 3)?.Position ?? Target.Position;
+            position = Targeting.GetFarthestClusterUnit(Target.Position, 15f, 40f, 3)?.Position ?? Target.Position;
             if (!Skills.Barbarian.FuriousCharge.CanCast() || Skills.Barbarian.FuriousCharge.TimeSinceUse < 500 && Player.PrimaryResourcePct > 0.85 && Skills.Barbarian.AncientSpear.CanCast())
                 return false;
 

@@ -47,9 +47,17 @@ namespace Trinity.Components.Coroutines
                 var lootedItem = InventoryManager.Backpack.FirstOrDefault(i => VacuumedAcdIds.Contains(item.AcdId));
                 if (Core.Player.IsInTown && inTown && lootedItem == null && validApproach)
                 {
+                    isVacuuming = true;
+                    //if (!await MoveToAndInteract.Execute(item.Position, item.AcdId))
+                    //{
+                    //    Core.Logger.Error($"[TownLoot] Failed to move to item ({item.Name}) to pick up items :(");
+                    //    return false;
+                    //}
+                    Core.Logger.Warn($"Moving to vacuum town item {item.Name} AcdId={item.AcdId}");
                     while (item.Distance > 7f && item.IsValid)
                     {
                         await Navigator.MoveTo(item.Position);
+                        await Coroutine.Sleep(1000);
                     }
                     if (!ZetaDia.Me.UsePower(SNOPower.Axe_Operate_Gizmo, item.Position, Core.Player.WorldDynamicId, item.AcdId))
                         Core.Logger.Warn($"Failed to vacuum town item {item.Name} AcdId={item.AcdId}");
