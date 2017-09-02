@@ -910,7 +910,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Routines\PhelonsPlayground\Settings\TragoulSettings - Copy.xaml">
+    <Page Include="Routines\PhelonsPlayground\Settings\TragoulSettings.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

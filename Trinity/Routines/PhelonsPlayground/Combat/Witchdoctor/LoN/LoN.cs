@@ -52,7 +52,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Witchdoctor.LoN
 
         #region IRoutine Defaults
 
-        public virtual ActorClass Class => ActorClass.Necromancer;
+        public virtual ActorClass Class => ActorClass.Witchdoctor;
         public virtual int PrimaryEnergyReserve => 80;
         public virtual int SecondaryEnergyReserve => 0;
         public virtual KiteMode KiteMode => KiteMode.Never;

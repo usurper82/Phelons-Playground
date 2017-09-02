@@ -17,7 +17,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
     {
         public TrinityPower OffensivePower()
         {
-            var castDistance = Skills.Necromancer.GrimScythe.IsActive ? 12f : 45f;
+            var castDistance = Skills.Necromancer.GrimScythe.IsActive ? 10f : 45f;
 
             Target = Targeting.BestAoeUnit(castDistance, true);
             if (Target == null)

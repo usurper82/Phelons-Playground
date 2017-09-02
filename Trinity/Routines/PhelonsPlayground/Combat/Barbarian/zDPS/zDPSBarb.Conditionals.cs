@@ -11,6 +11,7 @@ using Zeta.Game.Internals.Actors;
 namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
 {
     using System.Security.Cryptography;
+    using Components.Combat.Resources;
     using Framework.Helpers;
 
     public partial class zDPSBarb
@@ -68,7 +69,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
                     $"[FuriousCharge] -  On Closest Health Globe: [{position.Distance(Player.Position)}].");
                 return true;
             }
-            position = Targeting.GetFarthestClusterUnit(Target.Position, 15f, 40f)?.Position ?? Target.Position;
+            var lastCast = SpellHistory.GetLastUseHistoryItem(SNOPower.Barbarian_FuriousCharge);
+            position = lastCast.TargetAcdId != Target.AcdId ? Target.Position : Targeting.GetFarthestClusterUnit(Target.Position, 15f, 40f)?.Position ?? Target.Position;
 
             Core.Logger.Error(LogCategory.Routine,
                 $" [FuriousCharge] - On Best Cluster Target Distance: [{position.Distance(Player.Position)}].");

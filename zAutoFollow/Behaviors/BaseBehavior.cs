@@ -207,8 +207,6 @@ namespace AutoFollow.Behaviors
             if (Player.IsInTown && AdvDia.CurrentWorldId != ExplorationData.ActHubWorldIds[Act.A1] && PluginEvents.CurrentProfileType != ProfileType.Bounty)
                 return !await WaypointCoroutine.UseWaypoint(WaypointFactory.ActHubs[Act.A1]);
 
-            AcceptRiftDialog();
-
             if (DateTime.UtcNow < Coordination.WaitUntil)
             {
                 Log.Debug("Waiting... (Generic IC) Remaining={0}s", Coordination.WaitUntil.Subtract(DateTime.UtcNow).TotalSeconds);
@@ -228,6 +226,11 @@ namespace AutoFollow.Behaviors
                 }
                 return true;
             }
+
+            if (PluginEvents.CurrentProfileType == ProfileType.Bounty)
+                return false;
+
+            AcceptRiftDialog();
 
             GameUI.SafeCheckClickButtons();
             return false;

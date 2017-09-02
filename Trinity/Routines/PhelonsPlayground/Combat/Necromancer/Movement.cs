@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
 {
+    using DbProvider;
     using Framework;
     using Framework.Helpers;
     using Framework.Reference;
@@ -32,7 +33,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
                 return true;
             }
 
-            if (Target == null || Skills.Necromancer.BloodRush.TimeSinceUse < 2500)
+            if (Target == null)
                 return false;
 
             //if (!Target.IsInLineOfSight)
@@ -54,6 +55,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
             if (Target.Distance < distance) return false;
 
             position = Target.Position;
+            Core.Logger.Error(LogCategory.Routine,
+                $"[Blood Rush] - To Best Buff Target: {Target.Name} Distance: {Player.Position.Distance2D(position)}");
             return true;
         }
 

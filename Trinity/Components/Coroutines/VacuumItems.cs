@@ -43,15 +43,17 @@ namespace Trinity.Components.Coroutines
             foreach (var item in Core.Targets.OfType<TrinityItem>().OrderBy(x => x.Distance).Where(x => !VacuumedAcdIds.Contains(x.AcdId)))
             {
                 var validApproach = Core.Grids.Avoidance.IsIntersectedByFlags(Core.Player.Position, item.Position, AvoidanceFlags.NavigationBlocking, AvoidanceFlags.NavigationImpairing) && !Core.Player.IsFacing(item.Position, 90);
-                
+                Core.Inventory.Backpack.Update();
+                if (Core.Player.FreeBackpackSlots < 4)
+                    break;
                 if (inTown)
                 {
-                    Core.Logger.Warn($"Moving to vacuum town item {item.Name} AcdId={item.AcdId}");
+                    Core.Logger.Warn($"Moving to vacuum town item {item.Name} AcdId={item.AcdId} RadiusDistance={item.RadiusDistance}");
                     if (!await MoveToAndInteract.Execute(item.Position, item.AcdId))
                     {
                         Core.Logger.Error($"[TownLoot] Failed to move to item ({item.Name}) to pick up items :(");
                     }
-                    await Coroutine.Sleep((int)item.RadiusDistance * 250);
+                    await Coroutine.Sleep((int)(item.RadiusDistance + 1) * 250);
                     //if (item.Distance > 7f && item.IsValid)
                     //{
                     //    await Navigator.MoveTo(item.Position);
