@@ -34,17 +34,23 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Witchdoctor.LoN
             {
                 if (ShouldSoulHarvest())
                     return SoulHarvest(Player.Position);
-                if (ShouldLocustSwarm(out target))
-                    return LocustSwarm(target);
-                if (ShouldHaunt(out target))
-                    return Haunt(target);
-                if (ShouldSpiritBarrage())
-                    return SpiritBarrage(Target);
-                if (ShouldSacrifice())
-                    return Sacrifice();
+
                 if (ShouldGraspOfTheDead(out target))
                     return GraspOfTheDead(target);
+
+                if (ShouldSacrifice())
+                    return Sacrifice();
+
+                if (ShouldLocustSwarm(out target))
+                    return LocustSwarm(target);
+
+                if (ShouldSpiritBarrage())
+                    return SpiritBarrage(Target);
+
+                if (ShouldHaunt(out target))
+                    return Haunt(target);
             }
+
             if (ShouldWalk(out location, 45f))
                 return Walk(location, 3f);
 

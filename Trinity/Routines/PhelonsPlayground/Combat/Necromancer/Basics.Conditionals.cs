@@ -48,7 +48,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
                           Targeting.BestTargetWithoutDebuff(12f, SNOPower.P6_Necro_Leech, Player.Position) ??
                           Targeting.BestTargetWithoutDebuff(12f, SNOPower.P6_Necro_Frailty, Player.Position)) ??
                          Target;
-
+                if (target == null)
+                    return false;
                 Core.Logger.Error(LogCategory.Routine,
                     $"[Grim Scythe] - On {target}.");
                 return true;

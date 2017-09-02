@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace Trinity.Routines.PhelonsPlayground.Combat.Witchdoctor
 {
     using System.Diagnostics;
+    using Components.Combat.Resources;
     using Framework;
     using Framework.Actors.ActorTypes;
     using Framework.Helpers;
@@ -24,12 +25,12 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Witchdoctor
 
                 if (!Skills.WitchDoctor.LocustSwarm.CanCast())
                     return false;
-                
-                if (Player.PrimaryResourcePct < 0.90 && Legendary.AquilaCuirass.IsEquipped)
-                    return false;
 
-                if (!target.HasDebuff(SNOPower.Witchdoctor_Locust_Swarm))
+                if (!Targeting.HasDebuff(target, SNOPower.Witchdoctor_Locust_Swarm))
                     return true;
+
+                if (Player.PrimaryResourcePct < 0.90 && Legendary.AquilaCuirass.IsEquipped || SpellHistory.LastPowerUsed == SNOPower.Witchdoctor_Locust_Swarm)
+                    return false;
 
                 var percentTargetsWithHaunt = Targeting.DebuffedPercent(SNOPower.Witchdoctor_Locust_Swarm);
                 if (percentTargetsWithHaunt > 0.90)
@@ -38,11 +39,15 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Witchdoctor
                     Targeting.UnitsWithOutDebuff(SNOPower.Witchdoctor_Locust_Swarm, Player.Position)
                         .OrderBy(x => x.IsBoss || x.IsElite || x.IsChampion || x.IsMinion)
                         .FirstOrDefault();
+
+                if (target == null)
+                    return false;
+
                 Core.Logger.Error(LogCategory.Routine, $"Locust Swarm on {target}");
                 return true;
             }
 
-            private static Stopwatch _firstHaunt;
+            private static Stopwatch _firstHaunt = new Stopwatch();
             public static bool ShouldHaunt(out TrinityActor target)
             {
                 target = Target;
@@ -65,16 +70,21 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Witchdoctor
                     _firstHaunt.Start();
                 }
 
-                if (!target.HasDebuff(SNOPower.Witchdoctor_Haunt))
+                if (!Targeting.HasDebuff(target, SNOPower.Witchdoctor_Haunt))
                     return true;
 
                 var percentTargetsWithHaunt = Targeting.DebuffedPercent(SNOPower.Witchdoctor_Haunt);
                 if (percentTargetsWithHaunt > 0.90)
                     return false;
+
                 target =
                     Targeting.UnitsWithOutDebuff(SNOPower.Witchdoctor_Haunt, Player.Position)
                         .OrderBy(x => x.IsBoss || x.IsElite || x.IsChampion || x.IsMinion)
                         .FirstOrDefault();
+
+                if (target == null)
+                    return false;
+
                 Core.Logger.Error(LogCategory.Routine, $"Haunt on {target}");
                 return true;
             }

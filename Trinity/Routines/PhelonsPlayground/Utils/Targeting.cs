@@ -1548,30 +1548,6 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
             Core.Logger.Log(LogCategory.Behavior, "{0} out of {1} mobs have {3} ({2:0.##}%)", debuffed, total, pct * 100, power);
 
             return pct;
-
-            //var debuffed = new HashSet<int>((from u in ObjectCache
-            //                where u.IsUnit && u.IsValid && !u.IsPlayer &&
-            //                u.RadiusDistance <= maxRange &&
-            //                u.Attributes.Powers.ContainsKey(power) &&
-            //                u.HasBeenInLoS
-            //                select u.AcdId));
-
-            //var all = (from u in ObjectCache
-            //           where u.IsUnit && !u.IsPlayer &&
-            //           u.RadiusDistance <= maxRange &&
-            //           u.HasBeenInLoS
-            //           select u).ToList();
-
-            //notDebuffed = all.Where(p => !debuffed.Contains(p.AcdId)).ToList();
-
-            //if (all.Count <= 0)
-            //    return 0;
-
-            //var pct = (float)debuffed.Count / all.Count;
-
-            //Core.Logger.Log(LogCategory.Behavior, "{0} out of {1} mobs have {3} ({2:0.##}%)", debuffed, all, pct * 100, power);
-
-            //return pct;
         }
 
         internal static int UnitsWithDebuff(SNOPower power, float maxRange = 30f)

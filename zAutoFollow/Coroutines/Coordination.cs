@@ -121,7 +121,7 @@ namespace AutoFollow.Coroutines
                 if (AutoFollow.CurrentFollowers.Any(f => f.IsVendoring || f.InDifferentLevelArea))
                 {
                     Log.Info("Waiting for followers to finish vendoring.");
-                    await Coroutine.Sleep(1000);
+                    await Coroutine.Sleep(20000);
                     return true;
                 }
 

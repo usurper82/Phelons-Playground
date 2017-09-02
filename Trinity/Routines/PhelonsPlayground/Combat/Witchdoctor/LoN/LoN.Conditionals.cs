@@ -26,14 +26,17 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Witchdoctor.LoN
             if (!Skills.WitchDoctor.Sacrifice.CanCast())
                 return false;
 
-            var percentTargetsWithHaunt = Targeting.DebuffedPercent(SNOPower.Witchdoctor_GraspOfTheDead);
+            var percentTargetsWithdebuff = (Targeting.DebuffedPercent(SNOPower.Witchdoctor_Haunt) + Targeting.DebuffedPercent(SNOPower.Witchdoctor_Haunt))/2;
 
-            if (Player.Summons.ZombieDogCount < 1 || percentTargetsWithHaunt < 0.90)
+            if (Player.Summons.ZombieDogCount < 1 || percentTargetsWithdebuff < 0.90 && Player.Summons.ZombieDogCount < 3)
                 return false;
+
+            Core.Logger.Error(LogCategory.Routine,
+                $"[Sacrifice] - Percent Debuffed: {percentTargetsWithdebuff} Total Dogs: {Player.Summons.ZombieDogCount}.");
 
             return true;
         }
-        private static Stopwatch _firstBarrage;
+        private static Stopwatch _firstBarrage = new Stopwatch();
         public static bool ShouldSpiritBarrage()
         {
             if (!Skills.WitchDoctor.SpiritBarrage.CanCast())
@@ -52,7 +55,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Witchdoctor.LoN
             }
             
             Core.Logger.Error(LogCategory.Routine,
-                $"[Grasp Of the Dead] - On Cooldown.");
+                $"[pirit Barrage] - Time Since First Barrage: {_firstBarrage.ElapsedMilliseconds}");
             return true;
         }
 

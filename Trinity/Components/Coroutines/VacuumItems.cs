@@ -53,7 +53,7 @@ namespace Trinity.Components.Coroutines
                     {
                         Core.Logger.Error($"[TownLoot] Failed to move to item ({item.Name}) to pick up items :(");
                     }
-                    await Coroutine.Sleep((int)(item.RadiusDistance + 1) * 250);
+                    await Coroutine.Sleep((int)(item.Distance + 1) * 150);
                     //if (item.Distance > 7f && item.IsValid)
                     //{
                     //    await Navigator.MoveTo(item.Position);
@@ -62,7 +62,7 @@ namespace Trinity.Components.Coroutines
                     if (!ZetaDia.Me.UsePower(SNOPower.Axe_Operate_Gizmo, item.Position, Core.Player.WorldDynamicId,
                             item.AcdId))
                     {
-                        Core.Logger.Warn($"Failed to vacuum town item {item.Name} AcdId={item.AcdId}");
+                        Core.Logger.Warn($"Failed to vacuum town item {item.Name} AcdId={item.AcdId} Distance={item.Distance}");
                         VacuumedAcdIds.Add(item.AcdId);
                         continue;
                     }
