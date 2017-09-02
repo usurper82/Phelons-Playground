@@ -42,7 +42,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
                     return Spells.LandOfTheDead();
 
                 if (ShouldSimulacrum())
-                    return Spells.Simulacrum(Target.Position);
+                    return Spells.Simulacrum();
 
                 if (ShouldSkeletalMage())
                     return Spells.SkeletalMage(Target);

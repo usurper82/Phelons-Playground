@@ -58,17 +58,17 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Witchdoctor
                 //if (Player.PrimaryResourcePct < 0.90 && Legendary.AquilaCuirass.IsEquipped)
                 //    return false;
 
-                if (_firstHaunt.ElapsedMilliseconds > 4000 && Skills.WitchDoctor.Haunt.TimeSinceUse < 4000)
-                {
-                    _firstHaunt.Stop();
-                    return false;
-                }
+                //if (_firstHaunt.ElapsedMilliseconds > 4000 && Skills.WitchDoctor.Haunt.TimeSinceUse < 4000)
+                //{
+                //    _firstHaunt.Stop();
+                //    return false;
+                //}
 
-                if (!_firstHaunt.IsRunning)
-                {
-                    _firstHaunt.Reset();
-                    _firstHaunt.Start();
-                }
+                //if (!_firstHaunt.IsRunning)
+                //{
+                //    _firstHaunt.Reset();
+                //    _firstHaunt.Start();
+                //}
 
                 if (!Targeting.HasDebuff(target, SNOPower.Witchdoctor_Haunt))
                     return true;

@@ -65,8 +65,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
             public static TrinityPower Revive(Vector3 position, float range = 65f)
                 => new TrinityPower(Skills.Necromancer.Revive, range, position);
 
-            public static TrinityPower Simulacrum(Vector3 position, float range = 65f)
-                => new TrinityPower(Skills.Necromancer.Simulacrum, range, position);
+            public static TrinityPower Simulacrum()
+                => new TrinityPower(Skills.Necromancer.Simulacrum);
 
             public static TrinityPower SiphonBlood(TrinityActor target, float range = 65f)
                 => new TrinityPower(Skills.Necromancer.SiphonBlood, range, target.AcdId);

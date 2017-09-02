@@ -36,7 +36,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Tragoul
                     return LandOfTheDead();
 
                 if (ShouldSimulacrum())
-                    return Simulacrum(Target.Position);
+                    return Simulacrum();
 
                 if (ShouldFrailty(out target))
                     return Frailty(target);

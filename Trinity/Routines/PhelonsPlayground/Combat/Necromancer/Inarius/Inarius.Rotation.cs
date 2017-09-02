@@ -36,7 +36,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
                     return LandOfTheDead();
 
                 if (ShouldSimulacrum())
-                    return Simulacrum(Target.Position);
+                    return Simulacrum();
 
                 if (ShouldLeech(out target))
                     return Leech(target);

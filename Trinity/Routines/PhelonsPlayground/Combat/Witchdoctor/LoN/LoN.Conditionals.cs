@@ -55,7 +55,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Witchdoctor.LoN
             }
             
             Core.Logger.Error(LogCategory.Routine,
-                $"[pirit Barrage] - Time Since First Barrage: {_firstBarrage.ElapsedMilliseconds}");
+                $"[Spirit Barrage] - Time Since First Barrage: {_firstBarrage.ElapsedMilliseconds}");
             return true;
         }
 
