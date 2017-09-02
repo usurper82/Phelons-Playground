@@ -70,7 +70,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
                 return true;
             }
             var lastCast = SpellHistory.GetLastUseHistoryItem(SNOPower.Barbarian_FuriousCharge);
-            position = lastCast.TargetAcdId != Target.AcdId ? Target.Position : Targeting.GetFarthestClusterUnit(Target.Position, 15f, 40f)?.Position ?? Target.Position;
+            position = lastCast.TargetAcdId != Target.AcdId ? Target.Position : Targeting.GetDashStrikeFarthestTarget(40f)?.Position ?? Target.Position;
 
             Core.Logger.Error(LogCategory.Routine,
                 $" [FuriousCharge] - On Best Cluster Target Distance: [{position.Distance(Player.Position)}].");

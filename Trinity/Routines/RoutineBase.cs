@@ -360,8 +360,8 @@ namespace Trinity.Routines
         {
             if (Core.Avoidance.Avoider.ShouldAvoid)
             {
-                var isCloseToSafeSpot = Core.Player.Position.Distance(Core.Avoidance.Avoider.SafeSpot) < 10f;
-                if (CurrentTarget != null && isCloseToSafeSpot)
+                var isCloseToSafeSpot = Core.Player.Position.Distance(Core.Avoidance.Avoider.SafeSpot) < 3f;
+                if (CurrentTarget != null && (!CurrentTarget.IsInAvoidance || isCloseToSafeSpot))
                 {
                     var canReachTarget = CurrentTarget.Distance < CurrentPower?.MinimumRange;
                     if (canReachTarget && CurrentTarget.IsAvoidanceOnPath && !Core.Player.Actor.IsInAvoidance)
@@ -383,16 +383,34 @@ namespace Trinity.Routines
                 if (!TrinityCombat.IsInCombat && Core.Player.Actor.IsAvoidanceOnPath && safe)
                 {
                     Core.Logger.Log(LogCategory.Avoidance, $"Waiting for avoidance to clear (out of combat)");
-                    Core.PlayerMover.MoveTowards(Core.Player.Position);
+
+                    await CastMovementSpells(Core.Avoidance.Avoider.SafeSpot);
                     return true;
                 }
 
-                Core.Logger.Log(LogCategory.Avoidance, $"Avoiding");
-                await CastDefensiveSpells();
-                PlayerMover.MoveTo(Core.Avoidance.Avoider.SafeSpot);
-                return true;
+                if (Core.Avoidance.Avoider.SafeSpot.Distance(Player.Position) > 5f)
+                {
+                    Core.Logger.Log(LogCategory.Avoidance, $"Moving away from Critial Avoidance.");
+
+                    if (await CastMovementSpells(Core.Avoidance.Avoider.SafeSpot))
+                        return true;
+
+                    await CastDefensiveSpells();
+                    return true;
+                }
             }
             return false;
+        }
+
+        public static async Task<bool> CastMovementSpells(Vector3 destination)
+        {
+            var power = TrinityCombat.Routines.Current.GetMovementPower(destination);
+            if (power != null && power.SNOPower != SpellHistory.LastPowerUsed)
+            {
+                return await TrinityCombat.Spells.CastTrinityPower(power, "Movement");
+            }
+            PlayerMover.MoveTo(Core.Avoidance.Avoider.SafeSpot);
+            return true;
         }
 
         public static async Task<bool> CastDefensiveSpells()

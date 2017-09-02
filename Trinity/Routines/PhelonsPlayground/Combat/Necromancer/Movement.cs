@@ -25,7 +25,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
                 return false;
 
             var closestGlobe = Targeting.ClosestGlobe();
-            if (Player.CurrentHealthPct < 0.50 && closestGlobe != null)
+            if (Player.CurrentHealthPct < 0.50 && closestGlobe != null && closestGlobe.Distance < 25f)
             {
                 position = closestGlobe.Position;
                 Core.Logger.Error(LogCategory.Routine,

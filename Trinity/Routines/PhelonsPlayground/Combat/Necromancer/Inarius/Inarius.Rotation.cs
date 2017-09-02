@@ -8,7 +8,9 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
     using DbProvider;
     using Framework.Reference;
     using static Basics;
+    using static Basics.Conditionals;
     using static Basics.Spells;
+    using static Movement;
 
     public partial class Inarius
     {
@@ -21,14 +23,14 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
             Vector3 location;
             TrinityActor target = Target;
 
-            if (Target.RadiusDistance < 65f)
+            if (ShouldBloodRush(50f, out location))
+                return BloodRush(Target.Position);
+
+            if (ShouldBoneArmor())
+                return BoneArmor();
+
+            if (Target.RadiusDistance < 12f)
             {
-                if (ShouldBloodRush(50f, out location))
-                    return BloodRush(Target.Position);
-
-                if (ShouldBoneArmor())
-                    return BoneArmor();
-
                 if (ShouldDevour())
                     return Devour();
 
@@ -50,12 +52,6 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
                 if (ShouldBoneSpirit())
                     return BoneSpirit(Target);
 
-                if (ShouldSkeletalMage())
-                    return SkeletalMage(Target);
-
-                if (ShouldCommandSkeletons())
-                    return CommandSkeletons(Target);
-
                 if (ShouldCorpseExplosion())
                     return CorpseExplosion(Target.Position);
 
@@ -68,8 +64,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
                 if (ShouldGrimScythe(out target))
                     return GrimScythe(target);
             }
-            if (ShouldWalk(out location))
-                Walk(location, 3f);
+            if (ShouldWalk(out location, 12f))
+                return Walk(location, 3f);
 
             return null;
         }

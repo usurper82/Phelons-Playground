@@ -119,6 +119,23 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
                 return true;
             }
 
+            public static bool ShouldLeech(out TrinityActor target)
+            {
+                target = null;
+                if (!Skills.Necromancer.Leech.CanCast())
+                    return false;
+
+                if (Skills.Necromancer.Leech.TimeSinceUse < 4000)
+                    return false;
+
+                target = Targeting.BestTargetWithoutDebuff(65f, SNOPower.P6_Necro_Leech, Player.Position);
+                if (target == null)
+                    return false;
+                Core.Logger.Error(LogCategory.Routine,
+                    $"[Leech] - On {target}.");
+                return true;
+            }
+
             public static bool ShouldDecrepify(out TrinityActor target)
             {
                 target = null;

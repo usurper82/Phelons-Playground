@@ -422,10 +422,9 @@ namespace Trinity.Components.Combat
                                             u.IsElite &&
                                             u.Position.Distance2D(cacheObject.Position) <= 15f);
 
-                                    int nearbyTrashCount =
-                                        objects.Count(u => u.IsUnit && u.HitPoints > 0 && u.IsTrashMob &&
-                                                           cacheObject.Position.Distance(u.Position) <=
-                                                           20f);
+                                    int nearbyTrashCount =objects.Count(u => u.IsUnit && u.HitPoints > 0 && u.IsTrashMob &&
+                                                           cacheObject.Position.Distance(ZetaDia.Me.Position) <=
+                                                           TrinityCombat.Routines.Current.ClusterRadius);
 
                                     //bool ignoreSummoner = cacheObject.IsSummoner && !Core.Settings.Combat.Misc.ForceKillSummoners;
                                     //bool ignoreSummoner = cacheObject.IsSummoner && !Core.Settings.Combat.Misc.ForceKillSummoners;
@@ -747,7 +746,7 @@ namespace Trinity.Components.Combat
                                         //{
                                         //    cacheObject.WeightInfo += $"Questing Mode - Ignoring Trash Pack Size Setting.";
                                         //}
-                                        else if (leaderTarget != null && !isLeader && leaderTarget.Distance < 60f && TrinityCombat.Party.Leader.IsInCombat)
+                                        else if (leaderTarget != null && leaderTarget.AcdId != cacheObject.AcdId && !isLeader && leaderTarget.Distance < 60f && TrinityCombat.Party.Leader.IsInCombat)
                                         {
                                             cacheObject.WeightInfo += $"Ignoring Trash Pack Size for Leader's Target";
                                         }

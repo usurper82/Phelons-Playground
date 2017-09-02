@@ -147,7 +147,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
             }
             var closestSanc = ClosestSanctuary(maxRange, fromLocation, objectsInAoe);
             var closestOcc = ClosestOcculous(maxRange, fromLocation, Core.Avoidance.InAvoidance(Player.Position));
-            if ((closestOcc == Vector3.Zero || Player.CurrentHealthPct < 0.55 || CurrentTarget != null && CurrentTarget.MonsterAffixes.HasFlag(MonsterAffixes.Frozen)) && closestSanc != Vector3.Zero) //AnyElitesInRange(45f) || 
+            if ((closestOcc == Vector3.Zero || AnyElitesInRange(45f) || CurrentTarget != null && CurrentTarget.MonsterAffixes.HasFlag(MonsterAffixes.Frozen)) && closestSanc != Vector3.Zero) //AnyElitesInRange(45f) || 
             {
                 location = closestSanc;
                 return true;
