@@ -13,6 +13,7 @@ namespace Trinity.Components.Coroutines
 {
     using System;
     using Buddy.Coroutines;
+    using IronPython.Modules;
     using Zeta.Bot.Coroutines;
     using Zeta.Bot.Navigation;
 
@@ -50,7 +51,7 @@ namespace Trinity.Components.Coroutines
             // Items that shouldn't be picked up are currently excluded from cache.
             // a pickup evaluation should be added here if that changes.
 
-            foreach (var item in Core.Targets.OfType<TrinityItem>().OrderBy(x => x.Distance).Where(x => !VacuumedAcdIds.Keys.Contains(x.AcdId)))
+            foreach (var item in Core.Targets.OfType<TrinityItem>().OrderBy(x => x.Distance))
             {
                 var validApproach = Core.Grids.Avoidance.IsIntersectedByFlags(Core.Player.Position, item.Position, AvoidanceFlags.NavigationBlocking, AvoidanceFlags.NavigationImpairing) && !Core.Player.IsFacing(item.Position, 90);
                 Core.Inventory.Backpack.Update();
@@ -58,6 +59,8 @@ namespace Trinity.Components.Coroutines
                     break;
                 if (inTown)
                 {
+                    if (VacuumedAcdIds.Keys.Contains(item.AcdId))
+                        continue;
                     Core.Logger.Warn($"Moving to vacuum town item {item.Name} AcdId={item.AcdId} Distance={item.Distance}");
                     if (!await MoveToAndInteract.Execute(item.Position, item.AcdId, 3))
                     {
@@ -89,11 +92,11 @@ namespace Trinity.Components.Coroutines
                         Core.Logger.Warn($"Failed to vacuum item {item.Name} AcdId={item.AcdId}");
                         continue;
                     }
+                    VacuumedAcdIds.Add(item.AcdId, DateTime.Now);
                 }
                 count++;
                 Core.Logger.Debug($"Vacuumed: {item.Name} ({item.ActorSnoId}) InternalName={item.InternalName} GbId={item.GameBalanceId}");
                 SpellHistory.RecordSpell(SNOPower.Axe_Operate_Gizmo);
-                VacuumedAcdIds.Add(item.AcdId, DateTime.Now);
                 isVacuuming = true;
             }
 
