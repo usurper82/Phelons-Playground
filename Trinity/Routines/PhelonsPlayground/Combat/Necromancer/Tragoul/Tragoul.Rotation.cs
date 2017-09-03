@@ -21,6 +21,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Tragoul
             if (Target == null)
                 return null;
 
+            //Core.Logger.Warn(LogCategory.Routine, $"[Current Target] - Name: {Target.Name} | Elite: {Target.IsElite || Target.IsBoss || Target.IsChampion}.");
             Vector3 location;
             TrinityActor target = Target;
 

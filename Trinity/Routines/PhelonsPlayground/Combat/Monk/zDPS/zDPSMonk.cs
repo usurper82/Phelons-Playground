@@ -100,7 +100,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
 
         public TrinityPower GetMovementPower(Vector3 destination)
         {
-            return destination.Distance(Player.Position) > 7f ? Walk(destination) : null;
+            return  Walk(destination);
         }
 
         #region Settings

@@ -7,7 +7,10 @@ using System.Threading.Tasks;
 namespace Trinity.Routines.PhelonsPlayground.Combat.Witchdoctor.LoN
 {
     using Components.Combat.Resources;
+    using Framework;
     using Framework.Actors.ActorTypes;
+    using Framework.Helpers;
+    using Framework.Objects;
     using Utils;
     using Zeta.Common;
     using static Basics;
@@ -22,6 +25,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Witchdoctor.LoN
             Target = Targeting.BestAoeUnit(45f, true);
             if (Target == null)
                 return null;
+
+            //Core.Logger.Warn(LogCategory.Routine, $"[Current Target] - Name: {Target.Name} | Elite: {Target.IsElite || Target.IsBoss || Target.IsChampion}.");
 
             Vector3 location;
             TrinityActor target = Target;

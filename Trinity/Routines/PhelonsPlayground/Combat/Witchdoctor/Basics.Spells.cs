@@ -117,6 +117,9 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Witchdoctor
 
             public static TrinityPower FetishArmy()
                 => new TrinityPower(Skills.WitchDoctor.FetishArmy);
+
+            public static TrinityPower Walk(Vector3 position, float range = 0f) =>
+                new TrinityPower(SNOPower.Walk, range, position);
         }
     }
 }

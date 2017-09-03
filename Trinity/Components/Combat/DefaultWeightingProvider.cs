@@ -424,11 +424,9 @@ namespace Trinity.Components.Combat
                                         u =>
                                             u.AcdId != cacheObject.AcdId &&
                                             u.IsElite &&
-                                            u.Position.Distance2D(cacheObject.Position) <= 15f);
+                                            u.Position.Distance2D(cacheObject.Position) <= TrinityCombat.Routines.Current.EliteRange);
 
-                                    int nearbyTrashCount = objects.Count(u => u.IsUnit && u.HitPoints > 0 && u.IsTrashMob && (u.IsInLineOfSight || u.HasBeenInLoS)
-                                                           cacheObject.Position.Distance(ZetaDia.Me.Position) <=
-                                                           TrinityCombat.Routines.Current.TrashRange);
+                                    int nearbyTrashCount = objects.Count(u => u.IsUnit && u.HitPoints > 0 && u.IsTrashMob && (u.IsInLineOfSight || u.HasBeenInLoS) && cacheObject.Position.Distance(ZetaDia.Me.Position) <= TrinityCombat.Routines.Current.TrashRange);
 
                                     //bool ignoreSummoner = cacheObject.IsSummoner && !Core.Settings.Combat.Misc.ForceKillSummoners;
                                     //bool ignoreSummoner = cacheObject.IsSummoner && !Core.Settings.Combat.Misc.ForceKillSummoners;
@@ -780,9 +778,15 @@ namespace Trinity.Components.Combat
                                         //    break;
                                         //}
 
+                                        if (cacheObject.Distance > TrinityCombat.Routines.Current.EliteRange)
+                                        {
+                                            cacheObject.WeightInfo += string.Format("Ignoring {0} Elite is too far away.", cacheObject.InternalName);
+                                            cacheObject.Weight += 0;
+                                            break;
+                                        }
                                         if (cacheObject.IsSpawningBoss)
                                         {
-                                            cacheObject.WeightInfo += string.Format("Boss is spawning", cacheObject.InternalName);
+                                            cacheObject.WeightInfo += string.Format("Ignoring {0} Boss is spawning", cacheObject.InternalName);
                                             cacheObject.Weight += 0;
                                             break;
                                         }
@@ -790,7 +794,7 @@ namespace Trinity.Components.Combat
                                         if (cacheObject.IsBoss && Core.Player.IsInBossEncounterArea && cacheObject.Distance > 60f && !cacheObject.IsUsingBossbar)
                                         {
                                             // Need to trigger boss encounter to start (diablo, belial etc), ignore until profile to moves in range.
-                                            cacheObject.WeightInfo += string.Format("Boss event needs triggering", cacheObject.InternalName);
+                                            cacheObject.WeightInfo += string.Format("Ignoring {0} Boss event needs triggering", cacheObject.InternalName);
                                             cacheObject.Weight += 0;
                                             break;
                                         }

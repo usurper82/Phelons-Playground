@@ -6,6 +6,8 @@ using Zeta.Common;
 namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
 {
     using DbProvider;
+    using Framework;
+    using Framework.Helpers;
     using Framework.Reference;
     using static Basics;
     using static Basics.Conditionals;
@@ -19,6 +21,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Inarius
             Target = Targeting.BestAoeUnit(45);
             if (Target == null)
                 return null;
+
+            //Core.Logger.Warn(LogCategory.Routine, $"[Current Target] - Name: {Target.Name} | Elite: {Target.IsElite || Target.IsBoss || Target.IsChampion}.");
 
             Vector3 location;
             TrinityActor target = Target;

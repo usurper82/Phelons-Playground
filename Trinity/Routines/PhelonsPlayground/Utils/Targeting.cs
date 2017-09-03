@@ -139,18 +139,23 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         internal static bool BestBuffPosition(float maxRange, Vector3 fromLocation, bool objectsInAoe, out Vector3 location)
         {
             location = Vector3.Zero;
-            var closestSancAndOcc = ClosestSancAndOcc(maxRange, fromLocation, objectsInAoe);
-            if (closestSancAndOcc != Vector3.Zero && Core.Avoidance.Grid.CanRayCast(fromLocation, closestSancAndOcc))
-            {
-                location = closestSancAndOcc;
-                return true;
-            }
-            var closestSanc = ClosestSanctuary(maxRange, fromLocation, objectsInAoe);
             var closestOcc = ClosestOcculous(maxRange, fromLocation, Core.Avoidance.InAvoidance(Player.Position));
-            if ((closestOcc == Vector3.Zero || AnyElitesInRange(45f) || CurrentTarget != null && CurrentTarget.MonsterAffixes.HasFlag(MonsterAffixes.Frozen)) && closestSanc != Vector3.Zero) //AnyElitesInRange(45f) || 
+            if (ZetaDia.Me.IsParticipatingInTieredLootRun)
             {
-                location = closestSanc;
-                return true;
+                var closestSancAndOcc = ClosestSancAndOcc(maxRange, fromLocation, objectsInAoe);
+                if (closestSancAndOcc != Vector3.Zero && Core.Avoidance.Grid.CanRayCast(fromLocation, closestSancAndOcc))
+                {
+                    location = closestSancAndOcc;
+                    return true;
+                }
+                var closestSanc = ClosestSanctuary(maxRange, fromLocation, objectsInAoe);
+                if ((closestOcc == Vector3.Zero || AnyElitesInRange(45f) ||
+                     CurrentTarget != null && CurrentTarget.MonsterAffixes.HasFlag(MonsterAffixes.Frozen)) &&
+                    closestSanc != Vector3.Zero) //AnyElitesInRange(45f) || 
+                {
+                    location = closestSanc;
+                    return true;
+                }
             }
             if (closestOcc != Vector3.Zero)
             {

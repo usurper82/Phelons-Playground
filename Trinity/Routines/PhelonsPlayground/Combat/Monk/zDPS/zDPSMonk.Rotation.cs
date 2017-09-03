@@ -12,6 +12,8 @@ using Zeta.Common;
 namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
 {
     using Components.Coroutines.Town;
+    using Framework;
+    using Framework.Helpers;
 
     public partial class zDPSMonk
     {
@@ -21,6 +23,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
             Target = Targeting.BestAoeUnit(15f, true);
             if (Target == null)
                 return null;
+
+            //Core.Logger.Warn(LogCategory.Routine, $"[Current Target] - Name: {Target.Name} | Elite: {Target.IsElite || Target.IsBoss || Target.IsChampion}.");
 
             if (Target.Distance > 10f)
                 return Walk(Target);
@@ -42,7 +46,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
             if (ShouldEpiphany())
                 return Spells.Epiphany();
 
-            return TryCripplingWave(out power) ? power : Walk(Target);
+            return TryCripplingWave(out power) ? power : Walk(Target.Position);
         }
 
         public TrinityPower BuffPower()

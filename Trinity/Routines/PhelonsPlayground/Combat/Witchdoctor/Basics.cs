@@ -47,7 +47,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Witchdoctor
 
         public static TrinityPower MovementPower(Vector3 destination)
         {
-            return null;
+            return Walk(destination);
             //return PlayerMover.IsCompletelyBlocked && Target == null && Skills.WitchDoctor.BloodRush.CanCast() ? Basics.Spells.BloodRush(destination) : null;
         }
         public static int MaxDogs

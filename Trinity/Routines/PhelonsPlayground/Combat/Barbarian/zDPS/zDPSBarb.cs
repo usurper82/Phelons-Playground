@@ -98,21 +98,23 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
             if (ShouldSprint())
                 return Spells.Sprint();
 
-            if (Player.IsInTown)
-                return null;
-            if (CanChargeTo(destination) && Skills.Barbarian.FuriousCharge.TimeSinceUse > 500)
+            if (!Player.IsInTown)
             {
-                // Limit movement casts so we have stacks to charge units and build more stacks.
-
-                var chargeStacks = Skills.Barbarian.FuriousCharge.BuffStacks;
-                var isImportantTarget = CurrentTarget != null && _importantActors.Contains(CurrentTarget.Type);
-
-                if (IsInCombat && (chargeStacks == 3 || isImportantTarget && chargeStacks > 1) || TargetUtil.PierceHitsMonster(destination))
+                if (CanChargeTo(destination) && Skills.Barbarian.FuriousCharge.TimeSinceUse > 500)
                 {
-                    return Spells.FuriousCharge(destination);
+                    // Limit movement casts so we have stacks to charge units and build more stacks.
+
+                    var chargeStacks = Skills.Barbarian.FuriousCharge.BuffStacks;
+                    var isImportantTarget = CurrentTarget != null && _importantActors.Contains(CurrentTarget.Type);
+
+                    if (IsInCombat && (chargeStacks == 3 || isImportantTarget && chargeStacks > 1) ||
+                        TargetUtil.PierceHitsMonster(destination))
+                    {
+                        return Spells.FuriousCharge(destination);
+                    }
                 }
             }
-            return destination.Distance(Player.Position) > 7f ? Walk(destination) : null;
+            return Walk(destination);
         }
 
         public TrinityPower GetDestructiblePower() => DefaultPower;

@@ -9,6 +9,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
     using DbProvider;
     using Framework;
     using Framework.Helpers;
+    using Framework.Objects;
     using Framework.Reference;
     using Utils;
     using Zeta.Common;
@@ -81,9 +82,16 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
         public static bool ShouldWalk(out Vector3 position, float distance)
         {
             position = Vector3.Zero;
-
+            
+            if (CurrentTarget != null && !CurrentTarget.IsUnit)
+            {
+                Core.Logger.Error(LogCategory.Routine,
+                    $"[Walk] - Grabbing {CurrentTarget.Name}");
+                position = CurrentTarget.Position;
+                return true;
+            }
             var closestGlobe = Targeting.ClosestGlobe(15f);
-            if (Player.CurrentHealthPct < 0.50 && Player.Position.EasyNavToPosition(closestGlobe.Position))
+            if (closestGlobe != null && Player.CurrentHealthPct < 0.50 && Player.Position.EasyNavToPosition(closestGlobe.Position))
             {
                 Core.Logger.Error(LogCategory.Routine,
                     $"[Walk] - Grabbing Health Globe.");

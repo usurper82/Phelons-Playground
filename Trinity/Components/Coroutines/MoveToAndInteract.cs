@@ -38,8 +38,8 @@ namespace Trinity.Components.Coroutines
             if (Core.Player.IsInTown)
                 GameUI.CloseVendorWindow();
 
-            //if (obj.Position.Distance(ZetaDia.Me.Position) > range)
-            //{
+            if (obj.Position.Distance(ZetaDia.Me.Position) > range)
+            {
                 Navigator.PlayerMover.MoveTowards(obj.Position);
 
                 if (!await MoveTo.Execute(obj.Position, obj.Name))
@@ -47,7 +47,7 @@ namespace Trinity.Components.Coroutines
                     Core.Logger.Log("MoveTo Failed for {0} ({1}) Distance={2}", obj.Name, obj.ActorSnoId, obj.Distance);
                     return false;
                 }
-            //}
+            }
 
             //var distance = obj.Position.Distance(ZetaDia.Me.Position);
             //if (distance <= range || distance - obj.CollisionSphere.Radius <= range)
@@ -65,9 +65,9 @@ namespace Trinity.Components.Coroutines
 
             // Better to be redundant than failing to interact.
 
-            //Navigator.PlayerMover.MoveTowards(obj.Position);
-            //await Coroutine.Sleep(500);
-            //obj.Interact();
+            Navigator.PlayerMover.MoveTowards(obj.Position);
+            await Coroutine.Sleep(500);
+            obj.Interact();
 
             Navigator.PlayerMover.MoveStop();
             await Coroutine.Sleep(1000);
@@ -166,8 +166,8 @@ namespace Trinity.Components.Coroutines
             //    }
             //}
 
-            //await Coroutine.Sleep(100);
-            //await Coroutine.Yield();
+            await Coroutine.Sleep(100);
+            await Coroutine.Yield();
 
             // Better to be redundant than failing to interact.
 

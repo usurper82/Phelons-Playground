@@ -94,16 +94,7 @@ namespace Trinity.Components.Coroutines
                 SpellHistory.RecordSpell(SNOPower.Axe_Operate_Gizmo);
                 isVacuuming = true;
             }
-
-            if (count > 0)
-            {
-                Core.Logger.Verbose($"Vacuumed {count} items");
-            }
-            else
-            {
-                if (Core.Player.IsInTown && inTown)
-                    Core.Logger.Verbose($"[VacuumItems] Nothing to Vacuum.");
-            }
+            Core.Logger.Verbose($"Vacuumed {count} items");
             return isVacuuming;
         }
 

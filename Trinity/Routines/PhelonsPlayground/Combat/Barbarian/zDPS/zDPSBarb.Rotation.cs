@@ -22,6 +22,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
             if (Target == null)
                 return null;
 
+            //Core.Logger.Warn(LogCategory.Routine, $"[Current Target] - Name: {Target.Name} | Elite: {Target.IsElite || Target.IsBoss || Target.IsChampion}.");
+
             Vector3 position;
 
             if (ShouldIgnorePain())
@@ -42,8 +44,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
             if (ShouldFuriousChargeInCombat(out position))
                 return Spells.FuriousCharge(position);
 
-            return Walk(Targeting.HealthGlobeExists(25f) ? Targeting.GetBestHealthGlobeClusterPoint(10f, 25f) : 
-                TargetUtil.GetLoiterPosition(TargetUtil.GetBestClusterUnit(), 10f));
+            return Walk(Targeting.HealthGlobeExists(25f) ? Targeting.GetBestHealthGlobeClusterPoint(10f, 25f) : Target.Position);
         }
 
         public TrinityPower BuffPower()

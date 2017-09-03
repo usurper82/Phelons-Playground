@@ -3,6 +3,8 @@
 namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
 {
     using System;
+    using Framework;
+    using Framework.Helpers;
     using Trinity.Components.Combat.Resources;
     using Trinity.Framework.Actors.ActorTypes;
     using Trinity.Framework.Objects;
@@ -23,6 +25,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
             if (Target == null)
                 return null;
 
+            //Core.Logger.Warn(LogCategory.Routine, $"[Current Target] - Name: {Target.Name} | Elite: {Target.IsElite || Target.IsBoss || Target.IsChampion}.");
+
             Vector3 location;
             TrinityActor target = Target;
 
@@ -37,7 +41,6 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
 
             if (Target.RadiusDistance < castDistance)
             {
-
                 if (ShouldLandOfTheDead())
                     return Spells.LandOfTheDead();
 
@@ -72,7 +75,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
                     return Spells.GrimScythe(target);
             }
             if (ShouldWalk(out location, castDistance))
-                return Walk(location, 3f);
+                return Walk(location);
 
             return null;
         }

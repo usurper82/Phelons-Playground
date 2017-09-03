@@ -77,8 +77,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
             public static TrinityPower CorpseLance(TrinityActor target, float range = 65f)
                 => new TrinityPower(Skills.Necromancer.CorpseLance, range, target.AcdId);
 
-            public static TrinityPower Walk(Vector3 position, float range = 5f) =>
-                new TrinityPower(SNOPower.Walk, 5, position);
+            public static TrinityPower Walk(Vector3 position, float range = 0f) =>
+                new TrinityPower(SNOPower.Walk, range, position);
         }
     }
 }

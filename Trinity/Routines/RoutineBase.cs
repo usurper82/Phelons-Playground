@@ -60,7 +60,7 @@ namespace Trinity.Routines
         protected static TrinityPower Walk(TrinityActor target)
             => new TrinityPower(SNOPower.Walk, Math.Max(7f, target.AxialRadius), target.Position);
 
-        protected static TrinityPower Walk(Vector3 destination, float range = 7f)
+        protected static TrinityPower Walk(Vector3 destination, float range = 0f)
             => new TrinityPower(SNOPower.Walk, range, destination);
 
         public bool IsEliteNearby 
