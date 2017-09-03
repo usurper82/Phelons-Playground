@@ -33,6 +33,9 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
             if (ShouldThreateningShout())
                 return Spells.ThreateningShout();
 
+            if (ShouldGroundStomp())
+                return Spells.GroundStomp();
+
             if (ShouldFuriousChargeInCombat(out position))
                 return Spells.FuriousCharge(position);
 

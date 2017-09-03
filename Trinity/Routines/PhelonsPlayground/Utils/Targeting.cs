@@ -1406,9 +1406,9 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         /// </summary>
         internal static TrinityActor ClosestUnit(float range, Func<TrinityActor, bool> condition = null)
         {
-            return ObjectCache.Where(u => u.RadiusDistance <= range)
+            return ObjectCache.Where(u => u.Distance <= range)
                 .OrderBy(u => u.IsElite)
-                .ThenBy(u => u.RadiusDistance)
+                .ThenBy(u => u.Distance)
                 .FirstOrDefault();
         }
 
@@ -1417,10 +1417,13 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         /// </summary>
         internal static TrinityActor FarthesttUnit(float range, Func<TrinityActor, bool> condition = null)
         {
-            return ObjectCache.Where(u => u.RadiusDistance <= range)
-                .OrderBy(u => u.IsElite)
-                .ThenByDescending(u => u.RadiusDistance)
+            return ObjectCache.Where(u => u.Distance <= range)
+                .OrderByDescending(u => u.Distance)
                 .FirstOrDefault();
+        }
+        internal static List<TrinityActor> FarthesttUnits(float range, Func<TrinityActor, bool> condition = null)
+        {
+            return ObjectCache.OrderByDescending(u => u.Distance).Where(u => u.Distance <= range).Take(5).ToList();
         }
 
         /// <summary>

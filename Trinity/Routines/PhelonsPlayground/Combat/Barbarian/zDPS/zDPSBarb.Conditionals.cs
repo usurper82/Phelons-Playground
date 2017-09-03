@@ -10,6 +10,7 @@ using Zeta.Game.Internals.Actors;
 
 namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
 {
+    using System.Linq;
     using System.Security.Cryptography;
     using Components.Combat.Resources;
     using Framework.Helpers;
@@ -53,6 +54,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
             return true;
         }
 
+        private static int lastChargeTargetAcdId = 0;
+
         protected virtual bool ShouldFuriousChargeInCombat(out Vector3 position)
         {
             position = Vector3.Zero;
@@ -69,11 +72,24 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
                     $"[FuriousCharge] -  On Closest Health Globe: [{position.Distance(Player.Position)}].");
                 return true;
             }
+            position = Target.Position;
             var lastCast = SpellHistory.GetLastUseHistoryItem(SNOPower.Barbarian_FuriousCharge);
-            position = lastCast.TargetAcdId != Target.AcdId ? Target.Position : Targeting.GetDashStrikeFarthestTarget(40f)?.Position ?? Target.Position;
-
-            Core.Logger.Error(LogCategory.Routine,
-                $" [FuriousCharge] - On Best Cluster Target Distance: [{position.Distance(Player.Position)}].");
+            if (Targeting.FarthesttUnits(40f).Any() && lastCast != null && lastCast.TargetAcdId != Target.AcdId)
+            {
+                var rangedTarget =
+                    Targeting.FarthesttUnits(40f)
+                        .OrderByDescending(x => x.Distance)
+                        .FirstOrDefault(x => x.AcdId != lastChargeTargetAcdId);
+                if (rangedTarget != null && rangedTarget.Position.Distance(Target.Position) < 45f)
+                {
+                    position = rangedTarget.Position;
+                    Core.Logger.Error(LogCategory.Routine,
+                        $" [FuriousCharge] - On Farthest Target Distance: [{position.Distance(Player.Position)}].");
+                }
+            }
+            else
+                Core.Logger.Error(LogCategory.Routine,
+                    $" [FuriousCharge] - On Best Target Distance: [{position.Distance(Player.Position)}].");
             return true;
         }
 
@@ -97,15 +113,14 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
 
         // Defensive
 
-        protected virtual bool ShouldGroundStomp(out Vector3 position)
+        protected virtual bool ShouldGroundStomp()
         {
-            position = Vector3.Zero;
-
-            if (!Skills.Barbarian.GroundStomp.CanCast())
+            if (!Skills.Barbarian.GroundStomp.CanCast() || Target.Distance > 12f)
                 return false;
 
-            position = Targeting.GetBestClusterPoint();
-            return position != Vector3.Zero;
+            Core.Logger.Error(LogCategory.Routine,
+                $" [Ground Stomp] -  off CD.");
+            return true;
         }
 
         protected virtual bool ShouldIgnorePain()
