@@ -20,14 +20,18 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
         public static TrinityActor Target = CurrentTarget;
         public TrinityPower OffensivePower()
         {
-            Target = Targeting.BestAoeUnit(15f, true);
+            Target = Targeting.BestAoeUnit(20f, true);
             if (Target == null)
                 return null;
 
             //Core.Logger.Warn(LogCategory.Routine, $"[Current Target] - Name: {Target.Name} | Elite: {Target.IsElite || Target.IsBoss || Target.IsChampion}.");
 
             if (Target.Distance > 10f)
+            {
+                if (Skills.Monk.Epiphany.TimeSinceUse < 15000 && Target.Distance < 20)
+                    return Spells.CripplingWave(Target);
                 return Walk(Target);
+            }
 
             TrinityPower power;
 

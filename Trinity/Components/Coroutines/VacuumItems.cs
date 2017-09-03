@@ -16,6 +16,7 @@ namespace Trinity.Components.Coroutines
     using IronPython.Modules;
     using Zeta.Bot.Coroutines;
     using Zeta.Bot.Navigation;
+    using static Core;
 
     /// <summary>
     /// Pickup items within range.
@@ -34,7 +35,7 @@ namespace Trinity.Components.Coroutines
         {
 
             bool isVacuuming = false;
-            if (Core.Player.IsCasting)
+            if (Player.IsCasting)
                 return isVacuuming = false;
 
             var oldItems = VacuumedAcdIds.Where(x => (DateTime.Now - x.Value).TotalSeconds > 30).Select(x => x.Key).ToList();
@@ -51,27 +52,27 @@ namespace Trinity.Components.Coroutines
             // Items that shouldn't be picked up are currently excluded from cache.
             // a pickup evaluation should be added here if that changes.
 
-            foreach (var item in Core.Targets.OfType<TrinityItem>().OrderBy(x => !x.IsPickupNoClick).ThenBy(x => x.Distance))
+            foreach (var item in Targets.OfType<TrinityItem>().OrderBy(x => !x.IsPickupNoClick).ThenBy(x => x.Distance))
             {
-                var validApproach = Core.Grids.Avoidance.IsIntersectedByFlags(Core.Player.Position, item.Position, AvoidanceFlags.NavigationBlocking, AvoidanceFlags.NavigationImpairing) && !Core.Player.IsFacing(item.Position, 90);
-                Core.Inventory.Backpack.Update();
-                if (Core.Player.FreeBackpackSlots < 4)
+                var validApproach = Grids.Avoidance.IsIntersectedByFlags(Player.Position, item.Position, AvoidanceFlags.NavigationBlocking, AvoidanceFlags.NavigationImpairing) && !Player.IsFacing(item.Position, 90);
+                Inventory.Backpack.Update();
+                if (Player.FreeBackpackSlots < 4)
                     break;
                 if (inTown)
                 {
                     if (VacuumedAcdIds.Keys.Contains(item.AcdId))
                         continue;
-                    Core.Logger.Warn($"Moving to vacuum town item {item.Name} AcdId={item.AcdId} Distance={item.Distance}");
+                    Logger.Warn($"Moving to vacuum town item {item.Name} AcdId={item.AcdId} Distance={item.Distance}");
                     if (!await MoveToAndInteract.Execute(item.Position, item.AcdId, 3))
                     {
-                        Core.Logger.Debug($"[TownLoot] Failed to move to item ({item.Name}) to pick up items :(");
-                        await Coroutine.Sleep((int)(item.Distance + 1) * 150);
+                        Logger.Debug($"[TownLoot] Failed to move to item ({item.Name}) to pick up items :(");
+                        await Coroutine.Sleep((int)(item.Position.Distance2D(Player.Position) + 1) * 150);
                     }
                     await Coroutine.Sleep(500);
-                    if (!ZetaDia.Me.UsePower(SNOPower.Axe_Operate_Gizmo, item.Position, Core.Player.WorldDynamicId,
+                    if (!ZetaDia.Me.UsePower(SNOPower.Axe_Operate_Gizmo, item.Position, Player.WorldDynamicId,
                             item.AcdId))
                     {
-                        Core.Logger.Warn($"[TownLoot] Failed to vacuum town item {item.Name} AcdId={item.AcdId} Distance={item.Distance}");
+                        Logger.Warn($"[TownLoot] Failed to vacuum town item {item.Name} AcdId={item.AcdId} Distance={item.Position.Distance2D(Player.Position)}");
                         VacuumedAcdIds.Add(item.AcdId, DateTime.Now);
                         continue;
                     }
@@ -82,19 +83,19 @@ namespace Trinity.Components.Coroutines
                     if (item.Distance > 8f || !validApproach)
                         //Core.Logger.Debug("Vacuuming is valid");
                         continue;
-                    if (!ZetaDia.Me.UsePower(SNOPower.Axe_Operate_Gizmo, item.Position, Core.Player.WorldDynamicId, item.AcdId))
+                    if (!ZetaDia.Me.UsePower(SNOPower.Axe_Operate_Gizmo, item.Position, Player.WorldDynamicId, item.AcdId))
                     {
-                        Core.Logger.Warn($"Failed to vacuum item {item.Name} AcdId={item.AcdId}");
+                        Logger.Warn($"Failed to vacuum item {item.Name} AcdId={item.AcdId}");
                         continue;
                     }
                     VacuumedAcdIds.Add(item.AcdId, DateTime.Now);
                 }
                 count++;
-                Core.Logger.Debug($"Vacuumed: {item.Name} ({item.ActorSnoId}) InternalName={item.InternalName} GbId={item.GameBalanceId}");
+                Logger.Debug($"Vacuumed: {item.Name} ({item.ActorSnoId}) InternalName={item.InternalName} GbId={item.GameBalanceId}");
                 SpellHistory.RecordSpell(SNOPower.Axe_Operate_Gizmo);
                 isVacuuming = true;
             }
-            Core.Logger.Verbose($"Vacuumed {count} items");
+            Logger.Verbose($"Vacuumed {count} items");
             return isVacuuming;
         }
 

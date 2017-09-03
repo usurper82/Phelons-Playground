@@ -253,7 +253,7 @@ namespace Trinity.Routines
             if (settings.Reasons.HasFlag(UseReasons.Elites) && TargetUtil.AnyElitesInRange(40f))
                 return true;
 
-            if (settings.Reasons.HasFlag(UseReasons.Trash) && TargetUtil.ClusterExists(routine.ClusterRadius, routine.TrashRange, routine.ClusterSize))
+            if (settings.Reasons.HasFlag(UseReasons.Trash) && TargetUtil.ClusterExists(routine.TrashRange, routine.TrashRange, routine.ClusterSize))
                 return true;
 
             if (settings.Reasons.HasFlag(UseReasons.Surrounded) && TargetUtil.NumMobsInRange(25f) >= Math.Max(ClusterSize, 5))

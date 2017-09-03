@@ -598,16 +598,16 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
             //                () => ZetaDia.Service.Party.NumPartyMembers >= partysize || !ZetaDia.IsInGame);
             //    }
 
-            if (ZetaDia.Actors.GetActorsOfType<DiaPlayer>(true).Count(u => u.Distance >= 5f) <=
-                ZetaDia.Service.Party.NumPartyMembers)
-            {
-                Core.Logger.Log("Party member(s) father than 5 yards away. Waiting " + waittime +
-                            " seconds before opening rift. If party stacks, Starting rift.");
-                await Coroutine.Wait(TimeSpan.FromSeconds(waittime),
-                        () =>
-                            ZetaDia.Actors.GetActorsOfType<DiaPlayer>(true).Count(u => u.Distance <= 5) >=
-                            ZetaDia.Service.Party.NumPartyMembers);
-            }
+            //if (ZetaDia.Actors.GetActorsOfType<DiaPlayer>(true).Count(u => u.Distance >= 5f) <=
+            //    ZetaDia.Service.Party.NumPartyMembers)
+            //{
+            //    Core.Logger.Log("Party member(s) father than 5 yards away. Waiting " + waittime +
+            //                " seconds before opening rift. If party stacks, Starting rift.");
+            //    await Coroutine.Wait(TimeSpan.FromSeconds(waittime),
+            //            () =>
+            //                ZetaDia.Actors.GetActorsOfType<DiaPlayer>(true).Count(u => u.Distance <= 5) >=
+            //                ZetaDia.Service.Party.NumPartyMembers);
+            //}
             //}
 
             var maximizeXp = _RiftType == RiftType.Greater && _options.NormalRiftForXPShrine && (ZetaDia.Me.RestExperience < 5000000000 && ZetaDia.Me.RestExperience > -1);

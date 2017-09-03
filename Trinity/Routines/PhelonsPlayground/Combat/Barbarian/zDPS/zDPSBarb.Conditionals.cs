@@ -48,8 +48,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
             if (CurrentTarget?.Type == TrinityObjectType.Item && destinationDistance < 12f)
                 return false;
 
-            if (Math.Abs(destination.Z - Core.Player.Position.Z) > 5)
-                return false;
+            //if (Math.Abs(destination.Z - Core.Player.Position.Z) > 5)
+            //    return false;
 
             return true;
         }
