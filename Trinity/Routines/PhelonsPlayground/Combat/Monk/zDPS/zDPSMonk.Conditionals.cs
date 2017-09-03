@@ -187,7 +187,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
             if (!Skills.Monk.CycloneStrike.CanCast())
                 return false;
 
-            if (Player.PrimaryResource < 90 || Skills.Monk.CycloneStrike.TimeSinceUse < 200*Targeting.NearbyTargets(20f).Count())
+            if (Player.PrimaryResourcePct < 90 || Skills.Monk.CycloneStrike.TimeSinceUse < 200*Targeting.NearbyTargets(20f).Count())
                 return false;
 
             var targetIsCloseElite = CurrentTarget.IsElite && CurrentTarget.Distance < CycloneStrikeRange;      //Checks for elites first
