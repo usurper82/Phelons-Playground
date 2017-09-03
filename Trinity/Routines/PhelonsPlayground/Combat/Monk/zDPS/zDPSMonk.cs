@@ -69,8 +69,6 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
         public virtual int KiteStutterDuration => 500;
         public virtual int KiteStutterDelay => 1000;
         public virtual int KiteHealthPct => 100;
-        public virtual float TrashRange => 55f;
-        public virtual float EliteRange => 75f;
         public virtual float HealthGlobeRange => 60f;
         public virtual float ShrineRange => 80f;
         public virtual Func<bool> ShouldIgnoreNonUnits { get; } = () => false;
@@ -107,8 +105,10 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
 
         #region Settings
 
-        public override float ClusterRadius => Settings.ClusterSize;
+        public override float ClusterRadius => Settings.ClusterRadius;
         public override int ClusterSize => Settings.ClusterSize;
+        public virtual float TrashRange => Settings.TrashRange;
+        public virtual float EliteRange => Settings.EliteRange;
         public override float EmergencyHealthPct => Settings.EmergencyHealthPct;
 
         IDynamicSetting IRoutine.RoutineSettings => Settings;
@@ -125,19 +125,35 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
             private int _clusterSize;
             private float _clusterRadius;
             private float _emergencyHealthPct;
+            private float _trashRange;
+            private float _elitehRange;
 
-            [DefaultValue(8)]
+            [DefaultValue(10)]
             public int ClusterSize
             {
                 get { return _clusterSize; }
                 set { SetField(ref _clusterSize, value); }
             }
 
-            [DefaultValue(8)]
+            [DefaultValue(55)]
             public float ClusterRadius
             {
                 get { return _clusterRadius; }
                 set { SetField(ref _clusterRadius, value); }
+            }
+
+            [DefaultValue(55)]
+            public float EliteRange
+            {
+                get { return _elitehRange; }
+                set { SetField(ref _elitehRange, value); }
+            }
+
+            [DefaultValue(55)]
+            public float TrashRange
+            {
+                get { return _trashRange; }
+                set { SetField(ref _trashRange, value); }
             }
 
             [DefaultValue(2000)]

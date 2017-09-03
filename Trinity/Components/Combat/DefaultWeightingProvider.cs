@@ -426,7 +426,7 @@ namespace Trinity.Components.Combat
                                             u.IsElite &&
                                             u.Position.Distance2D(cacheObject.Position) <= 15f);
 
-                                    int nearbyTrashCount = objects.Count(u => u.IsUnit && u.HitPoints > 0 && u.IsTrashMob &&
+                                    int nearbyTrashCount = objects.Count(u => u.IsUnit && u.HitPoints > 0 && u.IsTrashMob && (u.IsInLineOfSight || u.HasBeenInLoS)
                                                            cacheObject.Position.Distance(ZetaDia.Me.Position) <=
                                                            TrinityCombat.Routines.Current.TrashRange);
 
