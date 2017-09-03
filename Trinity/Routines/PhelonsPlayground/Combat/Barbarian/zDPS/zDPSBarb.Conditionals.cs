@@ -97,10 +97,10 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
         {
             target = Target;
 
-            if (!Skills.Barbarian.AncientSpear.CanCast() || Skills.Barbarian.AncientSpear.TimeSinceUse < 1500 || Player.PrimaryResourcePct < 0.65)
+            if (!Skills.Barbarian.AncientSpear.CanCast() || Player.PrimaryResourcePct < 0.85 || Target.Distance > 10f)
                 return false;
 
-            target = Targeting.GetFarthestClusterUnit(Target.Position, 15f, 55f, 3);
+            target = Targeting.FarthesttUnit(65f);
 
             if (target == null)
                 return false;

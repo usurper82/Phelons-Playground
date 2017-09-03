@@ -36,11 +36,11 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
             if (ShouldGroundStomp())
                 return Spells.GroundStomp();
 
-            if (ShouldFuriousChargeInCombat(out position))
-                return Spells.FuriousCharge(position);
-
             if (ShouldAncientSpear(out Target))
                 return Spells.AncientSpear(Target);
+
+            if (ShouldFuriousChargeInCombat(out position))
+                return Spells.FuriousCharge(position);
 
             return Walk(Targeting.HealthGlobeExists(25f) ? Targeting.GetBestHealthGlobeClusterPoint(10f, 25f) : 
                 TargetUtil.GetLoiterPosition(TargetUtil.GetBestClusterUnit(), 10f));

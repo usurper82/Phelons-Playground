@@ -15,6 +15,9 @@ using Zeta.Game.Internals.Actors;
 
 namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
 {
+    using System.Linq;
+    using Utils;
+
     public partial class zDPSMonk
     {
         #region Expressions 
@@ -174,6 +177,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
             if (TargetUtil.BestAoeUnit(45, true).Distance > Settings.InnerSanctuaryMinRange)
                 return false;
 
+            Core.Logger.Error(LogCategory.Routine,
+                $"[InnerSanctuary] - On CD.");
             return true;
         }
 
@@ -182,14 +187,31 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
             if (!Skills.Monk.CycloneStrike.CanCast())
                 return false;
 
-            if (Player.PrimaryResource < PrimaryEnergyReserve || Skills.Monk.CycloneStrike.TimeSinceUse < 1250)
+            if (Player.PrimaryResource < 90 || Skills.Monk.CycloneStrike.TimeSinceUse < 200*Targeting.NearbyTargets(20f).Count())
                 return false;
 
             var targetIsCloseElite = CurrentTarget.IsElite && CurrentTarget.Distance < CycloneStrikeRange;      //Checks for elites first
             var plentyOfTargetsToPull = TargetUtil.IsPercentUnitsWithinBand(15f, CycloneStrikeRange, 0.25);     //Checks percentage within band
             var anyTargetsInRange = TargetUtil.AnyMobsInRange(CycloneStrikeRange, Settings.CycloneStrikeMinMobs);   //Checks minimum mobs in range
-
-            return targetIsCloseElite || plentyOfTargetsToPull || anyTargetsInRange;
+            if (targetIsCloseElite)
+            {
+                Core.Logger.Error(LogCategory.Routine,
+                    $"[CycloneStrike] - Target Is Close Elite.");
+                return true;
+            }
+            if (plentyOfTargetsToPull)
+            {
+                Core.Logger.Error(LogCategory.Routine,
+                    $"[CycloneStrike] - Plenty Of Targets To Pull");
+                return true;
+            }
+            if (anyTargetsInRange)
+            {
+                Core.Logger.Error(LogCategory.Routine,
+                    $"[CycloneStrike] - Any Targets In Range.");
+                return true;
+            }
+            return false;
         }
 
         protected virtual bool ShouldBlindingFlash()
@@ -204,7 +226,25 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
             var enoughStuffToBlind = TargetUtil.AnyElitesInRange(20, 1) || TargetUtil.AnyMobsInRange(20, 3);
             var blindCurrentTarget = CurrentTarget != null && CurrentTarget.IsElite && CurrentTarget.RadiusDistance <= 15f;
 
-            return lowHealth || enoughStuffToBlind || blindCurrentTarget;
+            if (lowHealth)
+            {
+                Core.Logger.Error(LogCategory.Routine,
+                    $"[BlindingFlash] - Low Health");
+                return true;
+            }
+            if (enoughStuffToBlind)
+            {
+                Core.Logger.Error(LogCategory.Routine,
+                    $"[BlindingFlash] - Enough Stuff To Blind");
+                return true;
+            }
+            if (blindCurrentTarget)
+            {
+                Core.Logger.Error(LogCategory.Routine,
+                    $"[BlindingFlash] - Blind Current Target.");
+                return true;
+            }
+            return false;
         }
 
         protected virtual bool ShouldMantraOfHealing()
@@ -212,11 +252,14 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
             if (!Skills.Monk.MantraOfHealing.CanCast())
                 return false;
 
-            if (Skills.Monk.MantraOfHealing.TimeSinceUse < Settings.MantraDelay)
+            //if (Skills.Monk.MantraOfHealing.TimeSinceUse < Settings.MantraDelay)
+            //    return false;
+
+            if (Player.PrimaryResourcePct <= 0.90)
                 return false;
 
-            if (Player.PrimaryResource <= PrimaryEnergyReserve)
-                return false;
+            Core.Logger.Error(LogCategory.Routine,
+                $"[MantraOfHealing] - On CD.");
 
             return true;
         }
@@ -226,11 +269,13 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
             if (!Skills.Monk.MantraOfSalvation.CanCast())
                 return false;
 
-            if (Skills.Monk.MantraOfSalvation.TimeSinceUse < Settings.MantraDelay)
-                return false;
+            //if (Skills.Monk.MantraOfSalvation.TimeSinceUse < Settings.MantraDelay)
+            //    return false;
 
-            if (Player.PrimaryResource <= PrimaryEnergyReserve)
+            if (Player.PrimaryResourcePct <= 0.90)
                 return false;
+            Core.Logger.Error(LogCategory.Routine,
+                $"[MantraOfSalvation] - On CD.");
 
             return true;
         }
@@ -240,11 +285,13 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
             if (!Skills.Monk.MantraOfRetribution.CanCast())
                 return false;
 
-            if (Skills.Monk.MantraOfRetribution.TimeSinceUse < Settings.MantraDelay)
-                return false;
+            //if (Skills.Monk.MantraOfRetribution.TimeSinceUse < Settings.MantraDelay)
+            //    return false;
 
-            if (Player.PrimaryResource <= PrimaryEnergyReserve)
+            if (Player.PrimaryResourcePct <= 0.90)
                 return false;
+            Core.Logger.Error(LogCategory.Routine,
+                $"[MantraOfRetribution] - On CD.");
 
             return true;
         }
@@ -254,19 +301,18 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
             if (!Skills.Monk.MantraOfConviction.CanCast())
                 return false;
 
-            if (Skills.Monk.MantraOfConviction.TimeSinceUse < Settings.MantraDelay)
-                return false;
+            //if (Skills.Monk.MantraOfConviction.TimeSinceUse < Settings.MantraDelay)
+            //    return false;
 
-            if (Player.PrimaryResource < PrimaryEnergyReserve)
+            if (Player.PrimaryResourcePct < 0.90)
                 return false;
-
-            if (CurrentTarget != null && CurrentTarget.IsElite)
-                return true;
 
             if (TargetUtil.ClusterExists(15f, 30f, 3))
                 return true;
+            Core.Logger.Error(LogCategory.Routine,
+                $"[MantraOfConviction] - On CD.");
 
-            return false;
+            return true;
         }
 
         protected virtual bool ShouldEpiphany()
@@ -283,6 +329,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
             if (TargetUtil.BestAoeUnit(45, true).Distance > 20)
                 return false;
 
+            Core.Logger.Error(LogCategory.Routine,
+                $"[Epiphany] - On CD.");
             return true;
         }
     }

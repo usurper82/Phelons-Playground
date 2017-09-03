@@ -547,6 +547,11 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
             return Core.Targets.Where(u => u.RActorId != actor.RActorId && u.IsUnit && !u.IsSummonedByPlayer && u.Position.Distance(actor.Position) <= range && u.HasBeenInLoS);
         }
 
+        public static IEnumerable<TrinityActor> NearbyTargets(float range)
+        {
+            return Core.Targets.Where(u => u.RActorId != Player.RActorGuid && u.IsUnit && !u.IsSummonedByPlayer && u.Position.Distance(Player.Position) <= range && u.HasBeenInLoS);
+        }
+
         /// <summary>
         /// Gets the number of units facing player
         /// </summary>

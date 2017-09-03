@@ -146,7 +146,7 @@ namespace Trinity.Components.Coroutines.Town
                     if (await Any(
                         DropItems.Execute,
                         () => StashItems.Execute(true),
-                        () => VacuumItems.Execute(true),
+                        () => VacuumItems.Execute(!TrinitySettings.Settings.Items.DontPickupInTown),
                         SellItems.Execute,
                         SalvageItems.Execute))
                         continue;
