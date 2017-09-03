@@ -38,8 +38,8 @@ namespace Trinity.Components.Coroutines
             if (Core.Player.IsInTown)
                 GameUI.CloseVendorWindow();
 
-            if (obj.Position.Distance(ZetaDia.Me.Position) > range)
-            {
+            //if (obj.Position.Distance(ZetaDia.Me.Position) > range)
+            //{
                 Navigator.PlayerMover.MoveTowards(obj.Position);
 
                 if (!await MoveTo.Execute(obj.Position, obj.Name))
@@ -47,7 +47,7 @@ namespace Trinity.Components.Coroutines
                     Core.Logger.Log("MoveTo Failed for {0} ({1}) Distance={2}", obj.Name, obj.ActorSnoId, obj.Distance);
                     return false;
                 }
-            }
+            //}
 
             //var distance = obj.Position.Distance(ZetaDia.Me.Position);
             //if (distance <= range || distance - obj.CollisionSphere.Radius <= range)

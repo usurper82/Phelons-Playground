@@ -416,15 +416,19 @@ namespace Trinity.Components.Combat
 
                                     //bool isInHotSpot = GroupHotSpots.CacheObjectIsInHotSpot(cacheObject) || cacheObject.IsNavBlocking();
 
+                                    var defaultKillRange = cacheObject.IsUnit && cacheObject.IsTrashMob
+                                        ? TrinityCombat.Routines.Current.TrashRange
+                                        : TrinityCombat.Routines.Current.EliteRange;
+
                                     bool elitesInRangeOfUnit = objects.Any(
                                         u =>
                                             u.AcdId != cacheObject.AcdId &&
                                             u.IsElite &&
                                             u.Position.Distance2D(cacheObject.Position) <= 15f);
 
-                                    int nearbyTrashCount =objects.Count(u => u.IsUnit && u.HitPoints > 0 && u.IsTrashMob &&
+                                    int nearbyTrashCount = objects.Count(u => u.IsUnit && u.HitPoints > 0 && u.IsTrashMob &&
                                                            cacheObject.Position.Distance(ZetaDia.Me.Position) <=
-                                                           TrinityCombat.Routines.Current.ClusterRadius);
+                                                           TrinityCombat.Routines.Current.TrashRange);
 
                                     //bool ignoreSummoner = cacheObject.IsSummoner && !Core.Settings.Combat.Misc.ForceKillSummoners;
                                     //bool ignoreSummoner = cacheObject.IsSummoner && !Core.Settings.Combat.Misc.ForceKillSummoners;
@@ -465,10 +469,6 @@ namespace Trinity.Components.Combat
                                             cacheObject.IsBountyObjective);
 
                                     #region Basic Checks
-
-                                    var defaultKillRange = cacheObject.IsUnit && cacheObject.IsTrashMob
-                                        ? TrinityCombat.Routines.Current.TrashRange
-                                        : TrinityCombat.Routines.Current.EliteRange;
 
                                     if (TrinityCombat.CombatMode == CombatMode.KillAll && cacheObject.Distance <= Math.Max(20, TrinityCombat.KillAllRadius) || questBasedKillAll || isInSpecialKillAllScene)
                                     {

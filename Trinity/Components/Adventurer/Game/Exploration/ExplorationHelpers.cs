@@ -81,7 +81,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration
 
                 if (Core.Rift.IsInRift && !Core.BlockedCheck.IsBlocked && !Core.StuckHandler.IsStuck)
                 {           
-                    Core.Logger.Warn("in rift");
+                    //Core.Logger.Warn("in rift");
                     // In rift prefer the highest weight nodes because we dont need to explore everything, just need to find the exit.    
                          
                     var closestUnvisitedNodes = ExplorationGrid.Instance.WalkableNodes
@@ -189,10 +189,10 @@ namespace Trinity.Components.Adventurer.Game.Exploration
         {
             var directionMultiplier = IsInPriorityDirection(n.NavigableCenter, 30) ? 5 : 1;
             var sceneConnectionDirectionMultiplier = IsInSceneConnectionDirection(n.NavigableCenter, 30) ? 2 : 1;
-            var nodeInPrioritySceneMultiplier = n.Priority ? 4 : 0;
+            var nodeInPrioritySceneMultiplier = n.Priority ? 2.25 : 0;
             var baseDistanceFactor = 5/n.NavigableCenter.Distance(AdvDia.MyPosition);
 
-            var edgeMultiplier = 3d;
+            var edgeMultiplier = 1d;
             var visitedMultiplier = 1d;
             var exitSceneMultiplier = 1d;
 

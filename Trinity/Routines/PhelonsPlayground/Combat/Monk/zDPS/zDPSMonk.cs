@@ -60,7 +60,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
         #endregion
 
         #region IRoutine Defaults
-
+        
         public virtual ActorClass Class => ActorClass.Monk;
         public virtual int PrimaryEnergyReserve => 50;
         public virtual int SecondaryEnergyReserve => 0;
@@ -107,6 +107,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
 
         #region Settings
 
+        public override float ClusterRadius => Settings.ClusterSize;
         public override int ClusterSize => Settings.ClusterSize;
         public override float EmergencyHealthPct => Settings.EmergencyHealthPct;
 
@@ -122,6 +123,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
             private int _innerSanctuaryMinRange;
             private float _mantraDelay;
             private int _clusterSize;
+            private float _clusterRadius;
             private float _emergencyHealthPct;
 
             [DefaultValue(8)]
@@ -129,6 +131,13 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
             {
                 get { return _clusterSize; }
                 set { SetField(ref _clusterSize, value); }
+            }
+
+            [DefaultValue(8)]
+            public float ClusterRadius
+            {
+                get { return _clusterRadius; }
+                set { SetField(ref _clusterRadius, value); }
             }
 
             [DefaultValue(2000)]
