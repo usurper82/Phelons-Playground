@@ -51,7 +51,7 @@ namespace Trinity.Components.Coroutines
             // Items that shouldn't be picked up are currently excluded from cache.
             // a pickup evaluation should be added here if that changes.
 
-            foreach (var item in Core.Targets.OfType<TrinityItem>().OrderBy(x => x.CanPickupItem).ThenBy(x => x.Distance))
+            foreach (var item in Core.Targets.OfType<TrinityItem>().OrderBy(x => !x.IsPickupNoClick).ThenBy(x => x.Distance))
             {
                 var validApproach = Core.Grids.Avoidance.IsIntersectedByFlags(Core.Player.Position, item.Position, AvoidanceFlags.NavigationBlocking, AvoidanceFlags.NavigationImpairing) && !Core.Player.IsFacing(item.Position, 90);
                 Core.Inventory.Backpack.Update();

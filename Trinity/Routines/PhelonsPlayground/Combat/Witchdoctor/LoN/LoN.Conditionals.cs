@@ -75,8 +75,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Witchdoctor.LoN
 
             var needsdebuffs = Targeting.BestTargetWithoutDebuff(30f, SNOPower.Witchdoctor_GraspOfTheDead,
                 Player.Position);
-
-            target = needsdebuffs;
+            if (needsdebuffs != null)
+                target = needsdebuffs;
             Core.Logger.Error(LogCategory.Routine,
                 $"[Grasp Of the Dead] - On {target}.");
             return true;
