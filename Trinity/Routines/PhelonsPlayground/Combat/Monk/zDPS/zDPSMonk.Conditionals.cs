@@ -252,8 +252,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
             if (!Skills.Monk.MantraOfHealing.CanCast())
                 return false;
 
-            //if (Skills.Monk.MantraOfHealing.TimeSinceUse < Settings.MantraDelay)
-            //    return false;
+            if (Skills.Monk.MantraOfHealing.TimeSinceUse < Settings.MantraDelay)
+                return false;
 
             if (Player.PrimaryResourcePct <= 0.90)
                 return false;
@@ -269,8 +269,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
             if (!Skills.Monk.MantraOfSalvation.CanCast())
                 return false;
 
-            //if (Skills.Monk.MantraOfSalvation.TimeSinceUse < Settings.MantraDelay)
-            //    return false;
+            if (Skills.Monk.MantraOfSalvation.TimeSinceUse < Settings.MantraDelay)
+                return false;
 
             if (Player.PrimaryResourcePct <= 0.90)
                 return false;
@@ -285,8 +285,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
             if (!Skills.Monk.MantraOfRetribution.CanCast())
                 return false;
 
-            //if (Skills.Monk.MantraOfRetribution.TimeSinceUse < Settings.MantraDelay)
-            //    return false;
+            if (Skills.Monk.MantraOfRetribution.TimeSinceUse < Settings.MantraDelay)
+                return false;
 
             if (Player.PrimaryResourcePct <= 0.90)
                 return false;
@@ -301,8 +301,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
             if (!Skills.Monk.MantraOfConviction.CanCast())
                 return false;
 
-            //if (Skills.Monk.MantraOfConviction.TimeSinceUse < Settings.MantraDelay)
-            //    return false;
+            if (Skills.Monk.MantraOfConviction.TimeSinceUse < Settings.MantraDelay)
+                return false;
 
             if (Player.PrimaryResourcePct < 0.90)
                 return false;

@@ -24,7 +24,7 @@ namespace Trinity.Modules
         {
             MoveSpeed = Core.PlayerHistory.GetYardsPerSecond();
 
-            if (PlayerMover.CanMoveUnhindered && !ZetaDia.Actors.GetActorsOfType<DiaPlayer>(true).Any(x => x.ACDId != Core.Player.AcdId))
+            if (PlayerMover.CanMoveUnhindered)// && !ZetaDia.Actors.GetActorsOfType<DiaPlayer>(true).Any(x => x.ACDId != Core.Player.AcdId))
                 return;
 
             Nodes = Core.Grids.Avoidance.GetNodesInRadius(Core.Player.Position, 10f)
