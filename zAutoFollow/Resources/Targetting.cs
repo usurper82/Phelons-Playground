@@ -61,13 +61,13 @@ namespace AutoFollow.Resources
                     {
                         ToggleCombat();
 
-                        if(CombatTargeting.Instance.AllowedToKillMonsters)
-                            _nextPulse = DateTime.UtcNow.Add(TimeSpan.FromMilliseconds(300));
-                        else
-                            _nextPulse = DateTime.UtcNow.Add(TimeSpan.FromMilliseconds(600));
+                        _nextPulse =
+                            DateTime.UtcNow.Add(CombatTargeting.Instance.AllowedToKillMonsters
+                                ? TimeSpan.FromMilliseconds(300)
+                                : TimeSpan.FromMilliseconds(600));
                     }
-                    break;     
-                        
+                    break;
+
                 case CombatState.Disabled:
                     TurnCombatOff();
                     break;

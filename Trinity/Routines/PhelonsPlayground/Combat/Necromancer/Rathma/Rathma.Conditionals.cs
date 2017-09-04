@@ -10,6 +10,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
     using Framework.Helpers;
     using Framework.Reference;
     using Zeta.Common;
+    using Zeta.Game;
     using Zeta.Game.Internals.Actors;
     using static Basics;
 
@@ -38,8 +39,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
 
             if (!Skills.Necromancer.SkeletalMage.CanCast())
                 return false;
-
-            if (Player.PrimaryResourcePct < 0.95)
+            var magePercent = ZetaDia.Actors.GetActorsOfType<DiaPlayer>(true).Count() > 1 ? 0.95 : 0.50;
+            if (Player.PrimaryResourcePct < magePercent)
                 return false;
 
             Core.Logger.Error(LogCategory.Routine,

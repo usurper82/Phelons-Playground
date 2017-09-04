@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
 {
+    using System.Web.Routing;
     using Components.Combat;
     using Components.Combat.Resources;
     using DbProvider;
@@ -18,7 +19,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
     using Zeta.Game.Internals.Actors;
     using static Basics.Conditionals;
 
-    public partial class Basics
+    public partial class Basics : RoutineBase
     {
         public static TrinityActor Target { get; set; }
         public static PlayerCache Player => Core.Player;
@@ -57,7 +58,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
 
         public static TrinityPower MovementPower(Vector3 destination)
         {
-            return (PlayerMover.IsCompletelyBlocked || destination.Distance(Player.Position) > 20) &&
+            return ((PlayerMover.IsCompletelyBlocked || destination.Distance(Player.Position) > 20) && CurrentTarget == null || HasInstantCooldowns) &&
                    Skills.Necromancer.BloodRush.CanCast()
                 ? Spells.BloodRush(destination)
                 : Spells.Walk(destination);

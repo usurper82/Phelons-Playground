@@ -146,6 +146,7 @@ namespace Trinity.Components.Coroutines.Town
                     if (await Any(
                         DropItems.Execute,
                         () => StashItems.Execute(true),
+                        OpenTreasureBags.Execute,
                         () => VacuumItems.Execute(!TrinitySettings.Settings.Items.DontPickupInTown && ZetaDia.IsInTown),
                         SellItems.Execute,
                         SalvageItems.Execute))

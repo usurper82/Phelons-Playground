@@ -134,7 +134,7 @@ namespace AutoFollow.Behaviors
                 }
                 if (AutoFollow.CurrentLeader.Distance > Settings.Coordination.FollowDistance)
                 {
-                    Targetting.State = CombatState.Pulsing;
+                    Targetting.State = CombatState.Disabled;
                     return FollowMode.FollowLeader;
                 }
             }

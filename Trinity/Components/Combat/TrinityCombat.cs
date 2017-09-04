@@ -76,8 +76,8 @@ namespace Trinity.Components.Combat
                 return startHookResult;
 
             await UsePotion.Execute();
-            await OpenTreasureBags.Execute();
-            await VacuumItems.Execute();
+            if (await VacuumItems.Execute())
+                return true;
 
             var target = Weighting.WeightActors(Core.Targets);
 
