@@ -52,14 +52,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
             if (Player.IsInTown || TrinityTownRun.IsTryingToTownPortal())
                 return null;
 
-            if (ShouldIgnorePain())
-                return Spells.IgnorePain();
-
             if (ShouldWarCry())
                 return Spells.WarCry();
-
-            if (ShouldThreateningShout())
-                return Spells.ThreateningShout();
 
             if (ShouldSprint())
                 return Spells.Sprint();

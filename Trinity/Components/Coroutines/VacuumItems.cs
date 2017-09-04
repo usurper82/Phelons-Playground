@@ -51,7 +51,7 @@ namespace Trinity.Components.Coroutines
 
             // Items that shouldn't be picked up are currently excluded from cache.
             // a pickup evaluation should be added here if that changes.
-
+            var worldId = Player.WorldSnoId;
             foreach (var item in Targets.OfType<TrinityItem>().OrderBy(x => !x.IsPickupNoClick).ThenBy(x => x.Distance))
             {
                 var validApproach = Grids.Avoidance.IsIntersectedByFlags(Player.Position, item.Position, AvoidanceFlags.NavigationBlocking, AvoidanceFlags.NavigationImpairing) && !Player.IsFacing(item.Position, 90);
@@ -66,9 +66,8 @@ namespace Trinity.Components.Coroutines
                     if (!await MoveToAndInteract.Execute(item.Position, item.AcdId, 3))
                     {
                         Logger.Debug($"[TownLoot] Failed to move to item ({item.Name}) to pick up items :(");
-                        await Coroutine.Sleep((int)(item.Position.Distance2D(Player.Position) + 1) * 150);
                     }
-                    await Coroutine.Sleep(500);
+                    await Coroutine.Sleep((int)(item.Position.Distance2D(Player.Position)) * 50);
                     if (!ZetaDia.Me.UsePower(SNOPower.Axe_Operate_Gizmo, item.Position, Player.WorldDynamicId,
                             item.AcdId))
                     {
@@ -76,6 +75,8 @@ namespace Trinity.Components.Coroutines
                         VacuumedAcdIds.Add(item.AcdId, DateTime.Now);
                         continue;
                     }
+                    if (worldId != Player.WorldSnoId)
+                        return false;
                 }
                 else
                 {

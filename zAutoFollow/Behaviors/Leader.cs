@@ -104,6 +104,8 @@ namespace AutoFollow.Behaviors
                 if (await Party.LeaveWhenInWrongGame())
                     return true;
             }
+            if (ZetaDia.Storage.RiftCompleted && ZetaDia.Storage.RiftStarted)
+                return false;
 
             if (await Coordination.WaitForGameStartDelay())
                 return true;
