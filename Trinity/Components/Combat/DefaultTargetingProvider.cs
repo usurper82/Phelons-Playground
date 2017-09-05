@@ -65,7 +65,7 @@ namespace Trinity.Components.Combat
                 return;
             }
 
-            if (target == null && CurrentTarget != null)
+            if (target == null && CurrentTarget != null) //CurrentTarget != null && !CurrentTarget.IsValid)
             {
                 Core.Logger.Log(LogCategory.Targetting, $"Clearing Target. Was: {CurrentTarget}");
             }

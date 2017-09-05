@@ -18,7 +18,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
         public static TrinityActor Target = CurrentTarget;
         public TrinityPower OffensivePower()
         {
-            Target = Targeting.BestAoeUnit();
+            Target = Targeting.BestTarget();
             if (Target == null)
                 return null;
 

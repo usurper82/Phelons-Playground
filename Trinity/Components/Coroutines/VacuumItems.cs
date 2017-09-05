@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 namespace Trinity.Components.Coroutines
 {
     using System;
+    using Adventurer.Game.Actors;
     using Buddy.Coroutines;
     using IronPython.Modules;
     using Zeta.Bot.Coroutines;
@@ -31,14 +32,16 @@ namespace Trinity.Components.Coroutines
         /* Should be able to wait for finishing this task While doing something.
          * Otherwise we see the bot locks in dilemma between going to Quest/Rift
          * or Vacuuming nearby items -Seq */
-        public static async Task<bool> Execute(bool inTown = false)
+
+        public static async Task<bool> Execute()
         {
 
             bool isVacuuming = false;
             if (Player.IsCasting)
                 return isVacuuming = false;
 
-            var oldItems = VacuumedAcdIds.Where(x => (DateTime.Now - x.Value).TotalSeconds > 30).Select(x => x.Key).ToList();
+            var oldItems =
+                VacuumedAcdIds.Where(x => (DateTime.Now - x.Value).TotalSeconds > 30).Select(x => x.Key).ToList();
             if (oldItems.Any())
             {
                 foreach (var item in oldItems)
@@ -51,49 +54,32 @@ namespace Trinity.Components.Coroutines
 
             // Items that shouldn't be picked up are currently excluded from cache.
             // a pickup evaluation should be added here if that changes.
-            var worldId = Player.WorldSnoId;
-            foreach (var item in Targets.OfType<TrinityItem>().OrderBy(x => !x.IsPickupNoClick).ThenBy(x => x.Distance))
+            foreach (var item in Targets.OfType<TrinityItem>().OrderBy(x => !x.IsPickupNoClick).ThenBy(x => x.Distance).Where(x => x.IsValid && !VacuumedAcdIds.Keys.Contains(x.AcdId)))
             {
-                var validApproach = Grids.Avoidance.IsIntersectedByFlags(Player.Position, item.Position, AvoidanceFlags.NavigationBlocking, AvoidanceFlags.NavigationImpairing) && !Player.IsFacing(item.Position, 90);
+                var validApproach =
+                    Grids.Avoidance.IsIntersectedByFlags(Player.Position, item.Position,
+                        AvoidanceFlags.NavigationBlocking, AvoidanceFlags.NavigationImpairing) &&
+                    !Player.IsFacing(item.Position, 90);
                 Inventory.Backpack.Update();
                 if (Player.FreeBackpackSlots < 4)
                     break;
-                if (inTown)
-                {
-                    if (VacuumedAcdIds.Keys.Contains(item.AcdId))
-                        continue;
-                    Logger.Warn($"Moving to vacuum town item {item.Name} AcdId={item.AcdId} Distance={item.Distance}");
-                    if (!await MoveToAndInteract.Execute(item.Position, item.AcdId, 3))
-                    {
-                        Logger.Debug($"[TownLoot] Failed to move to item ({item.Name}) to pick up items :(");
-                    }
-                    await Coroutine.Sleep((int)(item.Position.Distance2D(Player.Position)) * 50);
-                    if (!ZetaDia.Me.UsePower(SNOPower.Axe_Operate_Gizmo, item.Position, Player.WorldDynamicId,
-                            item.AcdId))
-                    {
-                        Logger.Warn($"[TownLoot] Failed to vacuum town item {item.Name} AcdId={item.AcdId} Distance={item.Position.Distance2D(Player.Position)}");
-                        VacuumedAcdIds.Add(item.AcdId, DateTime.Now);
-                        continue;
-                    }
-                    if (worldId != Player.WorldSnoId)
-                        return false;
-                }
-                else
-                {
-                    /* Added checkpoints to avoid approach stuck -Seq */
-                    if (item.Distance > 8f || !validApproach)
-                        //Core.Logger.Debug("Vacuuming is valid");
-                        continue;
-                    if (!ZetaDia.Me.UsePower(SNOPower.Axe_Operate_Gizmo, item.Position, Player.WorldDynamicId, item.AcdId))
-                    {
-                        Logger.Warn($"Failed to vacuum item {item.Name} AcdId={item.AcdId}");
-                        continue;
-                    }
+                /* Added checkpoints to avoid approach stuck -Seq */
+                if (item.Distance > 8f || !validApproach)
+                    continue;
+                if (!VacuumedAcdIds.Keys.Contains(item.AcdId))
                     VacuumedAcdIds.Add(item.AcdId, DateTime.Now);
-                }
-                count++;
-                Logger.Debug($"Vacuumed: {item.Name} ({item.ActorSnoId}) InternalName={item.InternalName} GbId={item.GameBalanceId}");
+                Logger.Warn(
+                    $"Vacuumed: {item.Name} ({item.ActorSnoId}) InternalName={item.InternalName} GbId={item.GameBalanceId}");
                 SpellHistory.RecordSpell(SNOPower.Axe_Operate_Gizmo);
+                item.Interact();
+                await Coroutine.Sleep(Math.Max((int)item.Position.Distance2D(Player.Position) * 100, 1000));
+                //if (!ZetaDia.Me.UsePower(SNOPower.Axe_Operate_Gizmo, item.Position, Player.WorldDynamicId,
+                //        item.AcdId))
+                //{
+                //    Logger.Warn($"Failed to vacuum item {item.Name} AcdId={item.AcdId}");
+                //    continue;
+                //}
+                count++;
                 isVacuuming = true;
             }
             Logger.Verbose($"Vacuumed {count} items");

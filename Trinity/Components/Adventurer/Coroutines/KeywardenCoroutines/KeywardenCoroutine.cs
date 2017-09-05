@@ -20,6 +20,11 @@ using Zeta.Game.Internals.Actors;
 
 namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
 {
+    using Buddy.Coroutines;
+    using Components.Coroutines;
+    using Framework.Actors.ActorTypes;
+    using Org.BouncyCastle.Asn1.X509;
+
     public class KeywardenCoroutine : IDisposable, ICoroutine
     {
         private readonly KeywardenData _keywardenData;
@@ -35,6 +40,7 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
             Searching,
             Moving,
             Waiting,
+            Looting,
             Completed,
             Failed
         }
@@ -92,6 +98,9 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
                 case States.Waiting:
                     return await Waiting();
 
+                case States.Looting:
+                    return await Looting();
+
                 case States.Completed:
                     return await Completed();
 
@@ -114,7 +123,7 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
 
             if (!_keywardenData.IsAlive)
             {
-                State = States.Completed;
+                State = States.Looting;
                 return false;
             }
             TargetingHelper.TurnCombatOn();
@@ -258,17 +267,36 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
 
         private async Task<bool> Waiting()
         {
-            DisablePulse();
             if (_waitCoroutine == null)
             {
                 _waitCoroutine = new WaitCoroutine(5000);
             }
-            if (!await _waitCoroutine.GetCoroutine()) return false;
-            _waitCoroutine = null;
-            State = States.Completed;
+            Core.Logger.Log("[Keywarden] Waiting...!");
+            await Coroutine.Sleep(2500);
+            State = States.Looting;
             return false;
         }
 
+        private async Task<bool> Looting()
+        {
+            DisablePulse();
+            var loots = ZetaDia.Actors.GetActorsOfType<DiaObject>(true, false).OrderBy(x => x.Distance).Where(x => x.IsFullyValid() && KeywardenDataFactory.KeyIds.Contains(x.ActorSnoId)).ToList();
+            if (!loots.Any())
+            {
+                StatusText = "[Keywarden] No Loot!";
+                Core.Logger.Log("[Keywarden] No Loot!");
+                State = States.Completed;
+                return false;
+            }
+            foreach (var loot in loots)
+            {
+                if (await MoveToAndInteract.Execute(loot, 0, 5))
+                    return true;
+                await Coroutine.Sleep(1000);
+            }
+            State = States.Completed;
+            return false;
+        }
         private async Task<bool> Completed()
         {
             StatusText = "[Keywarden] Completed";

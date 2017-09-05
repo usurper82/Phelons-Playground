@@ -21,6 +21,8 @@ namespace Trinity.Components.Coroutines
             {
                 foreach (var item in Core.Inventory.Backpack.ToList())
                 {
+                    if (Core.Player.FreeBackpackSlots < 4 * bagsOpened)
+                        break;
                     if (item.RawItemType == RawItemType.TreasureBag)
                     {
                         Core.Logger.Log($"Opening Treasure Bag {bagsOpened + 1}, Id={item.AnnId}");
@@ -33,7 +35,7 @@ namespace Trinity.Components.Coroutines
                 {
                     Core.Logger.Log($"Waiting for Treasure Bag loot");
                     await Coroutine.Sleep(2500);
-                    TrinityTownRun.IsWantingTownRun = true;
+                    //TrinityTownRun.IsWantingTownRun = true;
                     return true;
                 }
             }

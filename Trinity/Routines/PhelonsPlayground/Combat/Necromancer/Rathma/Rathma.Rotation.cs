@@ -21,7 +21,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
         {
             var castDistance = Skills.Necromancer.GrimScythe.IsActive ? 10f : 45f;
 
-            Target = Targeting.BestAoeUnit(castDistance, true);
+            Target = Targeting.BestTarget(castDistance, true);
             if (Target == null)
                 return null;
 

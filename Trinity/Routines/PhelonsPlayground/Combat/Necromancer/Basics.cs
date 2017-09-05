@@ -42,8 +42,6 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
 
         public static TrinityPower DestructiblePower()
         {
-            if (Skills.Necromancer.CommandSkeletons.CanCast())
-                return Spells.CommandSkeletons(CurrentTarget);
 
             if (Skills.Necromancer.BoneSpikes.CanCast())
                 return Spells.BoneSpikes(CurrentTarget);

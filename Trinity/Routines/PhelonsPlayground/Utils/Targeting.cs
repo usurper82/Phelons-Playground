@@ -134,8 +134,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         public static TrinityActor BestTarget(float searchRange = 45f, bool includeInAoE = false)
         {
             return CurrentTarget.Type == TrinityObjectType.Shrine || CurrentTarget.IsTreasureGoblin ||
-                   CurrentTarget.IsTreasureGoblin || CurrentTarget.Type == TrinityObjectType.HealthGlobe ||
-                   CurrentTarget.IsElite
+                   CurrentTarget.IsGizmo || CurrentTarget.Type == TrinityObjectType.HealthGlobe
                 ? CurrentTarget
                 : BestAoeUnit(searchRange, true) ?? CurrentTarget;
         }

@@ -23,7 +23,12 @@ using Zeta.Game.Internals.SNO;
 
 namespace Trinity.Components.Coroutines.Town
 {
+    using Adventurer.Game.Events;
+    using Framework.Actors.ActorTypes;
+    using Framework.Avoidance.Structures;
     using Settings;
+    using static Core;
+    using Logger = Zeta.Common.Logger;
 
     public class TrinityTownRun
     {
@@ -108,20 +113,14 @@ namespace Trinity.Components.Coroutines.Town
                     await Coroutine.Sleep(2000);
                 }
 
-                await Coroutine.Wait(8000, () => Core.Actors.Inventory.Any());
+                await Coroutine.Wait(8000, () => Actors.Inventory.Any());
                 await Coroutine.Sleep(1000);
 
                 Core.Logger.Debug("Started Town Run Loop");
 
                 var checkCycles = 2;
-                while (!Core.Player.IsInventoryLockedForGreaterRift)
+                while (!Player.IsInventoryLockedForGreaterRift)
                 {
-                    Core.Inventory.Backpack.ForEach(i => Core.Logger.Debug($"Backpack Item: {i.Name} ({i.ActorSnoId} / {i.InternalName}) RawItemType={i.RawItemType} TrinityItemType={i.TrinityItemType}"));
-                 
-                    await Coroutine.Yield();
-                    GameUI.CloseVendorWindow();
-                    await IdentifyItems.Execute();
-
                     if (!ZetaDia.IsInGame)
                     {
                         StartedOutOfTown = false;
@@ -130,6 +129,28 @@ namespace Trinity.Components.Coroutines.Town
                         IsVendoring = false;
                         return false;
                     }
+
+                    Inventory.Backpack.ForEach(i => Core.Logger.Debug($"Backpack Item: {i.Name} ({i.ActorSnoId} / {i.InternalName}) RawItemType={i.RawItemType} TrinityItemType={i.TrinityItemType}"));
+                 
+                    await Coroutine.Yield();
+                    if (Player.FreeBackpackSlots > 4)
+                    {
+                        if (!TrinitySettings.Settings.Items.DontPickupInTown &&
+                            ZetaDia.IsInTown ||
+                            PluginEvents.CurrentProfileType == ProfileType.Bounty &&
+                            !Core.Settings.Items.StashTreasureBags)
+                        {
+                            if (await OpenTreasureBags.Execute())
+                                continue;
+
+                            if (await TownPickup())
+                                continue;
+                        }
+                    }
+
+                    GameUI.CloseVendorWindow();
+                    if (await IdentifyItems.Execute())
+                        continue;
 
                     if (!await ExtractLegendaryPowers.Execute())
                         continue;
@@ -146,8 +167,6 @@ namespace Trinity.Components.Coroutines.Town
                     if (await Any(
                         DropItems.Execute,
                         () => StashItems.Execute(true),
-                        OpenTreasureBags.Execute,
-                        () => VacuumItems.Execute(!TrinitySettings.Settings.Items.DontPickupInTown && ZetaDia.IsInTown),
                         SellItems.Execute,
                         SalvageItems.Execute))
                         continue;
@@ -181,6 +200,60 @@ namespace Trinity.Components.Coroutines.Town
                 IsVendoring = false;
             }
             return false;
+        }
+
+        private static async Task<bool> TownPickup()
+        {
+            var closestItem =
+                Targets.OfType<TrinityItem>()
+                    .OrderBy(x => x.Distance)
+                    .FirstOrDefault(x => !VacuumItems.VacuumedAcdIds.Keys.Contains(x.AcdId));
+            if (closestItem == null)
+            {
+                Core.Logger.Warn(
+                    $"[TownLoot] No valid town items to pick up.");
+                return false;
+            }
+
+            //var validApproach =
+            //    Grids.Avoidance.IsIntersectedByFlags(Player.Position, closestItem.Position,
+            //        AvoidanceFlags.NavigationBlocking, AvoidanceFlags.NavigationImpairing) &&
+            //    !Player.IsFacing(closestItem.Position, 90);
+            //if (!validApproach)
+            //{
+            //    Core.Logger.Warn(
+            //        $"[TownLoot] No valid approach to town item.");
+            //    return false;
+            //}
+
+            //if (await MoveToAndInteract.Execute(closestItem.Position, closestItem.AcdId, 0))
+            //    return true;
+            //Core.Logger.Warn(
+            //    $"[TownLoot] Gave up trying to vacuum town closestItem {closestItem.Name} AcdId={closestItem.AcdId} Distance={closestItem.Position.Distance2D(Player.Position)}");
+            //return false;
+
+            if (closestItem.Distance > 8f)
+            {
+                Core.Logger.Warn(
+                    $"[TownLoot] Moving to vacuum town closestItem {closestItem.Name} AcdId={closestItem.AcdId} Distance={closestItem.Distance}");
+                await Navigator.MoveTo(closestItem.Position);
+                //Core.Logger.Warn(
+                    //$"[TownLoot] Failed to move to closestItem ({closestItem.Name}) to pick up closestItems.  Trying to Move there.");
+                return true;
+            }
+            await Coroutine.Sleep(Math.Max((int) closestItem.Position.Distance2D(Player.Position) * 100, 1000));
+            if (!await VacuumItems.Execute())
+            {
+                if (!ZetaDia.Me.UsePower(SNOPower.Axe_Operate_Gizmo, closestItem.Position, Player.WorldDynamicId,
+                    closestItem.AcdId))
+                {
+                    Core.Logger.Error(
+                        $"[TownLoot] Gave up trying to vacuum town item {closestItem.Name} AcdId={closestItem.AcdId} Distance={closestItem.Position.Distance2D(Player.Position)}");
+                    VacuumItems.VacuumedAcdIds.Add(closestItem.AcdId, DateTime.Now);
+                    return false;
+                }
+            }
+            return true;
         }
 
         public static async Task<bool> Any(params Func<Task<bool>>[] taskProducers)
@@ -245,12 +318,12 @@ namespace Trinity.Components.Coroutines.Town
                 return false;
             }
 
-            if (Core.Player.IsDead)
+            if (Player.IsDead)
                 return false;
 
             if (!RepairItems.EquipmentNeedsRepair())
             {
-                if (Core.Player.IsInventoryLockedForGreaterRift)
+                if (Player.IsInventoryLockedForGreaterRift)
                 {
                     Core.Logger.Verbose("Can't townrun while in greater rift!");
                     DontAttemptTownRunUntil = DateTime.UtcNow + TimeSpan.FromSeconds(5);
@@ -258,7 +331,7 @@ namespace Trinity.Components.Coroutines.Town
                 }
 
                 // Close Greater rift before doing a town run.
-                if (!Core.Settings.Items.KeepLegendaryUnid && Core.Player.ParticipatingInTieredLootRun)
+                if (!Core.Settings.Items.KeepLegendaryUnid && Player.ParticipatingInTieredLootRun)
                 {
                     return false;
                 }
@@ -271,21 +344,21 @@ namespace Trinity.Components.Coroutines.Town
                 return false;
             }
 
-            if (Core.Player.WorldSnoId == 71150 && ZetaDia.CurrentQuest.QuestSnoId == 87700 && ZetaDia.CurrentQuest.StepId == -1)
+            if (Player.WorldSnoId == 71150 && ZetaDia.CurrentQuest.QuestSnoId == 87700 && ZetaDia.CurrentQuest.StepId == -1)
             {
                 Core.Logger.Debug("Can't townrun with the current quest (A1 New Game) !");
                 DontAttemptTownRunUntil = DateTime.UtcNow + TimeSpan.FromSeconds(30);
                 return false;
             }
 
-            if (GameData.BossLevelAreaIDs.Contains(Core.Player.LevelAreaId))
+            if (GameData.BossLevelAreaIDs.Contains(Player.LevelAreaId))
             {
                 Core.Logger.Debug("Unable to Town Portal - Boss Area!");
                 DontAttemptTownRunUntil = DateTime.UtcNow + TimeSpan.FromSeconds(10);
                 return false;
             }
 
-            if (GameData.NeverTownPortalLevelAreaIds.Contains(Core.Player.LevelAreaId))
+            if (GameData.NeverTownPortalLevelAreaIds.Contains(Player.LevelAreaId))
             {
                 Core.Logger.Log("Unable to Town Portal in this area!");
                 DontAttemptTownRunUntil = DateTime.UtcNow + TimeSpan.FromSeconds(10);
@@ -364,7 +437,7 @@ namespace Trinity.Components.Coroutines.Town
                 return true;
             }
 
-            if (Core.Player.IsCastingPortal)
+            if (Player.IsCastingPortal)
             {
                 lastTownPortalCheckTime = DateTime.UtcNow;
                 lastTownPortalCheckResult = true;
@@ -397,7 +470,7 @@ namespace Trinity.Components.Coroutines.Town
                 return false;
             }
      
-            Core.PlayerMover.MoveStop();
+            PlayerMover.MoveStop();
 
             if (actor.IsFullyValid() && !actor.Interact())
             {

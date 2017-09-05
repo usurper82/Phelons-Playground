@@ -22,7 +22,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Witchdoctor.LoN
     {
         public TrinityPower OffensivePower()
         {
-            Target = Targeting.BestAoeUnit(45f, true);
+            Target = Targeting.BestTarget(45f, true);
             if (Target == null)
                 return null;
 

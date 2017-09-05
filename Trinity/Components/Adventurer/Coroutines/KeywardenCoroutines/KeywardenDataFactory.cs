@@ -7,7 +7,6 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
     //act2 gluttony
     //act3 war
     //act4 evil
-
     //A1: ActorId: 366946, Type: Item, Name: Infernal Machine of Bones
     //A2: ActorId: 366947, Type: Item, Name: Infernal Machine of Gluttony
     //A3: ActorId: 366948, Type: Item, Name: Infernal Machine of War
@@ -20,6 +19,15 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
 
     public static class KeywardenDataFactory
     {
+
+
+        public static HashSet<int> KeyIds = new HashSet<int>
+        {
+            366946,
+            366947,
+            366948,
+            366949
+        };
         public static HashSet<int> A4CorruptionSNOs = new HashSet<int> { 210268, 210120 };
 
         public static HashSet<int> GoblinSNOs = new HashSet<int>
@@ -125,7 +133,6 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
          };
 
         public static Dictionary<Act, KeywardenData> Items;
-
         static KeywardenDataFactory()
         {
             Items = new Dictionary<Act, KeywardenData>();
