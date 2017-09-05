@@ -241,6 +241,7 @@ namespace Trinity.Components.Coroutines.Town
                     //$"[TownLoot] Failed to move to closestItem ({closestItem.Name}) to pick up closestItems.  Trying to Move there.");
                 return true;
             }
+            Core.PlayerMover.MoveTowards(closestItem.Position);
             await Coroutine.Sleep(Math.Max((int) closestItem.Position.Distance2D(Player.Position) * 100, 1000));
             if (!await VacuumItems.Execute())
             {
