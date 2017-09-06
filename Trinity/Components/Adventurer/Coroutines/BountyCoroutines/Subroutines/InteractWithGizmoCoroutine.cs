@@ -154,7 +154,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
 
         private async Task<bool> Moving()
         {
-            if (!await NavigationCoroutine.MoveTo(_objectiveLocation, 5)) return false;
+            if (!await NavigationCoroutine.MoveTo(_objectiveLocation, 7)) return false;
             if (NavigationCoroutine.LastResult == CoroutineResult.Failure)
             {
                 _objectiveLocation = Vector3.Zero;
