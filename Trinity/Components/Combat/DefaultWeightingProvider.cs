@@ -20,6 +20,8 @@ using Zeta.Game.Internals.SNO;
 
 namespace Trinity.Components.Combat
 {
+    using Adventurer.Game.Events;
+
     public interface IWeightingProvider
     {
         TrinityActor WeightActors(IEnumerable<TrinityActor> objects);
@@ -1310,7 +1312,12 @@ namespace Trinity.Components.Combat
                                         cacheObject.WeightInfo += $"Ignoring {cacheObject.InternalName} - Used.";
                                         break;
                                     }
-
+                                    if (PluginEvents.CurrentProfileType == ProfileType.Bounty && cacheObject.Type == TrinityObjectType.CursedShrine)
+                                    {
+                                        cacheObject.Weight = MaxWeight;
+                                        cacheObject.WeightInfo += $"Brabbing Shrine for Bounty {cacheObject.InternalName}";
+                                        break;
+                                    }
                                     // Campaign A5 Quest "Lost Treasure of the Nephalem" - have to interact with nephalem switches first... 
                                     // Quest: x1_Adria, Id: 257120, Step: 108 - disable all looting, pickup, and objects
                                     if (Core.Player.WorldType != Act.OpenWorld && Core.Player.CurrentQuestSNO == 257120 && Core.Player.CurrentQuestStep == 108)

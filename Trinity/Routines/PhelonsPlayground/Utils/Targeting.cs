@@ -21,6 +21,7 @@ using Zeta.Game.Internals.Actors;
 
 namespace Trinity.Routines.PhelonsPlayground.Utils
 {
+    using Components.Adventurer.Game.Combat;
     using static Core;
     using PlayerMover = DbProvider.PlayerMover;
     using StuckHandler = DbProvider.StuckHandler;
@@ -133,7 +134,8 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
 
         public static TrinityActor BestTarget(float searchRange = 45f, bool includeInAoE = false)
         {
-            return CurrentTarget.Type == TrinityObjectType.Shrine || CurrentTarget.IsTreasureGoblin ||
+            return CurrentTarget.Type == TrinityObjectType.Shrine || CurrentTarget.IsTreasureGoblin || 
+                SafeZerg.CorruptGrowthIds.Contains(CurrentTarget.ActorSnoId) ||
                    CurrentTarget.IsGizmo || CurrentTarget.Type == TrinityObjectType.HealthGlobe
                 ? CurrentTarget
                 : BestAoeUnit(searchRange, true) ?? CurrentTarget;

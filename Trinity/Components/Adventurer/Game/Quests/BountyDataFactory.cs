@@ -122,9 +122,10 @@ namespace Trinity.Components.Adventurer.Game.Quests
                 Coroutines = new List<ISubroutine>
                 {
                     new EnterLevelAreaCoroutine(quest.QuestId, quest.Waypoint.WorldSnoId, BountyHelpers.DynamicBountyPortals.Values.ToList()),
+                    new InteractWithGizmoCoroutine(quest.QuestId, -1, (int)SNOActor.P4_BountyGrounds_CursedShrine_A5, 2912417, 5),
                     new ClearLevelAreaCoroutine(quest.QuestId),
-                    new InteractWithGizmoCoroutine(448214, 443678, 445737, -1, 5, 1, 10, true),
-                    new ClearLevelAreaCoroutine(quest.QuestId)
+                    //new InteractWithGizmoCoroutine(448214, 443678, 445737, -1, 5, 1, 10, true),
+                    //new ClearLevelAreaCoroutine(quest.QuestId)
                 }
             };
         }

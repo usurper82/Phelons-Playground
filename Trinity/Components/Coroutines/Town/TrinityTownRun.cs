@@ -131,8 +131,6 @@ namespace Trinity.Components.Coroutines.Town
                     }
 
                     Inventory.Backpack.ForEach(i => Core.Logger.Debug($"Backpack Item: {i.Name} ({i.ActorSnoId} / {i.InternalName}) RawItemType={i.RawItemType} TrinityItemType={i.TrinityItemType}"));
-                 
-                    await Coroutine.Yield();
                     if (Player.FreeBackpackSlots > 4)
                     {
                         if (!TrinitySettings.Settings.Items.DontPickupInTown &&
@@ -140,13 +138,15 @@ namespace Trinity.Components.Coroutines.Town
                             PluginEvents.CurrentProfileType == ProfileType.Bounty &&
                             !Core.Settings.Items.StashTreasureBags)
                         {
-                            if (await OpenTreasureBags.Execute())
+                            if (await TownPickup())
                                 continue;
 
-                            if (await TownPickup())
+                            if (await OpenTreasureBags.Execute())
                                 continue;
                         }
                     }
+
+                    await Coroutine.Yield();
 
                     GameUI.CloseVendorWindow();
                     if (await IdentifyItems.Execute())
@@ -164,11 +164,16 @@ namespace Trinity.Components.Coroutines.Town
                     if (!await CubeItemsToMaterials.Execute())
                         continue;
 
-                    if (await Any(
-                        DropItems.Execute,
-                        () => StashItems.Execute(true),
-                        SellItems.Execute,
-                        SalvageItems.Execute))
+                    if (await DropItems.Execute())
+                        continue;
+
+                    if (await StashItems.Execute(true))
+                        continue;
+
+                    if (await SellItems.Execute())
+                        continue;
+
+                    if (await SalvageItems.Execute())
                         continue;
 
                     //if (await VacuumItems.Execute(true))//!TrinitySettings.Settings.Items.DontPickupInTown

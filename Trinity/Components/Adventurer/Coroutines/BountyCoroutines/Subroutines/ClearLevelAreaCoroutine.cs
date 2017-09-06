@@ -18,19 +18,38 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
     public class ClearLevelAreaCoroutine : IBountySubroutine
     {
         private readonly int _questId;
+        private readonly int _objectiveId;
         private bool _isDone;
         private States _state;
         private Vector3 _hostileLocation = Vector3.Zero;
+        private Vector3 _objectiveLocation = Vector3.Zero;
         private BountyData _bountyData;
+        private bool _stopWhenExplored;
 
         public enum States
         {
             NotStarted,
             Searching,
             KillingHostile,
+            MovingToObjective,
             Completed,
             Failed
         }
+
+        //public int ObjectiveId
+        //{
+        //    get { return _objectiveId; }
+        //    get
+        //    {
+        //        if (_objectiveId == value) return;
+        //        if (value > 0)
+        //        {
+        //            Core.Logger.Log("[ClearLevelArea] Objective ID: " + value);
+        //            StatusText = "[ClearLevelArea]] Objective ID: " + value;
+        //        }
+        //        _objectiveId = value;
+        //    }
+        //}
 
         public States State
         {
@@ -57,10 +76,11 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             get { return _bountyData ?? (_bountyData = BountyDataFactory.GetBountyData(_questId)); }
         }
 
-        public ClearLevelAreaCoroutine(int questId, bool stopWhenExplored = false)
+        public ClearLevelAreaCoroutine(int questId, bool stopWhenExplored = false, int objectiveId = -1)
         {
             _questId = questId;
             _stopWhenExplored = stopWhenExplored;
+            _objectiveId = objectiveId;
             Id = Guid.NewGuid();
         }
 
@@ -80,6 +100,9 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
 
                 case States.Searching:
                     return await Searching();
+
+                case States.MovingToObjective:
+                    return await MovingToObjective();
 
                 case States.KillingHostile:
                     return await KillingHostile();
@@ -111,6 +134,16 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
                     return false;
                 }
             }
+            if (_objectiveLocation == Vector3.Zero)
+            {
+                _objectiveLocation = FindNearestObjectiveLocation();
+                if (_objectiveLocation != Vector3.Zero)
+                {
+                    Core.Logger.Log("[ClearLevelArea] Completed");
+                    State = States.MovingToObjective;
+                    return false;
+                }
+            }
 
             var ids = BountyData?.LevelAreaIds ?? new HashSet<int> {ZetaDia.CurrentLevelAreaSnoId};
 
@@ -124,6 +157,18 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             }
 
             ExplorationGrid.Instance.WalkableNodes.ForEach(n => { n.IsVisited = false; });
+            return false;
+        }
+
+        private async Task<bool> MovingToObjective()
+        {
+            if (_objectiveLocation == Vector3.Zero)
+            {
+                State = States.Searching;
+                return false;
+            }
+            if (!await NavigationCoroutine.MoveTo(_objectiveLocation, 7)) return false;
+            State = States.Completed;
             return false;
         }
 
@@ -166,16 +211,19 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
         public void DisablePulse()
         {
         }
-
-        private static readonly WaitTimer HostileSearchTimer = new WaitTimer(TimeSpan.FromMilliseconds(500));
-        private bool _stopWhenExplored;
-
+        
         public Vector3 FindNearestHostileUnitLocation()
         {
-            if (!HostileSearchTimer.IsFinished) return _hostileLocation;
-            HostileSearchTimer.Stop();
             var actor = ZetaDia.Actors.GetActorsOfType<DiaUnit>(true).Where(o => o.IsValid && o.CommonData != null && o.CommonData.IsValid && o.IsAlive && o.CommonData.MinimapVisibilityFlags != 0).OrderBy(o => o.Distance).FirstOrDefault();
-            HostileSearchTimer.Reset();
+
+            if (actor == null) return Vector3.Zero;
+            Core.Logger.Debug("[ClearLevelArea] Found a hostile unit {0} at {1} distance", ((SNOActor)actor.ActorSnoId).ToString(), actor.Distance);
+            return actor.Position;
+        }
+        
+        public Vector3 FindNearestObjectiveLocation()
+        {
+            var actor = ZetaDia.Actors.GetActorsOfType<DiaGizmo>(true).Where(o => o.ActorSnoId == _objectiveId && o.IsValid && o.CommonData != null && o.CommonData.IsValid && o.CommonData.MinimapVisibilityFlags != 0).OrderBy(o => o.Distance).FirstOrDefault();
 
             if (actor == null) return Vector3.Zero;
             Core.Logger.Debug("[ClearLevelArea] Found a hostile unit {0} at {1} distance", ((SNOActor)actor.ActorSnoId).ToString(), actor.Distance);

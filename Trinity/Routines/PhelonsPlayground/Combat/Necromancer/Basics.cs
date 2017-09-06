@@ -42,16 +42,19 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
 
         public static TrinityPower DestructiblePower()
         {
+            if (CurrentTarget.IsInLineOfSight && CurrentTarget.Distance < 45)
+            {
+                return Core.Routines.CurrentRoutine.GetOffensivePower();
+                if (Skills.Necromancer.BoneSpikes.CanCast())
+                    return Spells.BoneSpikes(CurrentTarget);
 
-            if (Skills.Necromancer.BoneSpikes.CanCast())
-                return Spells.BoneSpikes(CurrentTarget);
+                if (Skills.Necromancer.SiphonBlood.CanCast())
+                    return Spells.SiphonBlood(CurrentTarget);
 
-            if (Skills.Necromancer.SiphonBlood.CanCast())
-                return Spells.SiphonBlood(CurrentTarget);
-
-            if (Skills.Necromancer.GrimScythe.CanCast())
-                return Spells.GrimScythe(CurrentTarget);
-            return null;
+                if (Skills.Necromancer.GrimScythe.CanCast())
+                    return Spells.GrimScythe(CurrentTarget);
+            }
+            return Spells.Walk(CurrentTarget.Position);
         }
 
         public static TrinityPower MovementPower(Vector3 destination)
