@@ -46,8 +46,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Witchdoctor
                 Core.Logger.Error(LogCategory.Routine, $"Locust Swarm on {target}");
                 return true;
             }
-
-            private static Stopwatch _firstHaunt = new Stopwatch();
+            
             public static bool ShouldHaunt(out TrinityActor target)
             {
                 target = Target;

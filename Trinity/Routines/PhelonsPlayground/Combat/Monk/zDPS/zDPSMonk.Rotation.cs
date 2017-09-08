@@ -20,7 +20,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
         public static TrinityActor Target = CurrentTarget;
         public TrinityPower OffensivePower()
         {
-            Target = Targeting.BestTarget(20f, true);
+            Target = Targeting.BestTarget(185, true);
             if (Target == null)
                 return null;
 

@@ -127,7 +127,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
 
         public static TrinityActor BestAoeUnit(float range = 45f, bool includeInAoE = false)
         {
-            return BestEliteInRange(range, includeInAoE) ??
+            return BestEliteInRange(range, includeInAoE) ?? ClosestUnit(range, Monk) ??
                    GetBestClusterUnit(7, range, true, includeInAoE) ??
                    CurrentTarget;
         }
@@ -370,7 +370,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         {
             return
                 SafeList(objectsInAoe)
-                    .OrderBy(u => u.HitPointsPct)
+                    .OrderBy(u => u.Distance)
                     .FirstOrDefault(
                         u => u.IsUnit && (u.IsElite || u.IsChampion || u.IsBoss) && u.Position.Distance2D(Player.Position) <= range);
         }
@@ -1391,11 +1391,11 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         }
 
         /// <summary>
-        /// Checks if for units without a debuff
+        /// Checks if for closest unit to actor.
         /// </summary>
-        internal static TrinityActor ClosestUnit(float range, Func<TrinityActor, bool> condition = null)
+        internal static TrinityActor ClosestUnit(float range, TrinityActor actor)
         {
-            return ObjectCache.Where(u => u.Position.Distance2D(Player.Position) <= range)
+            return ObjectCache.Where(u => u.Position.Distance2D(actor.Position) <= range)
                 .OrderBy(u => u.IsElite)
                 .ThenBy(u => u.Distance)
                 .FirstOrDefault();

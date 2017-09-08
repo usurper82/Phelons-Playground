@@ -36,26 +36,23 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Witchdoctor.LoN
 
             return true;
         }
-        private static Stopwatch _firstBarrage = new Stopwatch();
+        private static int _barrageCount;
         public static bool ShouldSpiritBarrage()
         {
             if (!Skills.WitchDoctor.SpiritBarrage.CanCast())
                 return false;
 
-            if (_firstBarrage.ElapsedMilliseconds > 4000 && Skills.WitchDoctor.SpiritBarrage.TimeSinceUse < 4000)
-            {
-                _firstBarrage.Stop();
+            if (_barrageCount == 4 && Skills.WitchDoctor.SpiritBarrage.TimeSinceUse < 3000)
                 return false;
-            }
 
-            if (!_firstBarrage.IsRunning)
-            {
-                _firstBarrage.Reset();
-                _firstBarrage.Start();
-            }
+            if (_barrageCount == 4)
+                _barrageCount = 0;
+
+            if (SpellHistory.LastPowerUsed == SNOPower.Witchdoctor_SpiritBarrage)
+                _barrageCount++;
             
             Core.Logger.Error(LogCategory.Routine,
-                $"[Spirit Barrage] - Time Since First Barrage: {_firstBarrage.ElapsedMilliseconds}");
+                $"[Spirit Barrage] - Spirit Barrage Count: {_barrageCount}");
             return true;
         }
 

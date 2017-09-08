@@ -32,13 +32,16 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Witchdoctor.LoN
             TrinityActor target = Target;
 
 
-            if (ShouldWalkToBuff(out location, Target.Position, 45f))
+            if (ShouldWalkToBuff(out location, Target.Position, 20f))
                 return Walk(location, 3f);
 
-            if (Target.RadiusDistance < 45f)
+            if (Target.RadiusDistance < 20f)
             {
                 if (ShouldSoulHarvest())
                     return SoulHarvest(Player.Position);
+
+                if (ShouldSpiritBarrage())
+                    return SpiritBarrage(Target);
 
                 if (ShouldGraspOfTheDead(out target))
                     return GraspOfTheDead(target);
@@ -49,11 +52,9 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Witchdoctor.LoN
                 if (ShouldLocustSwarm(out target))
                     return LocustSwarm(target);
 
-                if (ShouldSpiritBarrage())
-                    return SpiritBarrage(Target);
-
                 if (ShouldHaunt(out target))
                     return Haunt(target);
+                return SpiritBarrage(Target);
             }
 
             if (ShouldWalk(out location, 45f))

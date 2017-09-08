@@ -428,7 +428,7 @@ namespace Trinity.Components.Combat
                                             u.IsElite &&
                                             u.Position.Distance2D(cacheObject.Position) <= TrinityCombat.Routines.Current.EliteRange);
 
-                                    int nearbyTrashCount = objects.Count(u => u.IsUnit && u.HitPoints > 0 && u.IsTrashMob && (u.IsInLineOfSight || u.HasBeenInLoS) && cacheObject.Position.Distance(ZetaDia.Me.Position) <= TrinityCombat.Routines.Current.TrashRange);
+                                    int nearbyTrashCount = objects.Count(u => u.IsUnit && u.HitPoints > 0 && u.IsTrashMob && (u.IsInLineOfSight || u.HasBeenInLoS) && cacheObject.Position.Distance(u.Position) <= TrinityCombat.Routines.Current.TrashRange);
 
                                     //bool ignoreSummoner = cacheObject.IsSummoner && !Core.Settings.Combat.Misc.ForceKillSummoners;
                                     //bool ignoreSummoner = cacheObject.IsSummoner && !Core.Settings.Combat.Misc.ForceKillSummoners;

@@ -89,7 +89,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
 
         public TrinityPower GetDefensivePower()
         {
-            var position = Targeting.HealthGlobeExists(35f) ? Targeting.GetBestHealthGlobeClusterPoint(35f) : Targeting.GetLoiterPosition(Targeting.ClosestUnit(35f), 35f);
+            var position = Targeting.HealthGlobeExists(35f) ? Targeting.GetBestHealthGlobeClusterPoint(35f) : Targeting.GetLoiterPosition(Targeting.ClosestUnit(35f, Target), 35f);
             return Spells.FuriousCharge(position);
         }
 

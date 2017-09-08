@@ -162,11 +162,11 @@ namespace AutoFollow.Behaviors
             switch (State)
             {
                 case FollowMode.FollowLeader:
-                    var catchUpDistance = AutoFollow.CurrentLeader.CurrentTarget != null ? Settings.Coordination.CatchUpDistance : Settings.Coordination.FollowDistance;
+                    var catchUpDistance = AutoFollow.CurrentLeader.CurrentTarget != null ? 20 : 5;//Settings.Coordination.CatchUpDistance : Settings.Coordination.FollowDistance;
                     if (AutoFollow.CurrentLeader.Distance > catchUpDistance)
                     {
                         Log.Info("Moving to Follow Leader.");
-                        await Navigator.MoveTo(AutoFollow.CurrentLeader.Destination);
+                        await Navigator.MoveTo(AutoFollow.CurrentLeader.Position);
                         return true;
                     }
                     break;
@@ -174,7 +174,7 @@ namespace AutoFollow.Behaviors
                     if (AutoFollow.CurrentLeader.Distance > Settings.Coordination.CatchUpDistance)
                     {
                         Log.Info("Moving to Chase Leader.");
-                        await Navigator.MoveTo(AutoFollow.CurrentLeader.Destination);
+                        await Navigator.MoveTo(AutoFollow.CurrentLeader.Position);
                         return true;
                     }
                     break;
