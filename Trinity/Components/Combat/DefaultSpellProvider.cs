@@ -150,6 +150,9 @@ namespace Trinity.Components.Combat
             if (!HasEnoughCharges(skill))
                 return false;
 
+            if (PowerManager.GetPowerCooldown(skill.SNOPower) >= skill.TimeSinceUse)
+                return false;
+
             PowerManager.CanCastFlags reason;
             if (!PowerManager.CanCast(skill.SNOPower, out reason))
             {

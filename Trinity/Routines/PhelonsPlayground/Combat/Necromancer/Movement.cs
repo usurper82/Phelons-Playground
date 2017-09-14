@@ -47,7 +47,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
 
             var buffPosition = Targeting.BestBuffPosition(distance, Target.Position, Player.CurrentHealthPct > 0.35, out position);
 
-            if (buffPosition && Player.Position.Distance2D(position) > 7)
+            if (buffPosition && Player.Position.Distance2D(position) > 7f)
             {
                 Core.Logger.Error(LogCategory.Routine,
                     $"[Blood Rush] - To Best Buff Position: {position} Distance: {Player.Position.Distance2D(position)}");
@@ -82,20 +82,21 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
         public static bool ShouldWalk(out Vector3 position, float distance)
         {
             position = Vector3.Zero;
-            
-            if (CurrentTarget != null && !CurrentTarget.IsUnit)
-            {
-                Core.Logger.Error(LogCategory.Routine,
-                    $"[Walk] - Grabbing {CurrentTarget.Name}");
-                position = CurrentTarget.Position;
-                return true;
-            }
+
             var closestGlobe = Targeting.ClosestGlobe(15f);
             if (closestGlobe != null && Player.CurrentHealthPct < 0.50 && Player.Position.EasyNavToPosition(closestGlobe.Position))
             {
                 Core.Logger.Error(LogCategory.Routine,
                     $"[Walk] - Grabbing Health Globe.");
                 position = closestGlobe.Position;
+                return true;
+            }
+
+            if (CurrentTarget != null && !CurrentTarget.IsUnit)
+            {
+                Core.Logger.Error(LogCategory.Routine,
+                    $"[Walk] - Grabbing {CurrentTarget.Name}");
+                position = CurrentTarget.Position;
                 return true;
             }
 

@@ -92,6 +92,12 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
             {
                 if (!Skills.Necromancer.Devour.CanCast())
                     return false;
+                if (Skills.Necromancer.LandOfTheDead.TimeSinceUse < 10000)
+                {
+                    Core.Logger.Error(LogCategory.Routine,
+                        $"[Devour] - Land of the Dead is active");
+                    return true;
+                }
                 var corpseCount = Targeting.CorpseCount(60f);
                 if (CurrentTarget != null && Player.PrimaryResourceMax - Player.PrimaryResource > corpseCount * 10 ||
                     Player.PrimaryResourcePct > 0.85 || corpseCount <= 1)
@@ -165,17 +171,17 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
             public static bool ShouldLandOfTheDead()
             {
                 if (!Skills.Necromancer.LandOfTheDead.CanCast() || Player.PrimaryResourcePct < 0.90 ||
-                    Skills.Necromancer.Simulacrum.IsActive && !Skills.Necromancer.Simulacrum.CanCast())
+                    Skills.Necromancer.Simulacrum.IsActive && !Skills.Necromancer.Simulacrum.CanCast() && Skills.Necromancer.Simulacrum.TimeSinceUse > 15000)
                     return false;
                 var elite = Targeting.BestLOSEliteInRange(65f);
                 if (elite == null || Skills.Necromancer.LandOfTheDead.TimeSinceUse < 10000)
                     return false;
 
                 //Trying to alternate cooldowns
-                if (!Skills.Necromancer.CorpseLance.IsActive && 
-					Targeting.Players.Any() && (Skills.Necromancer.Frailty.CanCast() && elite.IsChampion ||
-                                                Skills.Necromancer.Decrepify.CanCast() && elite.IsElite))
-                    return false;
+     //           if (!Skills.Necromancer.CorpseLance.IsActive && 
+					//Targeting.Players.Any() && (Skills.Necromancer.Frailty.CanCast() && elite.IsChampion ||
+     //                                           Skills.Necromancer.Decrepify.CanCast() && elite.IsElite))
+     //               return false;
 
                 Core.Logger.Error(LogCategory.Routine,
                     $"[Land of the Dead] - Because of Elite {elite}.");
@@ -193,10 +199,10 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
                     return false;
 
                 //Trying to alternate cooldowns
-                if (!Skills.Necromancer.CorpseLance.IsActive &&
-                    Targeting.Players.Any() && (Skills.Necromancer.Frailty.CanCast() && elite.IsChampion ||
-                                                Skills.Necromancer.Decrepify.CanCast() && elite.IsElite))
-                    return false;
+                //if (!Skills.Necromancer.CorpseLance.IsActive &&
+                //    Targeting.Players.Any() && (Skills.Necromancer.Frailty.CanCast() && elite.IsChampion ||
+                //                                Skills.Necromancer.Decrepify.CanCast() && elite.IsElite))
+                //    return false;
 
                 Core.Logger.Error(LogCategory.Routine,
                     $"[Simulaccrum] - Because of Elite {elite}.");

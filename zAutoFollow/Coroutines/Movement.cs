@@ -340,13 +340,13 @@ namespace AutoFollow.Coroutines
                 await MoveTo(() => AutoFollow.GetUpdatedMessage(player), player.HeroAlias, range,
                     t =>
                     {
-                        if (!player.IsInSameWorld)
-                            return true;
-
                         if (t.Distance > Settings.Coordination.TeleportDistance && !RiftHelper.IsInGreaterRift)
                             return true;
 
                         if (t.Distance < Settings.Coordination.CatchUpDistance && Targetting.RoutineWantsToAttackUnit())
+                            return true;
+
+                        if (t.Distance < Settings.Coordination.FollowDistance && !Targetting.RoutineWantsToAttackUnit())
                             return true;
 
                         return false;
@@ -374,9 +374,13 @@ namespace AutoFollow.Coroutines
                 215744
             };
 
-            if (AutoFollow.CurrentLeader.IsInGreaterRift && (!AutoFollow.CurrentLeader.IsInSameWorld || AutoFollow.CurrentLeader.Distance > 100f))
+            Log.Warn("IsInRift={0} IsInSameWorld={1}",
+                AutoFollow.CurrentLeader.IsInRift, AutoFollow.CurrentLeader.IsInSameWorld);
+            if (AutoFollow.CurrentLeader.IsInRift && !AutoFollow.CurrentLeader.IsInSameWorld)
             {
-                var marker = Data.Markers.FirstOrDefault(m => markerExitTextures.Contains(m.MinimapTextureSnoId) || m.IsPortalExit);
+                var marker =
+                    Data.Markers.FirstOrDefault(
+                        m => markerExitTextures.Contains(m.MinimapTextureSnoId) || m.IsPortalExit);
                 if (marker != null)
                 {
                     // Level 1 entrance from town
@@ -400,11 +404,19 @@ namespace AutoFollow.Coroutines
                     // level 4 entrance
                     //Id = -780668287 MinimapTextureSnoId = 102321 NameHash = 1938876095 IsPointOfInterest = False IsPortalEntrance = True IsPortalExit = False IsWaypoint = False Location = x = "311" y = "481" z = "-3"  Distance = 1
 
-                    Log.Verbose("Exit Marker found! Id={0} Distance={1}",
-                        marker.Id, marker.Position.Distance(Player.Position));
-
                     await MoveTo(marker.Position, "Exit Marker", 15f);
                     return true;
+                }
+
+                var portalUsed =
+                    Data.Portals.Where(p => p.Position.Distance(Player.Position) < 10f)
+                        .OrderBy(p => p.Position.Distance(Player.Position))
+                        .FirstOrDefault();
+                if (portalUsed != null)
+                {
+                    Log.Verbose("Exit Marker found! Id={0} Distance={1}",
+                        portalUsed.ACDId, portalUsed.Position.Distance(Player.Position));
+                    portalUsed?.Interact();
                 }
             }
 

@@ -14,12 +14,16 @@ using Zeta.Game.Internals.SNO;
 
 namespace AutoFollow.Resources
 {
+    using Trinity.Components.Combat.Resources;
+    using Trinity.DbProvider;
+
     public enum CombatState
     {
         None = 0,
         Enabled,
         Disabled,
-        Pulsing
+        Pulsing,
+        Movement
     }
 
     public static class Targetting
@@ -67,7 +71,9 @@ namespace AutoFollow.Resources
                                 : TimeSpan.FromMilliseconds(600));
                     }
                     break;
-
+                case CombatState.Movement:
+                    SafeZerg();
+                    break;
                 case CombatState.Disabled:
                     TurnCombatOff();
                     break;
@@ -80,26 +86,35 @@ namespace AutoFollow.Resources
 
         private static void ToggleCombat()
         {
-            if (CombatTargeting.Instance.AllowedToKillMonsters)
+            if (TrinityCombat.CombatMode == CombatMode.KillAll || TrinityCombat.CombatMode == CombatMode.Normal)
                 TurnCombatOff();
             else
                 TurnCombatOn();
         }
 
+        private static void SafeZerg()
+        {
+            if (TrinityCombat.CombatMode != CombatMode.SafeZerg)
+            {
+                Log.Debug("Combat was turned to Movement Only");
+                TrinityCombat.CombatMode = CombatMode.SafeZerg;
+            }
+        }
+
         private static void TurnCombatOff()
         {
-            if (CombatTargeting.Instance.AllowedToKillMonsters)
+            if (TrinityCombat.CombatMode == CombatMode.KillAll || TrinityCombat.CombatMode == CombatMode.Normal)
             {
                 Log.Debug("Combat was turned off");
-                CombatTargeting.Instance.AllowedToKillMonsters = false;
+                TrinityCombat.CombatMode = CombatMode.Off;
             }
         }
         private static void TurnCombatOn()
         {
-            if (!CombatTargeting.Instance.AllowedToKillMonsters)
+            if (TrinityCombat.CombatMode != CombatMode.KillAll && TrinityCombat.CombatMode != CombatMode.Normal)
             {
                 Log.Debug("Combat was turned on");
-                CombatTargeting.Instance.AllowedToKillMonsters = true;
+                TrinityCombat.CombatMode = CombatMode.Normal;
             }
         }
 
@@ -107,13 +122,13 @@ namespace AutoFollow.Resources
 
         public static bool RoutineWantsToAttackGoblin()
         {
-            var combatTarget = CombatTargeting.Instance.Provider.GetObjectsByWeight().FirstOrDefault();
+            var combatTarget = TrinityCombat.Targeting.CurrentTarget;
             return combatTarget != null && combatTarget.MonsterInfo.MonsterRace == MonsterRace.TreasureGoblin;
         }
 
         public static bool RoutineWantsToLoot()
         {
-            var combatTarget = CombatTargeting.Instance.Provider.GetObjectsByWeight().FirstOrDefault();
+            var combatTarget = TrinityCombat.Targeting.CurrentTarget;
             return combatTarget != null && combatTarget.ActorType == ActorType.Item;
         }
 
@@ -121,7 +136,7 @@ namespace AutoFollow.Resources
 
         public static bool RoutineWantsToClickGizmo()
         {
-            //var combatTarget = CombatTargeting.Instance.Provider.GetObjectsByWeight().FirstOrDefault();
+            //var combatTarget = TrinityCombat.Targeting.CurrentTarget? ;
             //return combatTarget != null && combatTarget is GizmoShrine && combatTarget.Distance < 80f;
 
             return Target != null && Target.IsGizmo && !Target.IsUsed && Target.Weight > 0 && Target.Distance < 80f;
@@ -129,7 +144,7 @@ namespace AutoFollow.Resources
 
         public static bool RoutineWantsToAttackUnit()
         {
-            var combatTarget = CombatTargeting.Instance.Provider.GetObjectsByWeight().FirstOrDefault();
+            var combatTarget = TrinityCombat.Targeting.CurrentTarget?.ToDiaObject();
             return combatTarget != null && combatTarget is DiaUnit && combatTarget.Distance < 80f;
         }
 

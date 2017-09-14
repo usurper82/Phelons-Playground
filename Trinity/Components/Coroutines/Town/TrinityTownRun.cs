@@ -130,6 +130,8 @@ namespace Trinity.Components.Coroutines.Town
                         return false;
                     }
 
+                    await Coroutine.Yield();
+
                     Inventory.Backpack.ForEach(i => Core.Logger.Debug($"Backpack Item: {i.Name} ({i.ActorSnoId} / {i.InternalName}) RawItemType={i.RawItemType} TrinityItemType={i.TrinityItemType}"));
                     if (Player.FreeBackpackSlots > 4)
                     {
@@ -138,15 +140,13 @@ namespace Trinity.Components.Coroutines.Town
                             PluginEvents.CurrentProfileType == ProfileType.Bounty &&
                             !Core.Settings.Items.StashTreasureBags)
                         {
-                            if (await TownPickup())
+                            if (await OpenTreasureBags.Execute())
                                 continue;
 
-                            if (await OpenTreasureBags.Execute())
+                            if (await TownPickup())
                                 continue;
                         }
                     }
-
-                    await Coroutine.Yield();
 
                     GameUI.CloseVendorWindow();
                     if (await IdentifyItems.Execute())
@@ -250,15 +250,14 @@ namespace Trinity.Components.Coroutines.Town
             await Coroutine.Sleep(Math.Max((int) closestItem.Position.Distance2D(Player.Position) * 100, 1000));
             if (!await VacuumItems.Execute())
             {
-                if (!ZetaDia.Me.UsePower(SNOPower.Axe_Operate_Gizmo, closestItem.Position, Player.WorldDynamicId,
+                if (closestItem.IsValid && !ZetaDia.Me.UsePower(SNOPower.Axe_Operate_Gizmo, closestItem.Position, Player.WorldDynamicId,
                     closestItem.AcdId))
                 {
                     Core.Logger.Error(
                         $"[TownLoot] Gave up trying to vacuum town item {closestItem.Name} AcdId={closestItem.AcdId} Distance={closestItem.Position.Distance2D(Player.Position)}");
-                    VacuumItems.VacuumedAcdIds.Add(closestItem.AcdId, DateTime.Now);
-                    return false;
                 }
             }
+            VacuumItems.VacuumedAcdIds.Add(closestItem.AcdId, DateTime.Now);
             return true;
         }
 

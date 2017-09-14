@@ -54,12 +54,12 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
                 if (Skills.Necromancer.GrimScythe.CanCast())
                     return Spells.GrimScythe(CurrentTarget);
             }
-            return Spells.Walk(CurrentTarget.Position);
+            return DefaultPower;
         }
 
         public static TrinityPower MovementPower(Vector3 destination)
         {
-            return ((PlayerMover.IsCompletelyBlocked || destination.Distance(Player.Position) > 20) && CurrentTarget == null || HasInstantCooldowns) &&
+            return (!Player.Position.EasyNavToPosition(destination) || destination.Distance(Player.Position) > 20 || HasInstantCooldowns) && CurrentTarget == null &&
                    Skills.Necromancer.BloodRush.CanCast()
                 ? Spells.BloodRush(destination)
                 : Spells.Walk(destination);

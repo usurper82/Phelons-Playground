@@ -67,7 +67,7 @@ namespace Trinity.Components.Combat
 
             if (target == null && CurrentTarget != null) //CurrentTarget != null && !CurrentTarget.IsValid)
             {
-                Core.Logger.Log(LogCategory.Targetting, $"Clearing Target. Was: {CurrentTarget}");
+                Core.Logger.Log(LogCategory.Targetting, $"Switching Target. Was: {CurrentTarget}");
             }
 
             if (CurrentTarget != null)
@@ -101,16 +101,16 @@ namespace Trinity.Components.Combat
 
             if (await TrinityCombat.Routines.Current.HandleKiting())
                 return true;
-
+            var reason = CurrentTarget != null ? $"CurrentTarget = {CurrentTarget}" : "";
             if (target == null || !target.IsValid)
             {
-                Clear();
+                Clear($"Our Target is Null: {reason}");
                 return false;
             }
 
             if (TryBlacklist(target))
             {
-                Clear();
+                Clear($"Trying to black list Target: {target} | {reason}");
                 return false;
             }
 
@@ -123,9 +123,10 @@ namespace Trinity.Components.Combat
             return await TrinityCombat.Routines.Current.HandleTarget(target);
         }
 
-        private void Clear()
+        private void Clear(string reason)
         {
-            SetCurrentTarget(null);
+            //SetCurrentTarget(null);
+            TargetUtil.ClearCurrentTarget(reason);
             SetCurrentPower(null);
         }
 

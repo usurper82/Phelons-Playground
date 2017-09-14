@@ -24,6 +24,10 @@ using Message = AutoFollow.Networking.Message;
 
 namespace AutoFollow.UI.Tab 
 {
+    using Behaviors;
+    using Trinity.Components.Combat;
+    using Trinity.Components.Combat.Resources;
+
     public class TabViewModel : INotifyPropertyChanged
     {
         private string _behaviorName;
@@ -32,6 +36,7 @@ namespace AutoFollow.UI.Tab
         private Uri _serverUri;
         private int _updateInterval;
         private bool _isConnected;
+        private string _combatStatus;
 
         public TabViewModel()
         {
@@ -44,12 +49,14 @@ namespace AutoFollow.UI.Tab
 
         private void Service_OnUpdated()
         {
-            BehaviorName = AutoFollow.CurrentBehavior.Name;
+            //BehaviorName = Player.GetCurrentTarget()?.ToString();
+            BehaviorName = AutoFollow.CurrentBehavior.Objective.ToString();
             ConnectionMode = Service.ConnectionMode;
             IsConnected = Service.IsConnected;
             ConnectedBots = AutoFollow.NumberOfConnectedBots;
             UpdateInterval = Settings.Network.UpdateInterval;
             LastUpdateMs = DateTime.UtcNow.Subtract(_lastUpdate).TotalMilliseconds;
+            CombatStatus = TrinityCombat.Targeting.CurrentTarget != null ? FollowerCombat.State + " " + TrinityCombat.Targeting.CurrentTarget.Type : FollowerCombat.State.ToString();
             ServerURI = Server.ServerUri;
             _lastUpdate = DateTime.UtcNow;
         }
@@ -94,6 +101,12 @@ namespace AutoFollow.UI.Tab
         {
             get { return _behaviorName; }
             set { SetField(ref _behaviorName, value); }
+        }
+
+        public string CombatStatus
+        {
+            get { return _combatStatus; }
+            set { SetField(ref _combatStatus, value); }
         }
 
         public ICommand OpenSettingsCommand

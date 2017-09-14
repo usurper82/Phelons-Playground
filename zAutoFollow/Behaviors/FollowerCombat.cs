@@ -84,8 +84,7 @@ namespace AutoFollow.Behaviors
             if (await Coordination.WaitForGreaterRiftInProgress())
                 return Repeat(PartyObjective.TownRun);
 
-            if (Targetting.RoutineWantsToLoot() || Targetting.RoutineWantsToClickGizmo())
-                return Continue(PartyObjective.None);
+            if (Targetting.RoutineWantsToClickGizmo())
 
             if (await Coordination.LeaveFinishedRift())
                 return Repeat(PartyObjective.TownRun);
@@ -93,10 +92,7 @@ namespace AutoFollow.Behaviors
             if (await Coordination.FollowLeaderThroughPortal())
                 return Repeat(PartyObjective.FollowLeader);
 
-            if (await Coordination.TeleportWhenInDifferentWorld(AutoFollow.CurrentLeader))
-                return Repeat(PartyObjective.Teleporting);
-
-            if (await Coordination.TeleportWhenTooFarAway(AutoFollow.CurrentLeader))
+            if (await Coordination.TeleportToPlayer(AutoFollow.CurrentLeader))
                 return Repeat(PartyObjective.Teleporting);
 
             if (await FollowLeader())
@@ -108,6 +104,8 @@ namespace AutoFollow.Behaviors
             if (await Movement.MoveToGreaterRiftExitPortal())
                 return Repeat(PartyObjective.FollowLeader);
 
+            if (Targetting.RoutineWantsToLoot())
+                return Continue(PartyObjective.None);
             return false;
         }
 
@@ -119,20 +117,20 @@ namespace AutoFollow.Behaviors
                 return FollowMode.None;
             }
 
-            if (AutoFollow.CurrentLeader.InDifferentLevelArea && RiftHelper.IsInGreaterRift)
+            if (AutoFollow.CurrentLeader.InDifferentLevelArea)// && !RiftHelper.IsInGreaterRift)
             {
                 Targetting.State = CombatState.Disabled;
                 return FollowMode.MoveToRiftExit;
             }
-
-            if (!AutoFollow.CurrentLeader.InDifferentLevelArea && !Targetting.IsPriorityTarget)
+            //Log.Info($"Distance: {AutoFollow.CurrentLeader.Distance} CurrentTarget: {AutoFollow.CurrentLeader.CurrentTarget} Position: {AutoFollow.CurrentLeader.Position} ");
+            if (!AutoFollow.CurrentLeader.InDifferentLevelArea)// && !Targetting.IsPriorityTarget)
             {
                 if (AutoFollow.CurrentLeader.Distance > Settings.Coordination.CatchUpDistance)
                 {
-                    Targetting.State = CombatState.Disabled;
+                    Targetting.State = CombatState.Movement;
                     return FollowMode.ChaseLeader;
                 }
-                if (AutoFollow.CurrentLeader.Distance > Settings.Coordination.FollowDistance)
+                if (AutoFollow.CurrentLeader.Distance > Settings.Coordination.FollowDistance && (Player.Target == null || AutoFollow.CurrentLeader.CurrentTarget == null))
                 {
                     Targetting.State = CombatState.Pulsing;
                     return FollowMode.FollowLeader;
@@ -158,11 +156,11 @@ namespace AutoFollow.Behaviors
         {
             if (!AutoFollow.CurrentLeader.IsInSameGame || Player.IsInTown)
                 return false;
-
+            
             switch (State)
             {
                 case FollowMode.FollowLeader:
-                    var catchUpDistance = AutoFollow.CurrentLeader.CurrentTarget != null ? 20 : 5;//Settings.Coordination.CatchUpDistance : Settings.Coordination.FollowDistance;
+                    var catchUpDistance = AutoFollow.CurrentLeader.CurrentTarget != null ? Settings.Coordination.CatchUpDistance : Settings.Coordination.FollowDistance;
                     if (AutoFollow.CurrentLeader.Distance > catchUpDistance)
                     {
                         Log.Info("Moving to Follow Leader.");

@@ -18,9 +18,9 @@
             if (Target == null)
                 return false;
 
-            var buffPosition = Targeting.BestBuffPosition(distance, fromPosition, Player.CurrentHealthPct > 0.65, out buffposition);
+            var buffPosition = Targeting.BestBuffPosition(distance, fromPosition, true, out buffposition);
 
-            if (buffPosition && Player.Position.Distance2D(buffposition) > 7 && buffposition.EasyNavToPosition(Player.Position))
+            if (buffPosition && Player.Position.Distance2D(buffposition) > 7f && buffposition.EasyNavToPosition(Player.Position))
             {
                 Core.Logger.Error(LogCategory.Routine,
                     $"[WalkToBuff] - To Best Buff Position: {buffposition} Distance: {Player.Position.Distance2D(buffposition)}");
@@ -31,13 +31,6 @@
 
         public static bool ShouldWalk(out Vector3 position, float distance)
         {
-            if (CurrentTarget != null && !CurrentTarget.IsUnit)
-            {
-                Core.Logger.Error(LogCategory.Routine,
-                    $"[Walk] - Grabbing {CurrentTarget.Name}");
-                position = CurrentTarget.Position;
-                return true;
-            }
             position = Vector3.Zero;
 
             var closestGlobe = Targeting.ClosestGlobe(15f);
@@ -46,6 +39,14 @@
                 Core.Logger.Error(LogCategory.Routine,
                     $"[Walk] - Grabbing Health Globe.");
                 position = closestGlobe.Position;
+                return true;
+            }
+
+            if (CurrentTarget != null && !CurrentTarget.IsUnit)
+            {
+                Core.Logger.Error(LogCategory.Routine,
+                    $"[Walk] - Grabbing {CurrentTarget.Name}");
+                position = CurrentTarget.Position;
                 return true;
             }
 

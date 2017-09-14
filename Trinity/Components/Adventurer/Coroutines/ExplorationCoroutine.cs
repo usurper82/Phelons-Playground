@@ -190,7 +190,7 @@ namespace Trinity.Components.Adventurer.Coroutines
                             _currentDestination = null;
                             _failedNavigationAttempts++;
                         }
-                        else if (!CanRayWalkDestination && _currentDestination.Distance < 25f && _currentDestination.FailedNavigationAttempts >= 3 || _currentDestination.FailedNavigationAttempts >= 15)
+                        else if (!CanRayWalkDestination && _currentDestination.Distance < 25f && _currentDestination.FailedNavigationAttempts >= 3)
                         {
                             Core.Logger.Debug($"[Exploration] Failed to Navigate to {_currentDestination.NavigableCenter} {_currentDestination.FailedNavigationAttempts} times; Ignoring Node.");
                             _currentDestination.IsVisited = true;

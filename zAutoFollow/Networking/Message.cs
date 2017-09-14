@@ -370,7 +370,7 @@ namespace AutoFollow.Networking
                         Dexterity = Player.Dexterity,   
                         Paragon = Player.Paragon,
                         //SettingsCode = Player.SettingsCode,
-                        FollowDistance = Settings.Coordination.CatchUpDistance,
+                        FollowDistance = Settings.Coordination.FollowDistance,
                         CatchUpDistance = Settings.Coordination.CatchUpDistance,
                         Objective = AutoFollow.CurrentBehavior.Objective,
                         //Build = Player.Build,

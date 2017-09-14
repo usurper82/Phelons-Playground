@@ -304,9 +304,11 @@ namespace Trinity.Framework.Actors.ActorTypes
             switch (ActorType)
             {
                 case ActorType.Monster:
+                    SpellHistory.RecordSpell(SNOPower.Axe_Operate_NPC);
                     return ZetaDia.Me.UsePower(SNOPower.Axe_Operate_NPC, Vector3.Zero, 0, AcdId);
                 case ActorType.Gizmo:
                 case ActorType.Item:
+                    SpellHistory.RecordSpell(SNOPower.Axe_Operate_Gizmo);
                     return ZetaDia.Me.UsePower(SNOPower.Axe_Operate_Gizmo, Vector3.Zero, 0, AcdId);
                 default:
                     return false;

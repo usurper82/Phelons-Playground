@@ -22,8 +22,12 @@
                         <Label Content="{Binding ConnectedBots, FallbackValue=0}" />
                     </WrapPanel>
                     <WrapPanel>
-                        <Label>Behavior Type: </Label>
-                        <Label Content="{Binding BehaviorType, FallbackValue=Unknown}" />
+                        <Label>Behavior: </Label>
+                        <Label Content="{Binding BehaviorName, FallbackValue=Unknown}" />
+                    </WrapPanel>
+                    <WrapPanel>
+                        <Label>Status:</Label>
+                        <Label Content="{Binding CombatStatus, FallbackValue=Unknown}" />
                     </WrapPanel>
                 </StackPanel>
                 <StackPanel>

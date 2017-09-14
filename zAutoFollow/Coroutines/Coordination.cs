@@ -240,25 +240,6 @@ namespace AutoFollow.Coroutines
             if (!await CanTeleportToPlayer(playerMessage))
                 return false;
 
-            if (!_teleportTimer.IsRunning)
-                _teleportTimer.Restart();
-
-            var portalNearby = Data.Portals.FirstOrDefault(p => p.Distance < 25f);
-
-            // Allow time for leader to resolve in new world.
-            if (!Player.IsInTown && portalNearby != null && _teleportTimer.ElapsedMilliseconds < 6000 && !AutoFollow.CurrentLeader.IsInRift)
-            {
-                Log.Debug("{0} is in a different world... waiting before teleport.  Portal Close:{1}", playerMessage.HeroAlias, portalNearby);
-                return false;
-            }
-                
-            _teleportTimer.Stop();
-
-            // Safety check.
-            var actor = Data.GetPlayerActor(playerMessage);
-            if (actor != null && actor.Distance <= 100f)
-                return false;
-
             Log.Warn("Teleporting to player {0} SameGame={1} SameWorld={2}",
                 playerMessage.HeroAlias, playerMessage.IsInSameGame, playerMessage.IsInSameWorld);
 
@@ -274,11 +255,19 @@ namespace AutoFollow.Coroutines
 
             return true;
         }
-
+        /// <summary>
+        /// Checks to see if we can teleport to player.
+        /// </summary>
+        /// <param name="playerMessage"></param>
+        /// <returns></returns>
         private static async Task<bool> CanTeleportToPlayer(Message playerMessage)
         {
             if (!ZetaDia.IsInGame || ZetaDia.Globals.IsLoadingWorld)
                 return false;
+
+            if (Player.IsInTown && BrainBehavior.IsVendoring)
+                return false;
+
             if (playerMessage.IsInGreaterRift && RiftHelper.RiftQuest.Step != RiftQuest.RiftStep.UrshiSpawned)
             {
                 Log.Debug("Can't teleport in greater rifts until Urshi spawns.");
@@ -299,51 +288,37 @@ namespace AutoFollow.Coroutines
                 return false;
             }
 
+            if (Player.IsInCombat)
+            {
+                Log.Info("Cant teleport because you are in combat.");
+                return false;
+            }
+            if (Player.IsInBossEncounter || playerMessage.IsInBossEncounter)
+            {
+                Log.Info("Cant teleport because you are in BOSS combat.");
+                return false;
+            }
+            if (playerMessage.WorldSnoId == Player.CurrentMessage.WorldSnoId)
+            {
+                Log.Info("Cant teleport because we are in the same world.");
+                return false;
+            }
+            if (!_teleportTimer.IsRunning)
+                _teleportTimer.Restart();
+
+            var portalNearby = Data.Portals.FirstOrDefault(p => p.Distance < 25f);
+
+            // Allow time for leader to resolve in new world.
+            if (!Player.IsInTown && portalNearby != null && _teleportTimer.ElapsedMilliseconds < 6000 && !AutoFollow.CurrentLeader.IsInRift)
+            {
+                Log.Debug("{0} is in a different world... waiting before teleport.  Portal Close:{1}", playerMessage.HeroAlias, portalNearby);
+                return false;
+            }
+
             if (Player.IsCasting)
                 return false;
 
             return true;
-        }
-
-        /// <summary>
-        /// If we're in a different world to the leader, teleport to him.
-        /// </summary>
-        public static async Task<bool> TeleportWhenInDifferentWorld(Message player)
-        {
-            if (player.WorldSnoId <= 0 || Player.CurrentWorldSnoId <= 0)
-                return false;
-
-            if (Player.IsInTown && BrainBehavior.IsVendoring)
-                return false;
-
-            if ((RiftHelper.IsInRift || player.IsInRift) && RiftHelper.IsGreaterRiftStarted)
-                return false;
-
-            if (Player.IsFollower && player.WorldSnoId != Player.CurrentMessage.WorldSnoId && player.IsInSameGame && !player.IsInCombat)
-            {
-                await Coordination.TeleportToPlayer(player);
-                return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// If we're too far away from the leader, teleport to him.
-        /// </summary>
-        public static async Task<bool> TeleportWhenTooFarAway(Message playerMessage)
-        {
-            if (RiftHelper.IsInGreaterRift || Player.IsInBossEncounter || playerMessage.IsInBossEncounter)
-                return false;
-
-            if (Player.IsFollower && playerMessage.WorldSnoId == Player.CurrentMessage.WorldSnoId && playerMessage.IsInSameGame &&
-                !playerMessage.IsInCombat && playerMessage.Distance > Settings.Coordination.TeleportDistance)
-            {
-                Log.Info("{0} is getting quite far away... attempting teleport!", playerMessage.HeroAlias);
-                await TeleportToPlayer(playerMessage);
-                return true;
-            }
-
-            return false;
         }
 
         /// <summary>

@@ -37,7 +37,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
         #region Definition
 
         public string DisplayName => "zDPS Monk";
-        public string Description => "Phelons Playground - Monk zDPS Inna's 2 Piece Set";
+        public string Description => "Phelons Playground - Monk zDPS Inna's 4 Piece Set";
         public string Author => "Phelon"; // (Ported)
         public string Version => "0.1";
         public string Url => "https://www.thebuddyforum.com/threads/phelons-playground-4-man-botting-routine.403317/";

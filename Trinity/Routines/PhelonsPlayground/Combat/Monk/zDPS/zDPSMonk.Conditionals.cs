@@ -141,8 +141,6 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
             TrinityActor target;
             power = null;
 
-            if (ShouldCripplingWave(out target))
-                power = Spells.CripplingWave(target);
 
             return power != null;
         }
@@ -154,16 +152,27 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
             if (!Skills.Monk.CripplingWave.CanCast())
                 return false;
 
-            var range = Skills.Monk.Epiphany.TimeSinceUse < 15000 ? 20 : 7f;
-            if (target.Distance > 7f && range > 7f)
+            var range = Skills.Monk.Epiphany.TimeSinceUse < 15000 ? 20 : 10f;
+            if (target.Distance > 7f && range > 10f)
+            {
+                Core.Logger.Error(LogCategory.Routine, $"[CripplingWave] - Epiphany distance closer on Unit: {target}.");
                 return true;
+            }
 
             target = TargetUtil.BestAuraUnit(SNOPower.Monk_CripplingWave, 10f, true) ?? target;
             if (target != null && target.Distance < range)
+            {
+                Core.Logger.Error(LogCategory.Routine, $"[CripplingWave] - On Aura Unit: {target}.");
                 return true;
+            }
 
             target = TargetUtil.GetClosestUnit(range);
-            return target != null;
+            if (target != null)
+            {
+                Core.Logger.Error(LogCategory.Routine, $"[CripplingWave] - On Closest Unit: {target}.");
+                return true;
+            }
+            return false;
         }
 
         protected virtual bool ShouldInnerSanctuary()

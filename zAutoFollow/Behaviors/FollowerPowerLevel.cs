@@ -45,9 +45,6 @@ namespace AutoFollow.Behaviors
             if (await base.InGameTask())
                 return true;
 
-            if (await Coordination.TeleportWhenInDifferentWorld(AutoFollow.CurrentLeader))
-                return true;
-
             return false;
         }
 

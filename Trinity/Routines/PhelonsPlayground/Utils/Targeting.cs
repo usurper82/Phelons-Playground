@@ -54,7 +54,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         {
             return
                 Targets.Where(x => !x.IsPlayer && !x.IsSummonedByPlayer && (!x.IsUnit || x.IsUnit && x.HitPoints > 0) && //x.IsInLineOfSight &&
-                                        (objectsInAoe || !Core.Avoidance.InCriticalAvoidance(x.Position))).ToList();
+                                        (objectsInAoe || !Core.Avoidance.InAvoidance(x.Position)) && !Core.Avoidance.InCriticalAvoidance(x.Position)).ToList();
         }
 
         internal static List<TrinityActor> CorpseSafeList(float distance = 60f, bool objectsInAoe = true)
@@ -148,15 +148,14 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
             if (ZetaDia.Me.IsParticipatingInTieredLootRun)
             {
                 var closestSancAndOcc = ClosestSancAndOcc(maxRange, fromLocation, objectsInAoe);
-                if (closestSancAndOcc != Vector3.Zero && Core.Avoidance.Grid.CanRayCast(fromLocation, closestSancAndOcc))
+                if (closestSancAndOcc != Vector3.Zero)
                 {
                     location = closestSancAndOcc;
                     return true;
                 }
                 var closestSanc = ClosestSanctuary(maxRange, fromLocation, objectsInAoe);
-                if ((closestOcc == Vector3.Zero || AnyElitesInRange(45f) ||
-                     CurrentTarget != null && CurrentTarget.MonsterAffixes.HasFlag(MonsterAffixes.Frozen)) &&
-                    closestSanc != Vector3.Zero) //AnyElitesInRange(45f) || 
+                if ((AnyElitesInRange(45f) || CurrentTarget != null && CurrentTarget.MonsterAffixes.HasFlag(MonsterAffixes.Frozen)) &&
+                    closestSanc != Vector3.Zero)
                 {
                     location = closestSanc;
                     return true;
@@ -395,9 +394,12 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
             {
                 var occPoint = GetOculusBuffDiaObjects(maxRange, fromLocation, objectsInAoe).OrderBy(x => x.IsSafeSpot)
                     .Select(y => y.Position)
-                    .FirstOrDefault(z => z.Distance2D(item) < 3);
+                    .FirstOrDefault(z => z.Distance2D(item) < 5);
                 if (occPoint != Vector3.Zero)
+                {
+                    //Core.Logger.Log(LogCategory.Movement, $"Found Occ in Sanc Puddle: {occPoint} Distance: {occPoint.Distance(Player.Position)}");
                     return occPoint;
+                }
             }
             return Vector3.Zero;
         }
@@ -1370,13 +1372,6 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         /// </summary>
         internal static bool IsUnitWithoutDebuffWithinRange(float range, SNOPower power, int unitsRequiredWithoutDebuff = 1)
         {
-            var unitsInRange = (from u in ObjectCache
-                where u.IsUnit && u.IsValid &&
-                      u.Weight > 0 &&
-                      u.Position.Distance2D(Player.Position) <= range &&
-                      u.HasBeenInLoS
-                select u).ToList();
-
             var unitsWithoutDebuff = (from u in ObjectCache
                 where u.IsUnit && u.IsValid &&
                       u.Weight > 0 &&
@@ -1395,24 +1390,26 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         /// </summary>
         internal static TrinityActor ClosestUnit(float range, TrinityActor actor)
         {
+            if (actor == null)
+                return null;
             return ObjectCache.Where(u => u.Position.Distance2D(actor.Position) <= range)
-                .OrderBy(u => u.IsElite)
-                .ThenBy(u => u.Distance)
+                //.OrderBy(u => u.IsElite)
+                .OrderBy(u => u.Distance)
                 .FirstOrDefault();
         }
 
         /// <summary>
         /// Checks if for units without a debuff
         /// </summary>
-        internal static TrinityActor FarthesttUnit(float range, Func<TrinityActor, bool> condition = null)
+        internal static TrinityActor FarthesttUnit(float range, Vector3 position)
         {
-            return ObjectCache.Where(u => u.Position.Distance2D(Player.Position) <= range)
+            return ObjectCache.Where(u => u.Position.Distance2D(position) <= range)
                 .OrderByDescending(u => u.Distance)
                 .FirstOrDefault();
         }
-        internal static List<TrinityActor> FarthesttUnits(float range, Func<TrinityActor, bool> condition = null)
+        internal static List<TrinityActor> FarthesttUnits(float range, Vector3 position)
         {
-            return ObjectCache.OrderByDescending(u => u.Distance).Where(u => u.Position.Distance2D(Player.Position) <= range).Take(5).ToList();
+            return ObjectCache.OrderByDescending(u => u.Distance).Where(u => u.Position.Distance2D(position) <= range).Take(5).ToList();
         }
 
         /// <summary>

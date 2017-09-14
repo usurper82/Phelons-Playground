@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:behaviors="clr-namespace:AutoFollow.UI.Components.Behaviors"
-            xmlns:converters="clr-namespace:AutoFollow.UI.Components.Converters"
+             xmlns:converters="clr-namespace:AutoFollow.UI.Components.Converters"
              mc:Ignorable="d" Foreground="#F2F2F2" Background="#393939"
              d:DesignHeight="450" d:DesignWidth="550">
     <UserControl.Resources>

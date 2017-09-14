@@ -54,30 +54,64 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
             return true;
         }
 
+
         private static int lastChargeTargetAcdId = 0;
 
+        protected virtual bool ShouldWhirlwind(out Vector3 position)
+        {
+            position = Vector3.Zero;
+            if (!Skills.Barbarian.Whirlwind.CanCast())
+                return false;
+
+            if (Targeting.HealthGlobeExists(60f))
+            {
+                position = Targeting.GetBestHealthGlobeClusterPoint(7f, 60f, false);
+                Core.Logger.Error(LogCategory.Routine,
+                    $"[Whirlwind] -  On Closest Health Globe: [{position.Distance(Player.Position)}].");
+                return true;
+            }
+
+            Vector3 actor = Targeting.Monk != null ? Targeting.Monk.Position : Player.Position;
+            var farthestUnit = Targeting.FarthesttUnits(40f, actor)
+                        .OrderByDescending(x => x.Distance)
+                        .FirstOrDefault(x => x.Distance < 65f);
+            if (farthestUnit != null)
+            {
+                position = farthestUnit.Position;
+                Core.Logger.Error(LogCategory.Routine,
+                    $" [Whirlwind] - On Farthest Target Distance: [{position.Distance(Player.Position)}].");
+                return true;
+            }
+            position = Target.Position;
+            Core.Logger.Error(LogCategory.Routine,
+                $" [Whirlwind] - On Target Distance: [{position.Distance(Player.Position)}].");
+            return true;
+        }
         protected virtual bool ShouldFuriousChargeInCombat(out Vector3 position)
         {
             position = Vector3.Zero;
-
-            if (!Skills.Barbarian.FuriousCharge.CanCast() ||
-                Skills.Barbarian.FuriousCharge.TimeSinceUse < 500 && Skills.Barbarian.AncientSpear.TimeSinceUse > 1500 &&
-                Player.PrimaryResourcePct > 0.65 && Skills.Barbarian.AncientSpear.CanCast())
+            if (!Skills.Barbarian.FuriousCharge.CanCast())
                 return false;
 
             if (Targeting.HealthGlobeExists(40f))
             {
-                position = Targeting.GetBestHealthGlobeClusterPoint(7f, 40f, false);
+                position = Targeting.GetBestHealthGlobeClusterPoint(7f, 45f, false);
                 Core.Logger.Error(LogCategory.Routine,
                     $"[FuriousCharge] -  On Closest Health Globe: [{position.Distance(Player.Position)}].");
                 return true;
             }
+
+            if (Skills.Barbarian.FuriousCharge.TimeSinceUse < 500 && Skills.Barbarian.AncientSpear.TimeSinceUse > 1500 &&
+                Player.PrimaryResourcePct > 0.65 && Skills.Barbarian.AncientSpear.CanCast())
+                return false;
+
             position = Target.Position;
             var lastCast = SpellHistory.GetLastUseHistoryItem(SNOPower.Barbarian_FuriousCharge);
-            if (Targeting.FarthesttUnits(40f).Any() && lastCast != null && lastCast.TargetAcdId != Target.AcdId)
+            Vector3 actor = Targeting.Monk != null ? Targeting.Monk.Position : Player.Position;
+            if (Targeting.FarthesttUnits(40f, actor).Any() && lastCast != null && lastCast.TargetAcdId != Target.AcdId)
             {
                 var rangedTarget =
-                    Targeting.FarthesttUnits(40f)
+                    Targeting.FarthesttUnits(40f, actor)
                         .OrderByDescending(x => x.Distance)
                         .FirstOrDefault(x => x.AcdId != lastChargeTargetAcdId);
                 if (rangedTarget != null && rangedTarget.Position.Distance(Target.Position) < 45f)
@@ -100,7 +134,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
             if (!Skills.Barbarian.AncientSpear.CanCast() || Player.PrimaryResourcePct < 0.85 || Target.Distance > 10f)
                 return false;
 
-            target = Targeting.FarthesttUnit(65f);
+            Vector3 actor = Targeting.Monk != null ? Targeting.Monk.Position : Player.Position;
+            target = Targeting.FarthesttUnit(65f, actor);
 
             if (target == null)
                 return false;
@@ -112,6 +147,19 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
         }
 
         // Defensive
+        protected virtual bool ShouldOverPower()
+        {
+            if (!Skills.Barbarian.Overpower.CanCast() ||
+                Skills.Barbarian.Overpower.TimeSinceUse < 4000 && Skills.Barbarian.Overpower.Charges < 3 ||
+                Skills.Barbarian.Overpower.TimeSinceUse < 2000)
+                return false;
+            if (!Targeting.NearbyTargets(15f).Any())
+                return false;
+
+            Core.Logger.Error(LogCategory.Routine,
+                $" [OverPower] -  Off CD.");
+            return true;
+        }
 
         protected virtual bool ShouldGroundStomp()
         {
@@ -165,8 +213,11 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
             if (Skills.Barbarian.Sprint.IsBuffActive)
                 return false;
 
+            if (Skills.Barbarian.Sprint.TimeSinceUse < 2500)
+                return false;
+
             Core.Logger.Error(LogCategory.Routine,
-                $" [Sprint]");
+                $" [Sprint] - Need Buff");
             return true;
         }
 

@@ -50,7 +50,10 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
             if (ShouldEpiphany())
                 return Spells.Epiphany();
 
-            return TryCripplingWave(out power) ? power : Walk(Target.Position);
+            TrinityActor target;
+            if (ShouldCripplingWave(out target))
+               return Spells.CripplingWave(target);
+            return Walk(Target.Position);
         }
 
         public TrinityPower BuffPower()

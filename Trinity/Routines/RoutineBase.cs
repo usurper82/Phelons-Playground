@@ -520,7 +520,7 @@ namespace Trinity.Routines
                 && !Core.Targets.Any(p => p.Type == TrinityObjectType.ProgressionGlobe && p.Distance < 150),
                 "Wait for Progression Globe", 1000))
                 return true;
-
+            //TODO: This is broke
             // Priority movement for progression globes. ** Temporary solution!
             if (TrinityCombat.Targeting.CurrentTarget != null)
             {

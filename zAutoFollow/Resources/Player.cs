@@ -17,6 +17,8 @@ using Zeta.Game.Internals.SNO;
 
 namespace AutoFollow.Resources
 {
+    using Trinity.Components.Combat;
+
     public static class Player
     {
         public static double PrimaryResourcePct { get; set; }
@@ -278,19 +280,13 @@ namespace AutoFollow.Resources
 
         public static bool GetIsInCombat()
         {
-            if (CombatTargeting.Instance == null)
-                return false;
-
-            if (CombatTargeting.Instance.FirstObject == null)
-                return false;
-
-            if (CombatTargeting.Instance.FirstObject == null)
+            if (TrinityCombat.Targeting.CurrentTarget == null)
                 return false;
 
             if (ZetaDia.Me.IsInCombat)
                 return true;
 
-            if (CombatTargeting.Instance.FirstObject.IsValid && CombatTargeting.Instance.FirstObject.ActorType == ActorType.Monster)
+            if (TrinityCombat.Targeting.CurrentTarget.IsValid && TrinityCombat.Targeting.CurrentTarget?.ActorType == ActorType.Monster)
                 return true;
 
             return false;
@@ -348,7 +344,7 @@ namespace AutoFollow.Resources
         {
             try
             {
-                return new Target(CombatTargeting.Instance.Provider.GetObjectsByWeight().FirstOrDefault());
+                return new Target(TrinityCombat.Targeting.CurrentTarget?.ToDiaObject());
             }
             catch (Exception ex)
             {

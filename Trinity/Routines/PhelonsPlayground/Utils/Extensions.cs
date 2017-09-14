@@ -9,6 +9,7 @@ using Zeta.Common;
 namespace Trinity.Routines.PhelonsPlayground.Utils
 {
     using Framework.Avoidance.Structures;
+    using Framework.Reference;
 
     public static class PhelonExtensions
     {
@@ -23,7 +24,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
 
         public static bool EasyNavToPosition(this Vector3 position, Vector3 otherPosition)
         {
-            return Targeting.UnitsBetweenLocations(position, otherPosition).Count < 3;
+            return Targeting.UnitsBetweenLocations(position, otherPosition).Count < 2 || Legendary.IllusoryBoots.IsEquipped;
         }
 
         public static int UnitsAroundPosition(this Vector3 position)

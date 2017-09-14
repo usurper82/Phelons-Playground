@@ -66,13 +66,15 @@ namespace Trinity.Components.Combat
 
             using (new PerformanceLogger("RefreshDiaObjectCache.Weighting"))
             {
+
+                var otherPlayers = ZetaDia.Actors.GetActorsOfType<DiaPlayer>().ToList();
                 #region Variables
 
                 var deadPlayer = false;
                 try
                 {
                     deadPlayer = ZetaDia.Service.Party.NumPartyMembers < 1 &&
-                                 ZetaDia.Actors.GetActorsOfType<DiaPlayer>().Any(x => x.IsDead);
+                                 otherPlayers.Any(x => x.IsDead);
                 }
                 catch
                 {
@@ -177,7 +179,7 @@ namespace Trinity.Components.Combat
 
 
 
-                #endregion
+                    #endregion
 
                 //Core.Logger.Debug(LogCategory.Weight,
                 //    "Starting weights: packSize={0} packRadius={1} MovementSpeed={2:0.0} Elites={3} AoEs={4} disableIgnoreTag={5} ({6}) closeRangePriority={7} townRun={8} questingArea={9} level={10} isQuestingMode={11} healthGlobeEmerg={12} hiPriHG={13} hiPriShrine={14}",
@@ -187,7 +189,6 @@ namespace Trinity.Components.Combat
                 //    PlayerMover.IsCompletelyBlocked, usingTownPortal,
                 //    GameData.QuestLevelAreaIds.Contains(Core.Player.LevelAreaId), Core.Player.Level,
                 //    CombatBase.IsQuestingMode, isHealthEmergency, hiPriorityHealthGlobes, hiPriorityShrine);
-
 
                 TrinityActor target = null;
                 target = objects.OfType<TrinityItem>().Cast<TrinityItem>().FirstOrDefault(u => u.IsCosmeticItem && u.Distance <= 200f);
@@ -428,7 +429,7 @@ namespace Trinity.Components.Combat
                                             u.IsElite &&
                                             u.Position.Distance2D(cacheObject.Position) <= TrinityCombat.Routines.Current.EliteRange);
 
-                                    int nearbyTrashCount = objects.Count(u => u.IsUnit && u.HitPoints > 0 && u.IsTrashMob && (u.IsInLineOfSight || u.HasBeenInLoS) && cacheObject.Position.Distance(u.Position) <= TrinityCombat.Routines.Current.TrashRange);
+                                    int nearbyTrashCount = objects.Count(u => u.IsUnit && u.HitPoints > 0 && u.IsTrashMob && (u.IsInLineOfSight || u.HasBeenInLoS) && u.Position.Distance(Core.Player.Position) <= TrinityCombat.Routines.Current.TrashRange);
 
                                     //bool ignoreSummoner = cacheObject.IsSummoner && !Core.Settings.Combat.Misc.ForceKillSummoners;
                                     //bool ignoreSummoner = cacheObject.IsSummoner && !Core.Settings.Combat.Misc.ForceKillSummoners;
@@ -500,13 +501,21 @@ namespace Trinity.Components.Combat
                                         break;
                                     }
 
+                                    if (ignoredByAffixElites.Any(x => x.Position.Distance(cacheObject.Position) < 20))
+                                    {
+                                        cacheObject.WeightInfo += $"Ignoring {cacheObject.InternalName} - Near Ignored Avoidance Elites.";
+                                        cacheObject.Weight = MinWeight;
+                                        break;
+                                    }
+
                                     // Note, a check here to ignore monsters in critical avoidance (molten core/arcane) was causing elites to be skipped.
                                     // what needs to happen is the bot doesnt MOVE into the critical area but can still attack the monsters
                                     // Movement spells that might cause the bot to teleport ontop of a molten core the moment it becomes targetted
                                     // should have their own checks at power selection to make sure that doesnt happen.
-                                    if (Core.Avoidance.InCriticalAvoidance(cacheObject.Position) && Core.Avoidance.InCriticalAvoidance(Core.Player.Position))
+                                    if (Core.Avoidance.InCriticalAvoidance(cacheObject.Position))// && Core.Avoidance.InCriticalAvoidance(Core.Player.Position))
                                     {
-                                        cacheObject.WeightInfo += $"Ignoring {cacheObject.InternalName} - in Critical Avoidance.";
+                                        cacheObject.WeightInfo +=
+                                            $"Ignoring {cacheObject.InternalName} - in Critical Avoidance.";
                                         break;
                                     }
 
@@ -572,6 +581,7 @@ namespace Trinity.Components.Combat
                                         cacheObject.RadiusDistance > killRange && !isQuestNpc)
                                     {
                                         cacheObject.WeightInfo += $"Ignoring {cacheObject.InternalName} - out of Kill Range ({killRange})";
+                                        cacheObject.Weight = MinWeight;
                                         break;
                                     }
 
@@ -642,8 +652,11 @@ namespace Trinity.Components.Combat
                                     //    cacheObject.Weight = MinWeight;
                                     //    break;
                                     //}
-
-                                    if (Core.Player.CurrentHealthPct <= 0.25 && ZetaDia.Service.Party.NumPartyMembers < 1)
+                                    if (deadPlayer)
+                                    {
+                                        cacheObject.WeightInfo += $"Adding {cacheObject.InternalName} Another Player is Dead.";
+                                    }
+                                    if (Core.Player.CurrentHealthPct <= 0.45 && ZetaDia.Service.Party.NumPartyMembers < 1 || ZetaDia.Service.Party.NumPartyMembers > 1 && otherPlayers.Any(x => x.HitpointsCurrentPct < 0.40))
                                     {
                                         cacheObject.WeightInfo += $"Adding {cacheObject.InternalName} Below Health Threshold ";
                                     }
@@ -683,6 +696,12 @@ namespace Trinity.Components.Combat
 
                                     else if (cacheObject.IsTrashMob)
                                     {
+                                        if (Core.Player.ParticipatingInTieredLootRun && cacheObject.RiftValuePct < 0)
+                                        {
+                                            cacheObject.WeightInfo += $"Ignoring Has No Rift Value: ({cacheObject.RiftValuePct})";
+                                            cacheObject.Weight = MinWeight;
+                                            break;
+                                        }
                                         //var isAlwaysKillByValue = Core.Rift.IsInRift &&
                                         //                          cacheObject.RiftValuePct > 0 &&
                                         //                          cacheObject.RiftValuePct >
@@ -758,6 +777,7 @@ namespace Trinity.Components.Combat
                                                  !GameData.CorruptGrowthIds.Contains(cacheObject.ActorSnoId) && !isQuestGiverOutsideCombat && !bossNearby && !cacheObject.IsShadowClone)
                                         {
                                             cacheObject.WeightInfo += $"Ignoring Below TrashPackSize ({nearbyTrashCount} < {TrinityCombat.Routines.Current.ClusterSize})";
+                                            cacheObject.Weight = MinWeight;
                                             break;
                                         }
                                         else
@@ -783,13 +803,13 @@ namespace Trinity.Components.Combat
                                         if (cacheObject.Distance > TrinityCombat.Routines.Current.EliteRange)
                                         {
                                             cacheObject.WeightInfo += string.Format("Ignoring {0} Elite is too far away.", cacheObject.InternalName);
-                                            cacheObject.Weight += 0;
+                                            cacheObject.Weight = MinWeight;
                                             break;
                                         }
                                         if (cacheObject.IsSpawningBoss)
                                         {
                                             cacheObject.WeightInfo += string.Format("Ignoring {0} Boss is spawning", cacheObject.InternalName);
-                                            cacheObject.Weight += 0;
+                                            cacheObject.Weight = MinWeight;
                                             break;
                                         }
 
@@ -797,7 +817,7 @@ namespace Trinity.Components.Combat
                                         {
                                             // Need to trigger boss encounter to start (diablo, belial etc), ignore until profile to moves in range.
                                             cacheObject.WeightInfo += string.Format("Ignoring {0} Boss event needs triggering", cacheObject.InternalName);
-                                            cacheObject.Weight += 0;
+                                            cacheObject.Weight = MinWeight;
                                             break;
                                         }
 
@@ -1742,7 +1762,11 @@ namespace Trinity.Components.Combat
                 reason = "Keep(IsMinimapActive)";
                 return false;
             }
-
+            if (unit.HitPointsPct < 0.25)
+            {
+                reason = "Keep(Elites=LowHealth)";
+                return false;
+            }
             if (Core.Settings.Weighting.EliteWeighting == SettingMode.Enabled)
             {
                 reason = "Keep(Elites=Enabled)";

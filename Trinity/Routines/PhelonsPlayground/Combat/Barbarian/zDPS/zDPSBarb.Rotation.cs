@@ -10,6 +10,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
     using Components.Coroutines.Town;
     using Framework;
     using Framework.Helpers;
+    using Framework.Reference;
     using Zeta.Game;
 
     public partial class zDPSBarb
@@ -43,6 +44,12 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
 
             if (ShouldFuriousChargeInCombat(out position))
                 return Spells.FuriousCharge(position);
+
+            if (ShouldOverPower())
+                return Spells.Overpower();
+
+            if (ShouldWhirlwind(out position))
+                return Spells.Whirlwind(position);
 
             return Walk(Targeting.HealthGlobeExists(25f) ? Targeting.GetBestHealthGlobeClusterPoint(10f, 25f) : Target.Position);
         }

@@ -43,12 +43,13 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
         {
             Sets = new Dictionary<Set, SetBonus>
             {
-                { Sets.TheLegacyOfRaekor, SetBonus.Second },
+                //{ Sets.TheLegacyOfRaekor, SetBonus.Second },
+                //{ Sets.WrathOfTheWastes, SetBonus.Second },
             },
             Skills = new Dictionary<Skill, Rune>
             {
-                { Skills.Barbarian.FuriousCharge, null },
-                { Skills.Barbarian.AncientSpear, Runes.Barbarian.RageFlip },
+                //{ Skills.Barbarian.FuriousCharge, null },
+                //{ Skills.Barbarian.AncientSpear, Runes.Barbarian.RageFlip },
             }
         };
 
@@ -100,6 +101,10 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
 
             if (!Player.IsInTown)
             {
+
+                if (Skills.Barbarian.Whirlwind.CanCast() && CurrentTarget != null && !CurrentTarget.IsGizmo)
+                    return Spells.Whirlwind(destination);
+
                 if (CanChargeTo(destination) && Skills.Barbarian.FuriousCharge.TimeSinceUse > 500)
                 {
                     // Limit movement casts so we have stacks to charge units and build more stacks.

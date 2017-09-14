@@ -58,7 +58,7 @@ namespace Trinity.Components.Coroutines
                 Targets.OfType<TrinityItem>()
                     .OrderBy(x => !x.IsPickupNoClick)
                     .ThenBy(x => x.Distance)
-                    .Where(x => x.IsValid && !VacuumedAcdIds.Keys.Contains(x.AcdId))
+                    .Where(x => x.IsValid && x.CanPickupItem)// && !VacuumedAcdIds.Keys.Contains(x.AcdId))
                     .Select(x => x.AcdId).ToList();
             if (!groundItems.Any())
                 return false;
@@ -66,8 +66,6 @@ namespace Trinity.Components.Coroutines
             foreach (var itemAcdId in groundItems)
             {
                 var item = Targets.OfType<TrinityItem>()
-                    .OrderBy(x => !x.IsPickupNoClick)
-                    .ThenBy(x => x.Distance)
                     .FirstOrDefault(x => x.AcdId == itemAcdId);
                 if (item == null)
                     continue;
@@ -76,30 +74,31 @@ namespace Trinity.Components.Coroutines
                     Grids.Avoidance.IsIntersectedByFlags(Player.Position, item.Position,
                         AvoidanceFlags.NavigationBlocking, AvoidanceFlags.NavigationImpairing) &&
                     !Player.IsFacing(item.Position, 90);
+
+                await Coroutine.Yield();
+
                 if (item.Distance > 7f || !validApproach)
                     continue;
 
                 Inventory.Backpack.Update();
                 if (Player.FreeBackpackSlots < 4)
                     break;
-
+                PlayerMover.MoveStop();
+                await Coroutine.Sleep(Math.Max((int)item.Position.Distance2D(Player.Position) * 50, 250));
                 /* Added checkpoints to avoid approach stuck -Seq */
+
                 if (!VacuumedAcdIds.Keys.Contains(item.AcdId))
                     VacuumedAcdIds.Add(item.AcdId, DateTime.Now);
-                Logger.Warn(
-                    $"Vacuumed: {item.Name} ({item.ActorSnoId}) InternalName={item.InternalName} GbId={item.GameBalanceId}");
-                SpellHistory.RecordSpell(SNOPower.Axe_Operate_Gizmo);
-                item.Interact();
-                await Coroutine.Sleep(Math.Max((int)item.Position.Distance2D(Player.Position) * 50, 500));
-                //if (!ZetaDia.Me.UsePower(SNOPower.Axe_Operate_Gizmo, item.Position, Player.WorldDynamicId,
-                //        item.AcdId))
-                //{
-                //    Logger.Warn($"Failed to vacuum item {item.Name} AcdId={item.AcdId}");
-                //    continue;
-                //}
+                if (!item.Interact())
+                {
+                    Logger.Warn($"Failed to vacuum item {item.Name} AcdId={item.AcdId} Distance: {item.Distance}");
+                    if (!VacuumedAcdIds.Keys.Contains(item.AcdId))
+                        VacuumedAcdIds.Add(item.AcdId, DateTime.Now.Subtract(new TimeSpan(0,0,0,20)));
+                    continue;
+                }
+                Logger.Warn($"Vacuumed: {item.Name} ({item.ActorSnoId}) InternalName={item.InternalName} GbId={item.GameBalanceId}");
                 count++;
                 isVacuuming = true;
-                await Coroutine.Yield();
             }
             Logger.Verbose($"Vacuumed {count} items");
             return isVacuuming;

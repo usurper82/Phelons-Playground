@@ -332,9 +332,26 @@ namespace AutoFollow
         private static void Initialize()
         {
             if (!Application.Current.CheckAccess()) return;
-
             Conditions.Initialize();
             Service.Initialize();
+            Log.Warn($"FollowDistance : {Settings.Coordination.FollowDistance, -30}");
+            Log.Warn($"CatchUpDistance : {Settings.Coordination.CatchUpDistance,-30}");
+            Log.Warn($"TeleportDistance : {Settings.Coordination.TeleportDistance,-30}");
+            Log.Warn($"DelayAfterJoinGame : {Settings.Coordination.DelayAfterJoinGame,-30}");
+            Log.Warn($"AllowAvoidance : {Settings.Combat.AllowAvoidance,-30}");
+            Log.Warn($"AllowKiting : {Settings.Combat.AllowKiting,-30}");
+            Log.Warn($"AlwaysAcceptInvites : {Settings.Misc.AlwaysAcceptInvites,-30}");
+            Log.Warn($"AlwaysEnablePlugin : {Settings.Misc.AlwaysEnablePlugin,-30}");
+            Log.Warn($"AvoidUnknownPlayers : {Settings.Misc.AvoidUnknownPlayers,-30}");
+            Log.Warn($"HideHeroName : {Settings.Misc.HideHeroName,-30}");
+            Log.Warn($"InviteByParagon : {Settings.Misc.InviteByParagon,-30}");
+            Log.Warn($"IsRealIdEnabled : {Settings.Misc.IsRealIdEnabled,-30}");
+            //Log.Warn($"RealId : {Settings.Misc.RealId,-30}");
+            Log.Warn($"Role : {Settings.Network.Role,-30}");
+            Log.Warn($"BindAddress : {Settings.Network.BindAddress,-30}");
+            Log.Warn($"ServerPort : {Settings.Network.ServerPort,-30}");
+            Log.Warn($"UpdateInterval : {Settings.Network.UpdateInterval,-30}");
+            Log.Warn($"DebugLogging : {Settings.Misc.DebugLogging,-30}");
         }
 
         public static Message GetUpdatedMessage(Message message)

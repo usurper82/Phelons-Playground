@@ -207,6 +207,9 @@ namespace Trinity.Components.Adventurer.Game.Exploration
                 if (n.Scene.ExitPositions.Count <= 1 && !isInExitScene)
                     return 0;
 
+                if (!Core.Grids.CanRayWalk(Core.Player.Position, n.NavigableCenter))
+                    return 0;
+
                 // Lower weight for scenes near the edge of an open style map.
                 edgeMultiplier = n.Scene.Name.Contains("Border") || n.Scene.Name.Contains("Edge") ? 0.5 : 1;
             }

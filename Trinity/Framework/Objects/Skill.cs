@@ -144,7 +144,7 @@ namespace Trinity.Framework.Objects
             get { return CurrentRune.ModifiedIsDamaging ?? _isDamaging; }
             set { _isDamaging = value; }
         }
-        
+
         /// <summary>
         /// Cooldown; uses rune value when applicable and cooldown reduction from items.
         /// </summary>
@@ -160,6 +160,11 @@ namespace Trinity.Framework.Objects
             }
             set { _cooldown = value; }
         }
+
+        /// <summary>
+        /// Returns if the skill is currently on Cooldown
+        /// </summary>
+        public bool OnCooldown => (int) Core.Cooldowns.GetSkillCooldownRemaining(SNOPower).TotalMilliseconds > TimeSinceUse;
 
         /// <summary>
         /// Milliseconds until spell is off cooldown
