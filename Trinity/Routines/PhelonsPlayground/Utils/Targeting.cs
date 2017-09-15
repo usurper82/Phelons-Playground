@@ -154,7 +154,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
                     return true;
                 }
                 var closestSanc = ClosestSanctuary(maxRange, fromLocation, objectsInAoe);
-                if ((AnyElitesInRange(45f) || CurrentTarget != null && CurrentTarget.MonsterAffixes.HasFlag(MonsterAffixes.Frozen)) &&
+                if ((AnyElitesChampionsBossesInRange(45f) || CurrentTarget != null && CurrentTarget.MonsterAffixes.HasFlag(MonsterAffixes.Frozen)) &&
                     closestSanc != Vector3.Zero)
                 {
                     location = closestSanc;
@@ -813,6 +813,15 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
             return bestClusterPoint;
         }
 
+        internal static TrinityActor ClosestHealthGlobe(float radius = 45f)
+        {
+
+            return
+                ObjectCache.OrderBy(x => x.Distance)
+                    .FirstOrDefault(
+                        u => u.Type == TrinityObjectType.HealthGlobe && u.Position.Distance2D(Player.Position) <= radius);
+        }
+
         /// <summary>
         /// Checks to see if there is a health globe around to grab
         /// </summary>
@@ -820,13 +829,8 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         /// <returns></returns>
         internal static bool HealthGlobeExists(float radius = 15f)
         {
-            var clusterCheck =
-            (from u in ObjectCache
-                where u.Type == TrinityObjectType.HealthGlobe && !UnitOrPathInAoE(u) &&
-                      u.Position.Distance2D(Player.Position) <= radius
-                select u).Any();
 
-            return clusterCheck;
+            return ClosestGlobe(radius) != null;
         }
 
         /// <summary>
@@ -1045,6 +1049,25 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         }
 
         /// <summary>
+        /// Fast check to see if there are any attackable Champion units within a certain distance
+        /// </summary>
+        /// <param name="range"></param>
+        /// <returns></returns>
+        internal static bool AnyChampionsInRange(float range = 10f)
+        {
+            if (Core.Settings.Weighting.EliteWeighting == SettingMode.Disabled)
+                return false;
+
+            if (range < 5f)
+                range = 5f;
+            return (from o in ObjectCache
+                    where o.IsUnit &&
+                    o.IsChampion &&
+                    o.RadiusDistance <= range
+                    select o).Any();
+        }
+
+        /// <summary>
         /// Fast check to see if there are any attackable Elite units within a certain distance
         /// </summary>
         /// <param name="range"></param>
@@ -1054,8 +1077,24 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
             if (range < 5f)
                 range = 5f;
             return (from o in ObjectCache
+                    where o.IsUnit &&
+                          o.IsElite &&
+                          o.Position.Distance2D(Player.Position) <= range
+                    select o).Any();
+        }
+
+        /// <summary>
+        /// Fast check to see if there are any attackable Elite units within a certain distance
+        /// </summary>
+        /// <param name="range"></param>
+        /// <returns></returns>
+        internal static bool AnyElitesChampionsBossesInRange(float range = 10f)
+        {
+            if (range < 5f)
+                range = 5f;
+            return (from o in ObjectCache
                 where o.IsUnit &&
-                      (o.IsElite || o.IsChampion || o.IsBoss || o.IsMinion) &&
+                      (o.IsElite || o.IsChampion || o.IsBoss) &&
                       o.Position.Distance2D(Player.Position) <= range
                 select o).Any();
         }

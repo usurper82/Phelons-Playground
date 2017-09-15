@@ -209,7 +209,7 @@ namespace Trinity.Components.Adventurer.Coroutines
                         _currentDestination = null;
                     }
 
-                    if (_failedNavigationAttempts > 25)
+                    if (_failedNavigationAttempts > 10)
                     {
                         if (_allowReExplore)
                         {

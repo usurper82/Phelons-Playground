@@ -23,6 +23,8 @@ using Zeta.Game.Internals.Actors;
 
 namespace Trinity.Routines
 {
+    using PhelonsPlayground.Utils;
+
     public class RoutineBase : NotifyBase
     {
         public virtual float PotionHealthPct => 0.50f;
@@ -250,13 +252,16 @@ namespace Trinity.Routines
         {
             var routine = Core.Routines.CurrentRoutine;
 
-            if (settings.Reasons.HasFlag(UseReasons.Elites) && TargetUtil.AnyElitesInRange(40f))
+            if (settings.Reasons.HasFlag(UseReasons.Elites) && (Targeting.AnyElitesInRange(40f) || Targeting.AnyBossesInRange(40f)))
+                return true;
+
+            if (settings.Reasons.HasFlag(UseReasons.Champions) && (Targeting.AnyChampionsInRange(40f) || Targeting.AnyBossesInRange(40f)))
                 return true;
 
             if (settings.Reasons.HasFlag(UseReasons.Trash) && TargetUtil.ClusterExists(routine.TrashRange, routine.TrashRange, routine.ClusterSize))
                 return true;
 
-            if (settings.Reasons.HasFlag(UseReasons.Surrounded) && TargetUtil.NumMobsInRange(25f) >= Math.Max(ClusterSize, 5))
+            if (settings.Reasons.HasFlag(UseReasons.Surrounded) && TargetUtil.NumMobsInRange(25f) >= ClusterSize)
                 return true;
 
             if (settings.Reasons.HasFlag(UseReasons.Avoiding) && IsCurrentlyAvoiding)

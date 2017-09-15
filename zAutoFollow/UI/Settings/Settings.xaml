@@ -80,6 +80,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition MinWidth="130" />
@@ -123,6 +124,14 @@
                             HorizontalAlignment="Stretch" Margin="0,3,0,3" />
                         <TextBlock Grid.Row="3" Grid.Column="2" Margin="2,0,0,0" FontSize="10" VerticalAlignment="Center">secs</TextBlock>
 
+                        <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center">Total Expected Bots</TextBlock>
+                        <Slider Grid.Row="4" Grid.Column="1" Template="{DynamicResource SliderEditable}" 
+                            ToolTip="How many bots to wait for before starting."
+                            Interval="1" Maximum="4" Minimum="1" 
+                            SmallChange="1" TickFrequency="1" IsSnapToTickEnabled="True"
+                            TickPlacement="BottomRight" Value="{Binding Coordination.ExpectedBots}" 
+                            HorizontalAlignment="Stretch" Margin="0,3,0,3" />
+                        <TextBlock Grid.Row="4" Grid.Column="2" Margin="2,0,0,0" FontSize="10" VerticalAlignment="Center">bots</TextBlock>
                     </Grid>
                 </GroupBox>
             </StackPanel>

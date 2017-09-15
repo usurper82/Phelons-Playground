@@ -1091,6 +1091,25 @@ namespace Trinity.Components.Combat.Resources
         }
 
         /// <summary>
+        /// Fast check to see if there are any attackable Champion units within a certain distance
+        /// </summary>
+        /// <param name="range"></param>
+        /// <returns></returns>
+        internal static bool AnyChampionsInRange(float range = 10f)
+        {
+            if (Core.Settings.Weighting.EliteWeighting == SettingMode.Disabled)
+                return false;
+
+            if (range < 5f)
+                range = 5f;
+            return (from o in ObjectCache
+                    where o.IsUnit &&
+                    o.IsChampion &&
+                    o.RadiusDistance <= range
+                    select o).Any();
+        }
+
+        /// <summary>
         /// Fast check to see if there are any attackable Elite units within a certain distance
         /// </summary>
         /// <param name="range"></param>

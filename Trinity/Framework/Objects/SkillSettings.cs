@@ -288,6 +288,9 @@ namespace Trinity.Framework.Objects
 
         [Description("Use when trash are nearby above cluster size")]
         Trash = 512,
+
+        [Description("Use when Champions are nearby")]
+        Champions = 1024,
     }
 
     public enum ConventionMode

@@ -41,10 +41,10 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
 
             if (Target.RadiusDistance < castDistance)
             {
-                if (ShouldLandOfTheDead())
+                if (AllowedToUse(Settings.Cooldowns, Skills.Necromancer.LandOfTheDead) && ShouldLandOfTheDead())
                     return Spells.LandOfTheDead();
 
-                if (ShouldSimulacrum())
+                if (AllowedToUse(Settings.Cooldowns, Skills.Necromancer.Simulacrum) && ShouldSimulacrum())
                     return Spells.Simulacrum();
 
                 if (ShouldSkeletalMage())

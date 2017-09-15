@@ -844,43 +844,17 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                 }
             }
 
-            //if (Core.Player.IsInParty && RiftData.GetGreaterRiftLevel() > 55 && TrinityPluginSettings.Settings.Advanced.BetaPlayground)
-            //{
-            //    var deadPlayer =
-            //        ZetaDia.Actors.GetActorsOfType<DiaPlayer>(true)
-            //            .FirstOrDefault(u => u.IsValid && u.CommonData != null && u.CommonData.IsValid && !u.IsAlive);
+            if (Core.Player.IsInParty)
+            {
+                var player =
+                    ZetaDia.Actors.GetActorsOfType<DiaPlayer>(true)
+                        .FirstOrDefault(u => u.IsValid && u.CommonData != null && u.CommonData.IsValid && (!u.IsAlive || u.Distance > 25f));
 
-            //    if (deadPlayer != null && deadPlayer.Distance > 15)
-            //    {
-            //        if (!await NavigationCoroutine.MoveTo(deadPlayer.Position, 15)) return false;
-            //    }
-
-            //    var players =
-            //            ZetaDia.Actors.GetActorsOfType<DiaPlayer>(true)
-            //                .Where(
-            //                    u =>
-            //                        u.IsValid && u.CommonData != null && u.CommonData.IsValid &&
-            //                        u.WorldId == ZetaDia.Me.WorldId && u.HitpointsMaxTotal < 999999999);
-
-            //    var diaPlayers = players as DiaPlayer[] ?? players.ToArray();
-            //    var maxhpplayer = diaPlayers.OrderByDescending(x => x.HitpointsMaxTotal).FirstOrDefault();
-
-            //    if (!PluginManager.GetEnabledPlugins().Any(u => u.Contains("AutoFollow")) && maxhpplayer != null && maxhpplayer.HitpointsMaxTotal > ZetaDia.Me.HitpointsMaxTotal)
-            //    {
-            //        if (maxhpplayer.Distance > 20 && ZetaDia.Me.IsInCombat || !ZetaDia.Me.IsInCombat)
-            //        {
-            //            var say = "[Follower] Got to far away.  Trying to follow the Tank with HPs: " +
-            //                      maxhpplayer.HitpointsMaxTotal + "!";
-            //            if (lastError == null || say != lastError)
-            //            {
-            //                Core.Logger.Log(say);
-            //                lastError = say;
-            //                Core.Logger.Log(lastError);
-            //            }
-            //            if (!await NavigationCoroutine.MoveTo(maxhpplayer.Position, 5)) return false;
-            //        }
-            //    }
-            //}
+                if (player != null && player.Distance > 45)
+                {
+                    if (!await NavigationCoroutine.MoveTo(player.Position, 15)) return false;
+                }
+            }
 
             if (!await ExplorationCoroutine.Explore(new HashSet<int> { AdvDia.CurrentLevelAreaId })) return false;
             Core.Scenes.Reset();

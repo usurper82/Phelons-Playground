@@ -12,6 +12,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
     using DbProvider;
     using Framework;
     using Framework.Actors.ActorTypes;
+    using Framework.Objects;
     using Framework.Reference;
     using Modules;
     using Utils;
@@ -59,7 +60,10 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
 
         public static TrinityPower MovementPower(Vector3 destination)
         {
-            return (!Player.Position.EasyNavToPosition(destination) || destination.Distance(Player.Position) > 20 || HasInstantCooldowns) && CurrentTarget == null &&
+            if (Player.IsInTown)
+                return null;
+
+            return (!Player.Position.EasyNavToPosition(destination) || destination.Distance(Player.Position) > 20 || HasInstantCooldowns) &&
                    Skills.Necromancer.BloodRush.CanCast()
                 ? Spells.BloodRush(destination)
                 : Spells.Walk(destination);

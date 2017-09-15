@@ -112,13 +112,21 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
         public sealed class RathmaSettings : NotifyBase, IDynamicSetting
         {
             private int _clusterSize;
+            private int _cooldownTrashSize;
             private float _emergencyHealthPct;
+            private SkillSettings _coolDowns;
 
             [DefaultValue(8)]
             public int ClusterSize
             {
                 get { return _clusterSize; }
                 set { SetField(ref _clusterSize, value); }
+            }
+            [DefaultValue(30)]
+            public int CooldownTrashSize
+            {
+                get { return _cooldownTrashSize; }
+                set { SetField(ref _cooldownTrashSize, value); }
             }
 
             [DefaultValue(0.4f)]
@@ -128,8 +136,28 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
                 set { SetField(ref _emergencyHealthPct, value); }
             }
 
-            #region IDynamicSetting
+            public SkillSettings Cooldowns
+            {
+                get { return _coolDowns; }
+                set { SetField(ref _coolDowns, value); }
+            }
 
+
+            #region Skill Defaults
+
+            private static readonly SkillSettings CooldownsDefaults = new SkillSettings
+            {
+                UseMode = UseTime.Always,
+                Reasons = UseReasons.Elites | UseReasons.Surrounded | UseReasons.Champions
+            };
+
+            #endregion
+
+            public override void LoadDefaults()
+            {
+                base.LoadDefaults();
+                Cooldowns = CooldownsDefaults.Clone();
+            }
             public string GetName() => GetType().Name;
             public UserControl GetControl() => UILoader.LoadXamlByFileName<UserControl>(GetName() + ".xaml");
             public object GetDataContext() => this;
@@ -137,8 +165,6 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
             public void ApplyCode(string code) => JsonSerializer.Deserialize(code, this, true);
             public void Reset() => LoadDefaults();
             public void Save() { }
-
-            #endregion
         }
 
         #endregion

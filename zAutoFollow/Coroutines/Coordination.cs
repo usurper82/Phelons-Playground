@@ -103,6 +103,7 @@ namespace AutoFollow.Coroutines
         //}
 
         public static DateTime PartyJoinTimer = DateTime.MinValue;
+
         /// <summary>
         /// Prevents a greater rift from being started until all bots are ready.
         /// </summary>
@@ -118,7 +119,9 @@ namespace AutoFollow.Coroutines
                 //    return true;
                 //}
 
-                if (AutoFollow.CurrentFollowers.Any(f => f.IsVendoring || !ZetaDia.Me.IsParticipatingInTieredLootRun && f.InDifferentLevelArea))
+                if (
+                    AutoFollow.CurrentFollowers.Any(
+                        f => f.IsVendoring || !ZetaDia.Me.IsParticipatingInTieredLootRun && f.InDifferentLevelArea))
                 {
                     Log.Info("Waiting for followers to finish vendoring.");
                     await Coroutine.Sleep(20000);
@@ -146,19 +149,21 @@ namespace AutoFollow.Coroutines
                     return true;
                 }
 
-                if (AutoFollow.CurrentLeader.IsMe && Player.IsInTown && Trinity.Routines.PhelonsPlayground.Utils.Targeting.Players.Count() < 4 &&
-                    AutoFollow.CurrentFollowers.All(f => f.IsInSameWorld && f.Distance > 35f))
-                {
-                    Log.Info("Waiting for followers to show up.");
-                    await Coroutine.Sleep(1000);
-                    return true;
-                }
-
                 var obelisk = Town.Actors.RiftObelisk;
                 if (obelisk != null)
                 {
                     Log.Info("Moving to Obelisk.");
                     await Movement.MoveTo(obelisk.Position);
+                }
+
+                if (AutoFollow.CurrentLeader.IsMe && Player.IsInTown &&
+                    (Trinity.Routines.PhelonsPlayground.Utils.Targeting.Players.Count() < AutoFollow.NumberOfConnectedBots ||
+                     AutoFollow.NumberOfConnectedBots < Settings.Coordination.ExpectedBots))
+                    //AutoFollow.CurrentFollowers.All(f => f.IsInSameWorld && f.Distance > 35f)))
+                {
+                    Log.Info("Waiting for followers to show up.");
+                    await Coroutine.Sleep(1000);
+                    return true;
                 }
             }
             return false;

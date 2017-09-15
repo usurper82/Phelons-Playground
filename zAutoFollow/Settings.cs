@@ -149,6 +149,7 @@ namespace AutoFollow
         private int _followDistance;
         private int _delayAfterJoinGame;
         private int _catchUpDistance;
+        private int _expectedBots;
 
         [DataMember, Setting]
         [DefaultValue(300)]
@@ -180,6 +181,14 @@ namespace AutoFollow
         {
             get { return _delayAfterJoinGame; }
             set { SetField(ref _delayAfterJoinGame, value); }
+        }
+
+        [DataMember, Setting]
+        [DefaultValue(4)]
+        public int ExpectedBots
+        {
+            get { return _expectedBots; }
+            set { SetField(ref _expectedBots, value); }
         }
 
     }

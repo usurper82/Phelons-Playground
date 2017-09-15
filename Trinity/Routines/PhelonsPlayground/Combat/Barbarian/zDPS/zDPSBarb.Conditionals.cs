@@ -93,9 +93,9 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
             if (!Skills.Barbarian.FuriousCharge.CanCast())
                 return false;
 
-            if (Targeting.HealthGlobeExists(40f))
+            if (Targeting.HealthGlobeExists(65f))
             {
-                position = Targeting.GetBestHealthGlobeClusterPoint(7f, 45f, false);
+                position = Targeting.ClosestHealthGlobe(65f).Position;
                 Core.Logger.Error(LogCategory.Routine,
                     $"[FuriousCharge] -  On Closest Health Globe: [{position.Distance(Player.Position)}].");
                 return true;

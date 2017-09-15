@@ -119,7 +119,7 @@ namespace Trinity.Components.Coroutines.Town
                 Core.Logger.Debug("Started Town Run Loop");
 
                 var checkCycles = 2;
-                while (!Player.IsInventoryLockedForGreaterRift)
+                while (!Player.IsInventoryLockedForGreaterRift && !ZetaDia.Me.IsParticipatingInTieredLootRun)
                 {
                     if (!ZetaDia.IsInGame)
                     {
