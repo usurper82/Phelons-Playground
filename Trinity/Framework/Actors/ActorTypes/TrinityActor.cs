@@ -93,16 +93,34 @@ namespace Trinity.Framework.Actors.ActorTypes
         public bool IsSummoned { get; set; }
         public bool IsSummonedByPlayer { get; set; }
         public bool IsTrashMob { get; set; }
+        /// <summary>
+        /// Rift Bosses Etc
+        /// </summary>
+        public bool IsBoss { get; set; }
+        /// <summary>
+        /// Champions, Rares, Bosses, Minions, Uniques, Rares
+        /// </summary>
         public bool IsElite { get; set; }
+        /// <summary>
+        /// Minions of Yellow Elites
+        /// </summary>
         public bool IsMinion { get; set; }
+        /// <summary>
+        /// Random Purple Elites
+        /// </summary>
         public bool IsUnique { get; set; }
+        /// <summary>
+        /// Blue Elites
+        /// </summary>
         public bool IsChampion { get; set; }
+        /// <summary>
+        /// Yellow Elites
+        /// </summary>
         public bool IsRare { get; set; }
         public bool IsIllusion { get; set; }
         public bool IsTreasureGoblin { get; set; }
         public double RiftValuePct { get; set; }
         public bool IsHostile { get; set; }
-        public bool IsBoss { get; set; }
         public MonsterQuality MonsterQuality { get; set; }
         public bool IsFriendly { get; set; }
         public MarkerType MarkerType { get; set; }

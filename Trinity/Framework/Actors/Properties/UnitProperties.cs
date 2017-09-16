@@ -37,16 +37,16 @@ namespace Trinity.Framework.Actors.Properties
 
             var monsterQuality = commonData.MonsterQualityLevel;
             actor.MonsterQuality = monsterQuality;
-            actor.IsBoss = monsterQuality == MonsterQuality.Boss;
             actor.RiftValuePct = Core.Rift.GetRiftValue(actor);
             actor.IsTreasureGoblin = actor.MonsterRace == MonsterRace.TreasureGoblin;
             actor.IsIllusion = monsterAffixes.HasFlag(MonsterAffixes.Illusionist) && attributes.IsIllusion;
+            actor.IsBoss = monsterQuality == MonsterQuality.Boss;
             actor.IsRare = monsterQuality == MonsterQuality.Rare;
             actor.IsChampion = monsterQuality == MonsterQuality.Champion;
             actor.IsUnique = monsterQuality == MonsterQuality.Unique;
             actor.IsMinion = monsterQuality == MonsterQuality.Minion;
-            actor.IsElite = actor.IsMinion || actor.IsRare || actor.IsChampion || actor.IsUnique || actor.IsBoss;
-            actor.IsTrashMob = actor.IsUnit && !(actor.IsElite || actor.IsBoss || actor.IsTreasureGoblin || actor.IsMinion);
+            actor.IsElite = actor.IsRare || actor.IsChampion || actor.IsUnique || actor.IsBoss;
+            actor.IsTrashMob = actor.IsUnit && !(actor.IsElite || actor.IsTreasureGoblin || actor.IsMinion);
             actor.IsCorruptGrowth = GameData.CorruptGrowthIds.Contains(actor.ActorSnoId);
 
             if (actor.IsBoss)

@@ -191,7 +191,7 @@ namespace Trinity.Components.Combat
                 //    CombatBase.IsQuestingMode, isHealthEmergency, hiPriorityHealthGlobes, hiPriorityShrine);
 
                 TrinityActor target = null;
-                target = objects.OfType<TrinityItem>().Cast<TrinityItem>().FirstOrDefault(u => u.IsCosmeticItem && u.Distance <= 200f);
+                target = objects.OfType<TrinityItem>().FirstOrDefault(u => u.IsCosmeticItem && u.Distance <= 200f);
 
                 if (target == null && Core.Settings.Weighting.GoblinPriority == TargetPriority.Kamikaze)
                 {
@@ -806,6 +806,16 @@ namespace Trinity.Components.Combat
                                             cacheObject.Weight = MinWeight;
                                             break;
                                         }
+
+                                        if (cacheObject.HitPointsPct <= 0.30 && !cacheObject.IsMinion)
+                                        {
+                                            cacheObject.WeightInfo +=
+                                                string.Format("Adding {0} for Elite Under Health Threshold.",
+                                                    cacheObject.InternalName);
+                                            cacheObject.Weight += MaxWeight;
+                                            break;
+                                        }
+
                                         if (cacheObject.IsSpawningBoss)
                                         {
                                             cacheObject.WeightInfo += string.Format("Ignoring {0} Boss is spawning", cacheObject.InternalName);
@@ -820,16 +830,6 @@ namespace Trinity.Components.Combat
                                             cacheObject.Weight = MinWeight;
                                             break;
                                         }
-
-                                        //if (cacheObject.HitPointsPct <=
-                                        //    Core.Settings.Combat.Misc.ForceKillElitesHealth && !cacheObject.IsMinion)
-                                        //{
-                                        //    cacheObject.WeightInfo +=
-                                        //        string.Format("Adding {0} for Elite Under Health Threshold.",
-                                        //            cacheObject.InternalName);
-                                        //    cacheObject.Weight += MaxWeight;
-                                        //    break;
-                                        //}
 
                                         //if (TargetUtil.NumMobsInRangeOfPosition(cacheObject.Position,
                                         //    CombatBase.CombatOverrides.EffectiveTrashRadius) >=
@@ -1335,7 +1335,7 @@ namespace Trinity.Components.Combat
                                     if (PluginEvents.CurrentProfileType == ProfileType.Bounty && cacheObject.Type == TrinityObjectType.CursedShrine)
                                     {
                                         cacheObject.Weight = MaxWeight;
-                                        cacheObject.WeightInfo += $"Brabbing Shrine for Bounty {cacheObject.InternalName}";
+                                        cacheObject.WeightInfo += $"Grabbing Shrine for Bounty {cacheObject.InternalName}";
                                         break;
                                     }
                                     // Campaign A5 Quest "Lost Treasure of the Nephalem" - have to interact with nephalem switches first... 
@@ -1748,6 +1748,12 @@ namespace Trinity.Components.Combat
             if (!unit.IsElite)
                 return false;
 
+            if (unit.HitPointsPct < 0.25)
+            {
+                reason = "Keep(Elites=LowHealth)";
+                return false;
+            }
+
             if (unit.IsBoss)
                 return false;
 
@@ -1760,11 +1766,6 @@ namespace Trinity.Components.Combat
             if (unit.IsMinimapActive)
             {
                 reason = "Keep(IsMinimapActive)";
-                return false;
-            }
-            if (unit.HitPointsPct < 0.25)
-            {
-                reason = "Keep(Elites=LowHealth)";
                 return false;
             }
             if (Core.Settings.Weighting.EliteWeighting == SettingMode.Enabled)

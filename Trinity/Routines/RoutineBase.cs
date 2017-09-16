@@ -204,11 +204,11 @@ namespace Trinity.Routines
             if (settings.UseMode == UseTime.Never)
                 return false;
 
-            if (IsRestricted(settings, skill))
-                return false;
-
             if (IsReasonToUse(settings, skill))
                 return true;
+
+            if (IsRestricted(settings, skill))
+                return false;
 
             if (settings.UseMode == UseTime.Selective)
                 return false;
@@ -224,6 +224,9 @@ namespace Trinity.Routines
 
         protected bool IsRestricted(SkillSettings settings, Skill skill)
         {
+            //if (settings.ClusterSize > 0 && !TargetUtil.ClusterExists(45f, settings.ClusterSize))
+            //    return false;
+
             if (Player.PrimaryResourcePct < settings.PrimaryResourcePct / 100)
                 return true;
 
@@ -234,9 +237,6 @@ namespace Trinity.Routines
                 return true;
 
             if (SpellHistory.TimeSinceUse(skill.SNOPower).TotalMilliseconds < settings.RecastDelayMs)
-                return true;
-  
-            if (settings.ClusterSize > 0 && !TargetUtil.ClusterExists(15f, settings.ClusterSize))
                 return true;
 
             if (settings.WaitForConvention == ConventionMode.GreaterRift && !Core.Rift.IsGreaterRift)
@@ -261,7 +261,7 @@ namespace Trinity.Routines
             if (settings.Reasons.HasFlag(UseReasons.Trash) && TargetUtil.ClusterExists(routine.TrashRange, routine.TrashRange, routine.ClusterSize))
                 return true;
 
-            if (settings.Reasons.HasFlag(UseReasons.Surrounded) && TargetUtil.NumMobsInRange(25f) >= ClusterSize)
+            if (settings.Reasons.HasFlag(UseReasons.Surrounded) && TargetUtil.NumMobsInRange(45f) >= ClusterSize)
                 return true;
 
             if (settings.Reasons.HasFlag(UseReasons.Avoiding) && IsCurrentlyAvoiding)

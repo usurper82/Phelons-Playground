@@ -26,6 +26,7 @@ using Action = Zeta.TreeSharp.Action;
 namespace AutoFollow.Behaviors
 {
     using Trinity.Components.Adventurer.Game.Events;
+    using Trinity.Framework.Objects;
 
     public class FollowerCombat : BaseBehavior
     {
@@ -125,12 +126,21 @@ namespace AutoFollow.Behaviors
             //Log.Info($"Distance: {AutoFollow.CurrentLeader.Distance} CurrentTarget: {AutoFollow.CurrentLeader.CurrentTarget} Position: {AutoFollow.CurrentLeader.Position} ");
             if (!AutoFollow.CurrentLeader.InDifferentLevelArea)// && !Targetting.IsPriorityTarget)
             {
+                if (AutoFollow.CurrentLeader.Distance < 45 && Player.Target != null &&
+                    Player.Target.Type == TrinityObjectType.Unit && AutoFollow.CurrentLeader.CurrentTarget != null &&
+                    AutoFollow.CurrentLeader.CurrentTarget.Type == TrinityObjectType.Unit)
+                {
+                    Targetting.State = CombatState.Enabled;
+                    return FollowMode.Combat;
+                }
+
                 if (AutoFollow.CurrentLeader.Distance > Settings.Coordination.CatchUpDistance)
                 {
-                    Targetting.State = CombatState.Movement;
+                    Targetting.State = CombatState.Disabled;
                     return FollowMode.ChaseLeader;
                 }
-                if (AutoFollow.CurrentLeader.Distance > Settings.Coordination.FollowDistance && (Player.Target == null || AutoFollow.CurrentLeader.CurrentTarget == null))
+
+                if (AutoFollow.CurrentLeader.Distance > Settings.Coordination.FollowDistance)
                 {
                     Targetting.State = CombatState.Pulsing;
                     return FollowMode.FollowLeader;
@@ -164,7 +174,8 @@ namespace AutoFollow.Behaviors
                     if (AutoFollow.CurrentLeader.Distance > catchUpDistance)
                     {
                         Log.Info("Moving to Follow Leader.");
-                        await Navigator.MoveTo(AutoFollow.CurrentLeader.Position);
+                        await Trinity.Components.Adventurer.Coroutines.NavigationCoroutine.MoveTo(AutoFollow.CurrentLeader.Position, 0);
+                        //await Navigator.MoveTo(AutoFollow.CurrentLeader.Position);
                         return true;
                     }
                     break;
@@ -172,7 +183,8 @@ namespace AutoFollow.Behaviors
                     if (AutoFollow.CurrentLeader.Distance > Settings.Coordination.CatchUpDistance)
                     {
                         Log.Info("Moving to Chase Leader.");
-                        await Navigator.MoveTo(AutoFollow.CurrentLeader.Position);
+                        await Trinity.Components.Adventurer.Coroutines.NavigationCoroutine.MoveTo(AutoFollow.CurrentLeader.Position, 0);
+                        //await Navigator.MoveTo(AutoFollow.CurrentLeader.Position);
                         return true;
                     }
                     break;

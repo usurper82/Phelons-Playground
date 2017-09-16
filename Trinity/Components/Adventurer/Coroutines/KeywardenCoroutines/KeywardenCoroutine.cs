@@ -183,7 +183,7 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
             if (_markerCoroutine == null)
             {
                 Core.Logger.Log("[Keywarden] Following a keywarden marker, lets see where it goes");
-                _markerCoroutine = new MoveToMapMarkerCoroutine(-1, AdvDia.CurrentWorldId, _minimapMarker.NameHash, true);
+                _markerCoroutine = new MoveToMapMarkerCoroutine(-1, AdvDia.CurrentWorldId, _minimapMarker.NameHash);
             }
 
             if (!_markerCoroutine.IsDone)
@@ -280,7 +280,7 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
         private async Task<bool> Looting()
         {
             DisablePulse();
-            var loots = ZetaDia.Actors.GetActorsOfType<DiaObject>(true, false).OrderBy(x => x.Distance).Where(x => x.IsFullyValid() && KeywardenDataFactory.KeyIds.Contains(x.ActorSnoId)).ToList();
+            var loots = ZetaDia.Actors.GetActorsOfType<DiaObject>(true).OrderBy(x => x.Distance).Where(x => x.IsFullyValid() && KeywardenDataFactory.KeyIds.Contains(x.ActorSnoId)).ToList();
             if (!loots.Any())
             {
                 StatusText = "[Keywarden] No Loot!";

@@ -576,8 +576,6 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
             var settings = PluginSettings.Current;
 
             _riftStartTime = DateTime.UtcNow;
-            const int waittime = 45;
-            const int partysize = 3; // ToDo: Add slider for party size under beta playground checkbox
 
             //if (TrinityPluginSettings.Settings.Advanced.BetaPlayground)
             //{
@@ -685,6 +683,16 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                 {
                     Core.Logger.Log("Opening {0} Rift", _RiftType);
                     ZetaDia.Me.OpenRift(Math.Min(_level, ZetaDia.Me.CommonData.HighestUnlockedRiftLevel));
+                }
+                await Coroutine.Sleep(2500);
+                if (UIElement.FromHash(0x902C5A190E01DA26).IsVisible)
+                {
+                    UIElement.FromHash(0x902C5A190E01DA26).Click();
+                    await Coroutine.Sleep(2500);
+                    _level = -1;
+                    _RiftType = RiftType.Nephalem;
+                    Core.Logger.Log("Opening {0} Rift because someone doesn't have keys.", _RiftType);
+                    ZetaDia.Me.OpenRift(_level);
                 }
             }
 
@@ -850,7 +858,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                     ZetaDia.Actors.GetActorsOfType<DiaPlayer>(true)
                         .FirstOrDefault(u => u.IsValid && u.CommonData != null && u.CommonData.IsValid && (!u.IsAlive || u.Distance > 25f));
 
-                if (player != null && player.Distance > 45)
+                if (player != null && player.Distance > 55)
                 {
                     if (!await NavigationCoroutine.MoveTo(player.Position, 15)) return false;
                 }

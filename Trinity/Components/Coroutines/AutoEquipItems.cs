@@ -859,6 +859,13 @@ namespace Trinity.Components.Coroutines
                     if (actorClass != ActorClass.DemonHunter)
                         return false;
                     break;
+
+                case TrinityItemType.Scythe:
+                case TrinityItemType.Phylactery:
+                case TrinityItemType.TwoHandScythe:
+                    if (actorClass != ActorClass.Necromancer)
+                        return false;
+                    break;
             }
 
             return true;

@@ -91,27 +91,27 @@
                         <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Follow Distance</TextBlock>
                         <Slider Grid.Row="0" Grid.Column="1" Template="{DynamicResource SliderEditable}" 
                             ToolTip="This determines how close the bots will get to the leader when following."
-                            Interval="1" Maximum="150" Minimum="0" 
+                            Interval="1" Maximum="100" Minimum="0" 
                             SmallChange="1" TickFrequency="5" IsSnapToTickEnabled="True"
                             TickPlacement="BottomRight" Value="{Binding Coordination.FollowDistance}" 
                             HorizontalAlignment="Stretch" Margin="0,3,0,3" />
                         <TextBlock Grid.Row="0" Grid.Column="2" Margin="2,0,0,0" FontSize="10" VerticalAlignment="Center">yards</TextBlock>
 
-                        <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Teleport Distance</TextBlock>
+                        <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Catch-Up Range</TextBlock>
                         <Slider Grid.Row="1" Grid.Column="1" Template="{DynamicResource SliderEditable}" 
+                            ToolTip="When outside this range from leader, followers will cycle combat on/off to catch up faster"
+                            Interval="1" Maximum="100" Minimum="10" 
+                            SmallChange="1" TickFrequency="5" IsSnapToTickEnabled="True"
+                            TickPlacement="BottomRight" Value="{Binding Coordination.CatchUpDistance}" 
+                            HorizontalAlignment="Stretch" Margin="0,3,0,3" />
+                        <TextBlock Grid.Row="1" Grid.Column="2" Margin="2,0,0,0" FontSize="10" VerticalAlignment="Center">yards</TextBlock>
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Teleport Distance</TextBlock>
+                        <Slider Grid.Row="2" Grid.Column="1" Template="{DynamicResource SliderEditable}" 
                             ToolTip="How far away bots need to be from leader before teleporting"
                             Interval="1" Maximum="750" Minimum="150" 
                             SmallChange="1" TickFrequency="25" IsSnapToTickEnabled="True"
                             TickPlacement="BottomRight" Value="{Binding Coordination.TeleportDistance}" 
-                            HorizontalAlignment="Stretch" Margin="0,3,0,3" />
-                        <TextBlock Grid.Row="1" Grid.Column="2" Margin="2,0,0,0" FontSize="10" VerticalAlignment="Center">yards</TextBlock>
-
-                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Catch-Up Range</TextBlock>
-                        <Slider Grid.Row="2" Grid.Column="1" Template="{DynamicResource SliderEditable}" 
-                            ToolTip="When outside this range from leader, followers will cycle combat on/off to catch up faster"
-                            Interval="1" Maximum="100" Minimum="10" 
-                            SmallChange="1" TickFrequency="25" IsSnapToTickEnabled="True"
-                            TickPlacement="BottomRight" Value="{Binding Coordination.CatchUpDistance}" 
                             HorizontalAlignment="Stretch" Margin="0,3,0,3" />
                         <TextBlock Grid.Row="2" Grid.Column="2" Margin="2,0,0,0" FontSize="10" VerticalAlignment="Center">yards</TextBlock>
 
@@ -137,7 +137,7 @@
             </StackPanel>
 
             <StackPanel Grid.Column="1" MinWidth="170">
-                <GroupBox Header="Misc" VerticalContentAlignment="Top" VerticalAlignment="Top" Height="288">
+                <GroupBox Header="Misc" VerticalContentAlignment="Top" VerticalAlignment="Top" Height="320">
                     <StackPanel>
                         <CheckBox Margin="5,6,5,0" IsEnabled="True" ToolTip="Bots will leave any game/party that has players it's not connected to via DemonBuddy"  IsChecked="{Binding Path=Misc.AvoidUnknownPlayers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" >
                             <TextBlock Margin="1,1" Text="Avoid Unknown Players" ToolTip="Bots will leave any game/party that has players it's not connected to via DemonBuddy" />
