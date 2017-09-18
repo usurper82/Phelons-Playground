@@ -37,6 +37,7 @@ namespace AutoFollow.UI.Tab
         private int _updateInterval;
         private bool _isConnected;
         private string _combatStatus;
+        private string _combatTarget;
 
         public TabViewModel()
         {
@@ -56,8 +57,11 @@ namespace AutoFollow.UI.Tab
             ConnectedBots = AutoFollow.NumberOfConnectedBots;
             UpdateInterval = Settings.Network.UpdateInterval;
             LastUpdateMs = DateTime.UtcNow.Subtract(_lastUpdate).TotalMilliseconds;
-            CombatStatus = TrinityCombat.Targeting.CurrentTarget != null ? FollowerCombat.State + " " + TrinityCombat.Targeting.CurrentTarget.Type : FollowerCombat.State.ToString();
+            CombatStatus = FollowerCombat.State.ToString();
             ServerURI = Server.ServerUri;
+            CombatTarget = TrinityCombat.Targeting.CurrentTarget != null
+                ? $"{TrinityCombat.Targeting.CurrentTarget.Name} | {TrinityCombat.Targeting.CurrentTarget.Type} | {TrinityCombat.Targeting.CurrentTarget.RadiusDistance}"
+                : "No Target";
             _lastUpdate = DateTime.UtcNow;
         }
 
@@ -107,6 +111,12 @@ namespace AutoFollow.UI.Tab
         {
             get { return _combatStatus; }
             set { SetField(ref _combatStatus, value); }
+        }
+
+        public string CombatTarget
+        {
+            get { return _combatTarget; }
+            set { SetField(ref _combatTarget, value); }
         }
 
         public ICommand OpenSettingsCommand

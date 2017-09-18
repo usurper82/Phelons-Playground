@@ -303,9 +303,9 @@ namespace AutoFollow.Coroutines
                 Log.Info("Cant teleport because you are in BOSS combat.");
                 return false;
             }
-            if (playerMessage.WorldSnoId == Player.CurrentMessage.WorldSnoId)
+            if (Player.IsInTown && playerMessage.WorldSnoId == Player.CurrentMessage.WorldSnoId)
             {
-                Log.Info("Cant teleport because we are in the same world.");
+                Log.Info("Cant teleport because we are in the same town world.");
                 return false;
             }
             if (!_teleportTimer.IsRunning)

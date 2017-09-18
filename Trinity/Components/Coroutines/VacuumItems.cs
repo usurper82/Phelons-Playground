@@ -83,12 +83,9 @@ namespace Trinity.Components.Coroutines
                 Inventory.Backpack.Update();
                 if (Player.FreeBackpackSlots < 4)
                     break;
-                PlayerMover.MoveStop();
-                await Coroutine.Sleep(Math.Max((int)item.Position.Distance2D(Player.Position) * 50, 250));
+                //PlayerMover.MoveStop();
                 /* Added checkpoints to avoid approach stuck -Seq */
 
-                if (!VacuumedAcdIds.Keys.Contains(item.AcdId))
-                    VacuumedAcdIds.Add(item.AcdId, DateTime.Now);
                 if (!item.Interact())
                 {
                     Logger.Warn($"Failed to vacuum item {item.Name} AcdId={item.AcdId} Distance: {item.Distance}");
@@ -96,7 +93,10 @@ namespace Trinity.Components.Coroutines
                         VacuumedAcdIds.Add(item.AcdId, DateTime.Now.Subtract(new TimeSpan(0,0,0,20)));
                     continue;
                 }
+                if (!VacuumedAcdIds.Keys.Contains(item.AcdId))
+                    VacuumedAcdIds.Add(item.AcdId, DateTime.Now);
                 Logger.Warn($"Vacuumed: {item.Name} ({item.ActorSnoId}) InternalName={item.InternalName} GbId={item.GameBalanceId}");
+                await Coroutine.Sleep(Math.Max((int)item.Position.Distance2D(Player.Position) * 50, 150));
                 count++;
                 isVacuuming = true;
             }

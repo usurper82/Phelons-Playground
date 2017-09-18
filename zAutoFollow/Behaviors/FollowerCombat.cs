@@ -67,14 +67,18 @@ namespace AutoFollow.Behaviors
         {
             // Returning True => go to next tick immediately, execution starts again from top of the tree.
             // Returning False => allow execution to continue to lower hooks. Such as profiles, Adventurer.
-            if (await base.InGameTask())
-                return Repeat(PartyObjective.TownRun);
 
             if (await Party.LeaveWhenInWrongGame())
                 return Repeat(PartyObjective.LeavingGame);
 
+            if (await base.InGameTask())
+                return Repeat(PartyObjective.TownRun);
+
             if (PluginEvents.CurrentProfileType == ProfileType.Bounty)
                 return false;
+
+            if (await Coordination.TeleportToPlayer(AutoFollow.CurrentLeader))
+                return Repeat(PartyObjective.Teleporting);
 
             if (await Questing.UpgradeGems())
                 return Continue(PartyObjective.Quest);
@@ -92,9 +96,6 @@ namespace AutoFollow.Behaviors
 
             if (await Coordination.FollowLeaderThroughPortal())
                 return Repeat(PartyObjective.FollowLeader);
-
-            if (await Coordination.TeleportToPlayer(AutoFollow.CurrentLeader))
-                return Repeat(PartyObjective.Teleporting);
 
             if (await FollowLeader())
                 return Continue(PartyObjective.FollowLeader);
@@ -170,8 +171,8 @@ namespace AutoFollow.Behaviors
             switch (State)
             {
                 case FollowMode.FollowLeader:
-                    var catchUpDistance = AutoFollow.CurrentLeader.CurrentTarget != null ? Settings.Coordination.CatchUpDistance : Settings.Coordination.FollowDistance;
-                    if (AutoFollow.CurrentLeader.Distance > catchUpDistance)
+                    //var catchUpDistance = AutoFollow.CurrentLeader.CurrentTarget != null ? Settings.Coordination.CatchUpDistance : Settings.Coordination.FollowDistance;
+                    if (AutoFollow.CurrentLeader.Distance > Settings.Coordination.FollowDistance)
                     {
                         Log.Info("Moving to Follow Leader.");
                         await Trinity.Components.Adventurer.Coroutines.NavigationCoroutine.MoveTo(AutoFollow.CurrentLeader.Position, 0);

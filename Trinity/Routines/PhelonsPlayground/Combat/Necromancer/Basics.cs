@@ -7,11 +7,13 @@ using System.Threading.Tasks;
 namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
 {
     using System.Web.Routing;
+    using Components.Adventurer.Game.Exploration;
     using Components.Combat;
     using Components.Combat.Resources;
     using DbProvider;
     using Framework;
     using Framework.Actors.ActorTypes;
+    using Framework.Grid;
     using Framework.Objects;
     using Framework.Reference;
     using Modules;
@@ -62,8 +64,10 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
         {
             if (Player.IsInTown)
                 return null;
-
-            return (!Player.Position.EasyNavToPosition(destination) || destination.Distance(Player.Position) > 20 || HasInstantCooldowns) &&
+            var projectedPosition = IsBlocked
+                    ? Core.Grids.Avoidance.GetPathCastPosition(45f, true)
+                    : Core.Grids.Avoidance.GetPathWalkPosition(45f, true);
+            return (!Player.Position.EasyNavToPosition(destination) || projectedPosition.Distance(Player.Position) > 10 || HasInstantCooldowns) &&
                    Skills.Necromancer.BloodRush.CanCast()
                 ? Spells.BloodRush(destination)
                 : Spells.Walk(destination);

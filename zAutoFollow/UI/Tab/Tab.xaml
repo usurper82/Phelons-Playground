@@ -26,8 +26,12 @@
                         <Label Content="{Binding BehaviorName, FallbackValue=Unknown}" />
                     </WrapPanel>
                     <WrapPanel>
-                        <Label>Status:</Label>
+                        <Label>Status: </Label>
                         <Label Content="{Binding CombatStatus, FallbackValue=Unknown}" />
+                    </WrapPanel>
+                    <WrapPanel>
+                        <Label>Target: </Label>
+                        <Label Content="{Binding CombatTarget, FallbackValue=Unknown}" />
                     </WrapPanel>
                 </StackPanel>
                 <StackPanel>
@@ -36,7 +40,7 @@
                         <Label Content="{Binding UpdateInterval, FallbackValue=0}" />
                     </WrapPanel>
                     <WrapPanel>
-                        <Label>Last Update:</Label>
+                        <Label>Last Update: </Label>
                         <Label Content="{Binding LastUpdateMs, FallbackValue=0}" ContentStringFormat=" {1:00.00000}ms." />
                     </WrapPanel>
                     <WrapPanel>
