@@ -165,7 +165,7 @@ namespace Trinity.Components.Combat
                 var ignoredByAffixElites = new List<TrinityActor>();
                 _ignoredAffixes = Core.Settings.Weighting.IgnoreAffixes.GetFlags<MonsterAffixes>().ToList();
 
-                foreach (var unit in objects.Where(u => u.IsUnit && u.IsElite))
+                foreach (var unit in objects.Where(u => u.IsUnit && (u.IsElite || u.IsMinion)))
                 {
                     if (_ignoredAffixes.Any(a => unit.MonsterAffixes.HasFlag(a)))
                     {
@@ -742,11 +742,11 @@ namespace Trinity.Components.Combat
                                         //            "Adding {0} because it is below the minimum trash mob health",
                                         //            cacheObject.InternalName);
                                         //}
-                                        if (cacheObject.IsSummoner)
-                                        {
-                                            cacheObject.WeightInfo += $"Adding {cacheObject.InternalName} because he is a summoner";
-                                            //cacheObject.Weight += 100d;
-                                        }
+                                        //if (cacheObject.IsSummoner)
+                                        //{
+                                        //    cacheObject.WeightInfo += $"Adding {cacheObject.InternalName} because he is a summoner";
+                                        //    //cacheObject.Weight += 100d;
+                                        //}
                                         if (Core.Player.IsInBossEncounter)
                                         {
                                             cacheObject.WeightInfo += $"BossEncounter";
@@ -1748,7 +1748,7 @@ namespace Trinity.Components.Combat
             if (!unit.IsElite)
                 return false;
 
-            if (unit.HitPointsPct < 0.25)
+            if (unit.HitPointsPct < 0.25 && !unit.IsMinion)
             {
                 reason = "Keep(Elites=LowHealth)";
                 return false;

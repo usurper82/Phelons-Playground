@@ -170,11 +170,10 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
 
             public static bool ShouldLandOfTheDead()
             {
-                if (!Skills.Necromancer.LandOfTheDead.CanCast() || Player.PrimaryResourcePct < 0.90 ||
-                    Skills.Necromancer.Simulacrum.IsActive && !Skills.Necromancer.Simulacrum.CanCast() && Skills.Necromancer.Simulacrum.TimeSinceUse > 15000)
+                if (!Skills.Necromancer.LandOfTheDead.CanCast() || Skills.Necromancer.LandOfTheDead.TimeSinceUse < 10000 || Skills.Necromancer.Simulacrum.IsActive && !Skills.Necromancer.Simulacrum.CanCast() && Skills.Necromancer.Simulacrum.TimeSinceUse > 15000)
                     return false;
                 var elite = Targeting.BestLOSEliteInRange(65f);
-                if (elite == null || Skills.Necromancer.LandOfTheDead.TimeSinceUse < 10000)
+                if (elite == null)
                     return false;
 
                 //Trying to alternate cooldowns
@@ -190,12 +189,11 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
 
             public static bool ShouldSimulacrum()
             {
-                if (!Skills.Necromancer.Simulacrum.CanCast())
+                if (!Skills.Necromancer.Simulacrum.CanCast() || Skills.Necromancer.Simulacrum.TimeSinceUse < 10000 || Player.PrimaryResourcePct < 0.90 && !Skills.Necromancer.LandOfTheDead.IsActive)
                     return false;
 
                 var elite = Targeting.BestLOSEliteInRange(65f);
-                if (elite == null || Skills.Necromancer.Simulacrum.TimeSinceUse < 10000 ||
-                    Player.PrimaryResourcePct < 0.90)
+                if (elite == null)
                     return false;
 
                 //Trying to alternate cooldowns

@@ -30,6 +30,9 @@ using GizmoType = Zeta.Game.Internals.SNO.GizmoType;
 
 namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
 {
+    using Framework.Grid;
+    using Zeta.Bot.Navigation;
+
     public class RiftCoroutine : IDisposable, ICoroutine
     {
         public class RiftOptions
@@ -845,20 +848,21 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
 
             if (_nextLevelPortalLocation != Vector3.Zero)
             {
-                if (_nextLevelPortalLocation.Distance(Core.Player.Position) < 150)
+                var walkDistance = Core.Grids.Avoidance.CanRayWalk(_nextLevelPortalLocation, Core.Player.Position) ? 150 : 25;
+                if (_nextLevelPortalLocation.Distance(Core.Player.Position) < walkDistance)
                 {
                     State = States.MovingToExitPortal;
                     return false;
                 }
             }
 
-            if (Core.Player.IsInParty)
+            if (Core.Player.IsInParty && Core.Player.IsInventoryLockedForGreaterRift && Core.Player.ParticipatingInTieredLootRun)
             {
                 var player =
                     ZetaDia.Actors.GetActorsOfType<DiaPlayer>(true)
                         .FirstOrDefault(u => u.IsValid && u.CommonData != null && u.CommonData.IsValid && (!u.IsAlive || u.Distance > 25f));
 
-                if (player != null && player.Distance > 55)
+                if (!Core.Player.IsInTown && player != null && player.Distance > 55)
                 {
                     if (!await NavigationCoroutine.MoveTo(player.Position, 15)) return false;
                 }

@@ -135,7 +135,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
                 get { return _emergencyHealthPct; }
                 set { SetField(ref _emergencyHealthPct, value); }
             }
-
+            
             public SkillSettings Cooldowns
             {
                 get { return _coolDowns; }

@@ -46,16 +46,16 @@
                     <GroupBox.Header>Cooldowns</GroupBox.Header>
                     <StackPanel>
                         <WrapPanel>
-                            <RadioButton Content="Always" IsChecked="{Binding DataContext.Cooldowns.UseMode, ConverterParameter=Always, Converter={StaticResource EnumBooleanConverter}, Mode=TwoWay}"  />
-                            <RadioButton Content="Selectively" IsChecked="{Binding DataContext.Cooldowns.UseMode, ConverterParameter=Selective, Converter={StaticResource EnumBooleanConverter}, Mode=TwoWay}" />
+                            <RadioButton Content="Always" IsChecked="{Binding Path=DataContext.Cooldowns.UseMode, ConverterParameter=Always, Converter={StaticResource EnumBooleanConverter}, Mode=TwoWay}"  />
+                            <RadioButton Content="Selectively" IsChecked="{Binding Path=DataContext.Cooldowns.UseMode, ConverterParameter=Selective, Converter={StaticResource EnumBooleanConverter}, Mode=TwoWay}" />
                         </WrapPanel>
-                        <StackPanel Margin="0,5,0,0" Visibility="{Binding DataContext.Cooldowns.UseMode, ConverterParameter=Selective, Converter={StaticResource VisibleWhenEnumTrueConverter}}">
+                        <StackPanel Margin="0,5,0,0" Visibility="{Binding Path=DataContext.Cooldowns.UseMode, ConverterParameter=Selective, Converter={StaticResource VisibleWhenEnumTrueConverter}}">
                             <CheckBox ToolTip="Use when there are Champions nearby" 
-                				IsChecked="{Binding DataContext.Cooldowns.Reasons, ConverterParameter=Champions, Converter={converters:FlagsToBoolConverter}}">Champions</CheckBox>
+                				IsChecked="{Binding Path=DataContext.Cooldowns.Reasons, ConverterParameter=Champions, Converter={converters:FlagsToBoolConverter}}">Champions</CheckBox>
                             <CheckBox ToolTip="Use when there are Elites nearby" 
-                				IsChecked="{Binding DataContext.Cooldowns.Reasons, ConverterParameter=Elites, Converter={converters:FlagsToBoolConverter}}">Elites</CheckBox>
+                				IsChecked="{Binding Path=DataContext.Cooldowns.Reasons, ConverterParameter=Elites, Converter={converters:FlagsToBoolConverter}}">Elites</CheckBox>
                             <CheckBox ToolTip="Use when you are surrounded by lots of mobs." 
-                				IsChecked="{Binding DataContext.Cooldowns.Reasons, ConverterParameter=Surrounded, Converter={converters:FlagsToBoolConverter}}">Trash Mob Count</CheckBox>
+                				IsChecked="{Binding Path=DataContext.Cooldowns.Reasons, ConverterParameter=Surrounded, Converter={converters:FlagsToBoolConverter}}">Trash Mob Count</CheckBox>
                             <Slider Template="{DynamicResource LabelledSliderEditable}" 
                             Tag="Trash Mob Count:"
                             ToolTip="Number of monsters that must be grouped up before we blow cooldowns"

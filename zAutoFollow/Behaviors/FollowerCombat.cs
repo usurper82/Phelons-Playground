@@ -71,14 +71,14 @@ namespace AutoFollow.Behaviors
             if (await Party.LeaveWhenInWrongGame())
                 return Repeat(PartyObjective.LeavingGame);
 
+            if (await Coordination.TeleportToPlayer(AutoFollow.CurrentLeader))
+                return Repeat(PartyObjective.Teleporting);
+
             if (await base.InGameTask())
                 return Repeat(PartyObjective.TownRun);
 
             if (PluginEvents.CurrentProfileType == ProfileType.Bounty)
                 return false;
-
-            if (await Coordination.TeleportToPlayer(AutoFollow.CurrentLeader))
-                return Repeat(PartyObjective.Teleporting);
 
             if (await Questing.UpgradeGems())
                 return Continue(PartyObjective.Quest);
