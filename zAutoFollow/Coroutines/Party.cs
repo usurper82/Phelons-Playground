@@ -188,31 +188,21 @@ namespace AutoFollow.Coroutines
                 }
                 if (!AutoFollow.CurrentLeader.IsInSameGame && !AutoFollow.CurrentLeader.IsLoadingWorld)
                 {
-                    if (LeaderGameMismatchLeaveTime == DateTime.MinValue)
-                    {
-                        Log.Warn("Leader gameId is different/invalid!", AutoFollow.CurrentLeader.IsInSameGame);
-                        LeaderGameMismatchLeaveTime = DateTime.UtcNow.AddSeconds(10);
-                        return false;
-                    }
-
                     if (DateTime.UtcNow > LeaderGameMismatchLeaveTime)
                     {
-                        Log.Warn("Leader is in a different game, Leave Game!", AutoFollow.CurrentLeader.IsInSameGame);
+                        Log.Warn($"Leader GameId is different: {AutoFollow.CurrentLeader?.GameId} | {Player.CurrentGameId} - {AutoFollow.CurrentLeader?.GameId.High} | {Player.CurrentGameId.High}");
                         LeaderGameMismatchLeaveTime = default(DateTime);
                         await LeaveGame(true);
                         Coordination.WaitFor(TimeSpan.FromSeconds(10));
+                        LeaderGameMismatchLeaveTime = DateTime.UtcNow.AddSeconds(120);
                         return true;
                     }
-                }
-                else
-                {
-                    LeaderGameMismatchLeaveTime = DateTime.MinValue;
                 }
             }
             return false;
         }
 
-        public static DateTime LeaderGameMismatchLeaveTime = DateTime.MinValue;
+        public static DateTime LeaderGameMismatchLeaveTime = DateTime.MaxValue;
 
         /// <summary>
         /// Use the quickjoin links on the hero screen to join the leaders game.

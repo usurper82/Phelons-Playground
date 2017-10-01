@@ -30,6 +30,7 @@ using GizmoType = Zeta.Game.Internals.SNO.GizmoType;
 
 namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
 {
+    using System.Diagnostics;
     using Framework.Grid;
     using Zeta.Bot.Navigation;
 
@@ -554,7 +555,6 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
             }
             return false;
         }
-
         private async Task<bool> OpeningRift()
         {
             if (RiftData.RiftWorldIds.Contains(AdvDia.CurrentWorldId))
@@ -570,7 +570,6 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
             {
                 return false;
             }
-
             _entranceSceneNames.Clear();
             long empoweredCost = 0;
             bool shouldEmpower = _options.IsEmpowered;
@@ -862,7 +861,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                     ZetaDia.Actors.GetActorsOfType<DiaPlayer>(true)
                         .FirstOrDefault(u => u.IsValid && u.CommonData != null && u.CommonData.IsValid && (!u.IsAlive || u.Distance > 25f));
 
-                if (!Core.Player.IsInTown && player != null && player.Distance > 55)
+                if (!Core.Player.IsInTown && player != null && player.Distance > 85)
                 {
                     if (!await NavigationCoroutine.MoveTo(player.Position, 15)) return false;
                 }
@@ -1367,7 +1366,8 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
 
         private void PulseChecks()
         {
-            if (BrainBehavior.IsVendoring || !ZetaDia.IsInGame || ZetaDia.Globals.IsLoadingWorld || ZetaDia.Globals.IsPlayingCutscene)
+            if (BrainBehavior.IsVendoring || !ZetaDia.IsInGame || ZetaDia.Globals.IsLoadingWorld ||
+                ZetaDia.Globals.IsPlayingCutscene)
             {
                 DisablePulse();
                 return;
@@ -1375,7 +1375,9 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
 
             //AdvDia.Update(true);
 
-            if (AdvDia.CurrentWorldId == ExplorationData.ActHubWorldIds[Act.A1] && (AdvDia.RiftQuest.Step == RiftStep.KillingMobs || AdvDia.RiftQuest.Step == RiftStep.BossSpawned || AdvDia.RiftQuest.Step == RiftStep.UrshiSpawned))
+            if (AdvDia.CurrentWorldId == ExplorationData.ActHubWorldIds[Act.A1] &&
+                (AdvDia.RiftQuest.Step == RiftStep.KillingMobs || AdvDia.RiftQuest.Step == RiftStep.BossSpawned ||
+                 AdvDia.RiftQuest.Step == RiftStep.UrshiSpawned))
             {
                 if (!EnteringRiftStates.Contains(State))
                 {
@@ -1392,12 +1394,16 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                 return;
             }
 
-            if (_currentWorldDynamicId != AdvDia.CurrentWorldDynamicId && _previusWorldDynamicId != AdvDia.CurrentWorldDynamicId && AdvDia.CurrentWorldId != ExplorationData.ActHubWorldIds[Act.A1])
+            if (_currentWorldDynamicId != AdvDia.CurrentWorldDynamicId &&
+                _previusWorldDynamicId != AdvDia.CurrentWorldDynamicId &&
+                AdvDia.CurrentWorldId != ExplorationData.ActHubWorldIds[Act.A1])
             {
                 RiftData.AddEntryPortal();
                 _previusWorldDynamicId = _currentWorldDynamicId;
                 _currentWorldDynamicId = AdvDia.CurrentWorldDynamicId;
             }
+
+            var totalTime = DateTime.UtcNow - _riftStartTime;
 
             switch (AdvDia.RiftQuest.Step)
             {
@@ -1407,16 +1413,17 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                         Core.Logger.Log("[Rift] Behold the Rift Boss!");
                         State = States.BossSpawned;
                     }
-                    break;
+                    return;
 
                 case RiftStep.UrshiSpawned:
                     if (!UrshiSpawnedStates.Contains(State))
                     {
                         _riftEndTime = DateTime.UtcNow;
-                        var totalTime = _riftEndTime - _riftStartTime;
+                        totalTime = _riftEndTime - _riftStartTime;
                         if (totalTime.TotalSeconds < 3600 && totalTime.TotalSeconds > 0)
                         {
-                            Core.Logger.Log("[Rift] All done. (Total Time: {0} mins {1} seconds)", totalTime.Minutes, totalTime.Seconds);
+                            Core.Logger.Log("[Rift] All done. (Total Time: {0} mins {1} seconds)", totalTime.Minutes,
+                                totalTime.Seconds);
                             Core.Logger.Log("[Rift] Level: {0}", ZetaDia.Me.InTieredLootRunLevel + 1);
                         }
                         else
@@ -1426,20 +1433,22 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                         Core.Logger.Log("[Rift] My dear Urshi, I have some gems for you.");
                         State = States.UrshiSpawned;
                     }
-                    break;
+                    return;
 
                 case RiftStep.Cleared:
-                    if (_RiftType == RiftType.Nephalem && PluginSettings.Current.NephalemRiftFullExplore && State != States.TownstoneFound)
+                    if (_RiftType == RiftType.Nephalem && PluginSettings.Current.NephalemRiftFullExplore &&
+                        State != States.TownstoneFound)
                     {
                         break;
                     }
                     if (!ClearedStates.Contains(State))
                     {
                         _riftEndTime = DateTime.UtcNow;
-                        var totalTime = _riftEndTime - _riftStartTime;
+                        totalTime = _riftEndTime - _riftStartTime;
                         if (totalTime.TotalSeconds < 3600 && totalTime.TotalSeconds > 0)
                         {
-                            Core.Logger.Log("[Rift] All done. (Total Time: {0} mins {1} seconds)", totalTime.Minutes, totalTime.Seconds);
+                            Core.Logger.Log("[Rift] All done. (Total Time: {0} mins {1} seconds)", totalTime.Minutes,
+                                totalTime.Seconds);
                         }
                         else
                         {
@@ -1447,7 +1456,26 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                         }
                         State = States.ReturningToTown;
                     }
-                    break;
+                    return;
+            }
+            if (ZetaDia.Globals.RiftProgressionPercent > 90f || 
+                AdvDia.RiftQuest.Step == RiftStep.UrshiSpawned || AdvDia.RiftQuest.Step == RiftStep.Cleared ||
+                AdvDia.RiftQuest.Step == RiftStep.BossSpawned || AdvDia.RiftQuest.Step == RiftStep.Completed)
+                return;
+            var extraTime = ZetaDia.Globals.RiftProgressionPercent > 70f
+                ? ZetaDia.Globals.RiftProgressionPercent * 0.25 *
+                  (ZetaDia.Me.CommonData.HighestUnlockedRiftLevel - ZetaDia.Me.InTieredLootRunLevel)
+                : 0;
+            if (PluginSettings.Current.UseMaxTimeInRift &&
+                PluginSettings.Current.MaxTimeInRift < totalTime.Minutes - extraTime)
+            {
+                _riftEndTime = DateTime.UtcNow;
+                Core.Logger.Warn(
+                    "[Rift] Failed to Clear in Time of {3} mins. (Total Time: {0} mins {1} seconds) + (Extra Time {2} mins)",
+                    totalTime.Minutes,
+                    totalTime.Seconds, extraTime, PluginSettings.Current.MaxTimeInRift);
+                Core.Logger.Warn("[Rift] Level: {0}", ZetaDia.Me.InTieredLootRunLevel + 1);
+                ZetaDia.Service.Party.LeaveGame(true);
             }
         }
 

@@ -107,7 +107,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
         public override float EmergencyHealthPct => Settings.EmergencyHealthPct;
 
         IDynamicSetting IRoutine.RoutineSettings => Settings;
-        public Rathma.RathmaSettings Settings { get; } = new Rathma.RathmaSettings();
+        public RathmaSettings Settings { get; } = new RathmaSettings();
 
         public sealed class RathmaSettings : NotifyBase, IDynamicSetting
         {

@@ -66,12 +66,16 @@ namespace Trinity.Components.Coroutines
             // Better to be redundant than failing to interact.
 
             Navigator.PlayerMover.MoveTowards(obj.Position);
-            await Coroutine.Sleep(500);
+            await Coroutine.Sleep(100);
+            Navigator.PlayerMover.MoveStop();
             obj.Interact();
 
-            Navigator.PlayerMover.MoveStop();
-            await Coroutine.Sleep(1000);
-            await Interact(obj);
+            if (!IsInteracting())
+            {
+                Navigator.PlayerMover.MoveStop();
+                await Coroutine.Sleep(100);
+                await Interact(obj);
+            }
             return true;
         }
 
@@ -174,9 +178,7 @@ namespace Trinity.Components.Coroutines
             if (!IsInteracting())
             {
                 Navigator.PlayerMover.MoveTowards(actor.Position);
-                await Coroutine.Sleep(100);
                 actor.Interact();
-                await Coroutine.Sleep(100);
 
                 if (!IsInteracting())
                 {

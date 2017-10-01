@@ -272,6 +272,7 @@ namespace Trinity.UI
 
                     return LoadAndTransformXamlFile<T>(path);
                 }
+                Core.Logger.Error("Error loading settings {0}", fileName.ToLower());
             }
             return default(T);
         }

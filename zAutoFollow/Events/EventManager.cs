@@ -344,12 +344,13 @@ namespace AutoFollow.Events
         {
             if (!ZetaDia.Service.IsValid || !ZetaDia.Service.Hero.IsValid)
                 return false;
-
+			/*
             if (!Core.IsOutOfGame && !Core.TrinityIsReady)
             {
                 Log.Verbose("Waiting for Trinity to be ready");
                 return true;
             }
+		    */
 
             if (IsExecutionBreakRequested)
             {

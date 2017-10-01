@@ -49,6 +49,8 @@ namespace Trinity.Components.Adventurer.Settings
         private int _empoweredRiftLevelLimit;
         private int _riftCount;
         private bool _useGemAutoLevel;
+        private bool _useMaxTimeInRift;
+        private int _maxTimeInRift;
         private string _greaterRiftLevelMax;
         private int _gemAutoLevelReductionLimit;
         private int _minimumKeys;
@@ -270,6 +272,20 @@ namespace Trinity.Components.Adventurer.Settings
         }
 
         [DataMember]
+        public bool UseMaxTimeInRift
+        {
+            get { return _useMaxTimeInRift; }
+            set { SetField(ref _useMaxTimeInRift, value); }
+        }
+        
+        [DataMember]
+        public int MaxTimeInRift
+        {
+            get { return _maxTimeInRift; }
+            set { SetField(ref _maxTimeInRift, value); }
+        }
+        
+        [DataMember]
         public string GreaterRiftLevelMax
         {
             get { return _greaterRiftLevelMax; }
@@ -366,6 +382,8 @@ namespace Trinity.Components.Adventurer.Settings
         {
             GemUpgradePriority = GemPriority.Rank;
             GreaterRiftLevel = 1;
+            UseMaxTimeInRift = true;
+            MaxTimeInRift = 12;
             GreaterRiftRunNephalem = true;
             GreaterRiftGemUpgradeChance = 60;
             GreaterRiftPrioritizeEquipedGems = true;

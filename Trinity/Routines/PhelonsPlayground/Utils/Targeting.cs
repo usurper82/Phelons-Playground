@@ -50,11 +50,15 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
 
         #endregion Helper fields
 
-        internal static List<TrinityActor> SafeList(bool objectsInAoe = false)
+        internal static List<TrinityActor> SafeList(bool objectsInAoe = true)
         {
             return
-                Targets.Where(x => !x.IsPlayer && !x.IsSummonedByPlayer && (!x.IsUnit || x.IsUnit && x.HitPoints > 0) && //x.IsInLineOfSight &&
-                                        (objectsInAoe || !Core.Avoidance.InAvoidance(x.Position)) && !Core.Avoidance.InCriticalAvoidance(x.Position)).ToList();
+                Targets.Where(
+                    x =>
+                        !x.IsPlayer && !x.IsShadowClone && !x.IsIllusion && !x.IsSummonedByPlayer &&
+                        (!x.IsUnit || x.IsUnit && x.HitPoints > 0) && //x.IsInLineOfSight &&
+                        (objectsInAoe || !Core.Avoidance.InAvoidance(x.Position)) &&
+                        !Core.Avoidance.InCriticalAvoidance(x.Position)).ToList();
         }
 
         internal static List<TrinityActor> CorpseSafeList(float distance = 60f, bool objectsInAoe = true)
@@ -154,7 +158,11 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
                     return true;
                 }
                 var closestSanc = ClosestSanctuary(maxRange, fromLocation, objectsInAoe);
-                if ((AnyElitesChampionsBossesInRange(45f) || CurrentTarget != null && CurrentTarget.MonsterAffixes.HasFlag(MonsterAffixes.Frozen)) &&
+                if ((closestOcc != Vector3.Zero || AnyElitesChampionsBossesInRange(45f) ||
+                     Core.Player.CurrentHealthPct < 0.55 ||
+                     CurrentTarget != null &&
+                     (CurrentTarget.MonsterAffixes.HasFlag(MonsterAffixes.Frozen) ||
+                      CurrentTarget.MonsterAffixes.HasFlag(MonsterAffixes.ArcaneEnchanted))) &&
                     closestSanc != Vector3.Zero)
                 {
                     location = closestSanc;
@@ -184,7 +192,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
             return false;
         }
 
-        internal static List<TrinityActor> BestShrine(float range = 25f, bool objectsInAoe = false)
+        internal static List<TrinityActor> BestShrine(float range = 25f, bool objectsInAoe = true)
         {
             return
             (from u in SafeList(objectsInAoe)
@@ -194,7 +202,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
                 select u).ToList();
         }
 
-        internal static Vector3 BestDpsPosition(Vector3 location, float searchRange = 12f, bool objectsInAoe = false)
+        internal static Vector3 BestDpsPosition(Vector3 location, float searchRange = 12f, bool objectsInAoe = true)
         {
             Vector3 bestBuffPosition;
             return BestBuffPosition(searchRange, location, objectsInAoe, out bestBuffPosition)
@@ -202,7 +210,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
                 : location;
         }
 
-        internal static Vector3 BestTankPosition(float maxRange, bool objectsInAoe = false)
+        internal static Vector3 BestTankPosition(float maxRange, bool objectsInAoe = true)
         {
             var bestTarget = BestAoeUnit(maxRange, objectsInAoe).Position;
             Vector3 bestTankPosition = Vector3.Zero;
@@ -211,7 +219,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
                 : bestTarget;
         }
 
-        internal static Vector3 BestWalkLocation(float maxRange, bool objectsInAoe = false)
+        internal static Vector3 BestWalkLocation(float maxRange, bool objectsInAoe = true)
         {
             if (ClosestGlobe(maxRange, objectsInAoe) != null)
                 return ClosestGlobe(maxRange, objectsInAoe).Position;
@@ -365,7 +373,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
                 .ThenByDescending(u => u.HitPointsPct);
         }
 
-        public static TrinityActor BestEliteInRange(float range, bool objectsInAoe = false)
+        public static TrinityActor BestEliteInRange(float range, bool objectsInAoe = true)
         {
             return
                 SafeList(objectsInAoe)
@@ -374,21 +382,21 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
                         u => u.IsUnit && (u.IsElite || u.IsChampion || u.IsBoss) && u.Position.Distance2D(Player.Position) <= range);
         }
 
-        internal static Vector3 ClosestOcculous(float maxRange, Vector3 fromLocation, bool objectsInAoe = false)
+        internal static Vector3 ClosestOcculous(float maxRange, Vector3 fromLocation, bool objectsInAoe = true)
         {
             var trinityActor = GetOculusBuffDiaObjects(maxRange, fromLocation, objectsInAoe).OrderBy(x => x.IsSafeSpot).FirstOrDefault();
             return trinityActor?.Position ?? Vector3.Zero;
         }
 
-        internal static List<TrinityActor> GetOculusBuffDiaObjects(float range, Vector3 fromLocation, bool objectsInAoe = false)
+        internal static List<TrinityActor> GetOculusBuffDiaObjects(float range, Vector3 fromLocation, bool objectsInAoe = true)
         {
             //[1FABA194] Type: ClientEffect Name: p2_itemPassive_unique_ring_017_dome-58267 ActorSnoId: 433966, Distance: 24.701
 
-            return SafeList(objectsInAoe).Where(u => fromLocation.Distance2D(u.Position) <= range && Core.Avoidance.Grid.CanRayCast(fromLocation, u.Position) && 
+            return SafeList(objectsInAoe).OrderBy(x => NearbyUnitsWithinDistance(x, 15f)).Where(u => fromLocation.Distance2D(u.Position) <= range && Core.Avoidance.Grid.CanRayCast(fromLocation, u.Position) && 
                                                u.ActorSnoId == 433966).OrderBy(u => u.Distance).ToList();
         }
 
-        internal static Vector3 ClosestSancAndOcc(float maxRange, Vector3 fromLocation, bool objectsInAoe = false)
+        internal static Vector3 ClosestSancAndOcc(float maxRange, Vector3 fromLocation, bool objectsInAoe = true)
         {
             foreach (var item in GetInnerSanctuaryDiaObjects(maxRange, fromLocation, objectsInAoe).Select(x => x.Position).ToList())
             {
@@ -404,14 +412,14 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
             return Vector3.Zero;
         }
 
-        internal static Vector3 ClosestSanctuary(float maxRange, Vector3 fromLocation, bool objectsInAoe = false)
+        internal static Vector3 ClosestSanctuary(float maxRange, Vector3 fromLocation, bool objectsInAoe = true)
         {
             var TrinityActor = GetInnerSanctuaryDiaObjects(maxRange, fromLocation, objectsInAoe).OrderBy(x => x.IsSafeSpot).FirstOrDefault();
             return TrinityActor?.Position ?? Vector3.Zero;
         }
 
         internal static List<TrinityActor> GetInnerSanctuaryDiaObjects(float range, Vector3 fromLocation,
-            bool objectsInAoe = false)
+            bool objectsInAoe = true)
         {
             return SafeList(objectsInAoe).Where(u =>
                 fromLocation.Distance2D(u.Position) <= range &&
@@ -419,14 +427,14 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
                 u.ActorSnoId == 320136).OrderBy(u => u.Distance).ToList();
         }
 
-        internal static TrinityActor ClosestGlobe(float distance = 45, bool objectsInAoe = false)
+        internal static TrinityActor ClosestGlobe(float distance = 45, bool objectsInAoe = true)
         {
             return SafeList(objectsInAoe).OrderBy(x => x.Distance).FirstOrDefault(u => (u.Type == TrinityObjectType.HealthGlobe || u.Type == TrinityObjectType.PowerGlobe) &&
                             u.Position.Distance2D(Player.Position) <= distance);
         }
 
         internal static bool WithInDistance(TrinityActor actor, TrinityActor actor2, float distance,
-            bool objectsInAoe = false)
+            bool objectsInAoe = true)
         {
             return
                 SafeList(objectsInAoe).Any(
@@ -434,7 +442,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         }
 
         internal static bool WithInDistance(TrinityActor actor, Vector3 unitLocation, float distance,
-            bool objectsInAoe = false)
+            bool objectsInAoe = true)
         {
             return
                 SafeList(objectsInAoe).Any(
@@ -442,7 +450,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         }
 
         internal static List<TrinityActor> GetDiaObjects(uint actorSNO, float range = 25f,
-            bool objectsInAoe = false)
+            bool objectsInAoe = true)
         {
             return
             (from u in SafeList(objectsInAoe)
@@ -453,7 +461,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         }
 
         internal static Vector3 GetDiaObjectBestClusterPoint(uint actorSNO, float radius = 15f, float maxRange = 45f,
-            bool useWeights = true, bool includeUnitsInAoe = true, bool objectsInAoe = false)
+            bool useWeights = true, bool includeUnitsInAoe = true, bool objectsInAoe = true)
         {
             var clusterUnits =
             (from u in SafeList(objectsInAoe)
@@ -466,7 +474,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
             return clusterUnits.Any() ? clusterUnits.FirstOrDefault() : Vector3.Zero;
         }
 
-        internal static List<TrinityActor> GetTwisterDiaObjects(float range = 25f, bool objectsInAoe = false)
+        internal static List<TrinityActor> GetTwisterDiaObjects(float range = 25f, bool objectsInAoe = true)
         {
             return
             (from u in SafeList(objectsInAoe)
@@ -477,7 +485,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         }
 
         internal static Vector3 GetBestTwsiterClusterPoint(float radius = 15f, float maxRange = 45f,
-            bool useWeights = true, bool includeUnitsInAoe = true, bool objectsInAoe = false)
+            bool useWeights = true, bool includeUnitsInAoe = true, bool objectsInAoe = true)
         {
             var clusterUnits =
             (SafeList(objectsInAoe).Where(u => u.ActorSnoId == 322236 &&
@@ -489,7 +497,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
             return clusterUnits.Any() ? clusterUnits.FirstOrDefault() : Vector3.Zero;
         }
 
-        public static Vector3 PointBehind(Vector3 point, float maxRange = 45, bool objectsInAoe = false)
+        public static Vector3 PointBehind(Vector3 point, float maxRange = 45, bool objectsInAoe = true)
         {
             var properDistance = point.Distance2D(Core.Player.Position) - maxRange;
             //return MathEx.GetPointAt(point, properDistance, Core.Player.Rotation);
@@ -551,17 +559,17 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
             if (unitsOnly && actor.Type != TrinityObjectType.Unit)
                 return 0;
 
-            return Targets.Count(u => u.RActorId != actor.RActorId && u.IsUnit && u.Position.Distance(actor.Position) <= range && u.HasBeenInLoS);
+            return ObjectCache.Count(u => u.RActorId != actor.RActorId && u.IsUnit && u.Position.Distance2D(actor.Position) <= range && u.HasBeenInLoS);
         }
 
         public static IEnumerable<TrinityActor> NearbyTargets(TrinityActor actor, float range = 5f)
         {
-            return Targets.Where(u => u.RActorId != actor.RActorId && u.IsUnit && !u.IsSummonedByPlayer && u.Position.Distance(actor.Position) <= range && u.HasBeenInLoS);
+            return ObjectCache.Where(u => u.RActorId != actor.RActorId && u.IsUnit && !u.IsSummonedByPlayer && u.Position.Distance(actor.Position) <= range && u.HasBeenInLoS);
         }
 
         public static IEnumerable<TrinityActor> NearbyTargets(float range)
         {
-            return Targets.Where(u => u.RActorId != Player.RActorGuid && u.IsUnit && !u.IsSummonedByPlayer && u.Position.Distance2D(Player.Position) <= range && u.HasBeenInLoS);
+            return ObjectCache.Where(u => u.RActorId != Player.RActorGuid && u.IsUnit && !u.IsSummonedByPlayer && u.Position.Distance2D(Player.Position) <= range && u.HasBeenInLoS);
         }
 
         /// <summary>
@@ -2059,7 +2067,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
             return Players.Any(condition);
         }
 
-        public static TrinityActor IsEliteInRange(float range, bool objectsInAoe = false)
+        public static TrinityActor IsEliteInRange(float range, bool objectsInAoe = true)
         {
             return (from u in SafeList(objectsInAoe)
                     where u.IsUnit &&

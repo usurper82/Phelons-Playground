@@ -20,35 +20,33 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
         public static TrinityActor Target = CurrentTarget;
         public TrinityPower OffensivePower()
         {
-            Target = Targeting.BestTarget(185, true);
+            Target = Targeting.BestTarget(12f, true);
             if (Target == null)
                 return null;
 
-            //Core.Logger.Warn(LogCategory.Routine, $"[Current Target] - Name: {Target.Name} | Elite: {Target.IsElite || Target.IsBoss || Target.IsChampion}.");
-
-            if (Target.Distance > 10f)
-            {
-                if (Skills.Monk.Epiphany.TimeSinceUse < 15000 && Target.Distance < 20)
-                    return Spells.CripplingWave(Target);
-                return Walk(Target);
-            }
+            //var closestOcc = Targeting.GetOculusBuffDiaObjects(18f, Core.Player.Position).OrderBy(x => x.RadiusDistance).FirstOrDefault() ?? Target;//x => Targeting.NearbyTargets(x, 12f).Any()
+            //if (closestOcc != null && closestOcc.Position.Distance2D(Player.Position) > 7f)
+            //{
+            //    Core.Logger.Warn(LogCategory.Routine, $"[Movement] - Moving to Best Tank Area: {closestOcc}.");
+            //    return Walk(closestOcc);
+            //}
 
             TrinityPower power;
 
             if (TryMantra(out power))
                 return power;
 
-            if (ShouldCycloneStrike())
-                return Spells.CycloneStrike();
+            if (ShouldEpiphany())
+                return Spells.Epiphany();
 
             if (ShouldInnerSanctuary())
                 return Spells.InnerSanctuary();
 
+            if (ShouldCycloneStrike())
+                return Spells.CycloneStrike();
+
             if (ShouldBlindingFlash())
                 return Spells.BlindingFlash();
-
-            if (ShouldEpiphany())
-                return Spells.Epiphany();
 
             TrinityActor target;
             if (ShouldCripplingWave(out target))
@@ -60,8 +58,14 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
         {
             if (Player.IsInTown || TrinityTownRun.IsTryingToTownPortal())
                 return null;
-            //if (Skills.Monk.CycloneStrike.TimeSinceUse > 3000 && Player.PrimaryResource > 45 && Targeting.NumMobsInRange(22f) > 3)
-            //    return Spells.CycloneStrike();
+
+            if (Skills.Monk.CycloneStrike.TimeSinceUse > 3000 && Player.PrimaryResource > 45 && Targeting.NumMobsInRange(22f) > 3)
+                return Spells.CycloneStrike();
+
+            TrinityPower power;
+            if (TryMantra(out power))
+                return power;
+
             return null;
         }
 

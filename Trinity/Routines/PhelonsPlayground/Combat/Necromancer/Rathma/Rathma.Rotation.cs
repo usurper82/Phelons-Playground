@@ -33,47 +33,44 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
             if (ShouldBoneArmor())
                 return Spells.BoneArmor();
 
-            if (ShouldBloodRush(castDistance, out location))
+            if (ShouldBloodRush(45f, out location))
                 return Spells.BloodRush(location);
 
             //if (ShouldWalkToBuff(out location, Target.Position, Math.Min(castDistance, 25f)))
-                //return Walk(location, 3f);
+            //return Walk(location, 3f);
+            if (AllowedToUse(Settings.Cooldowns, Skills.Necromancer.LandOfTheDead) && ShouldLandOfTheDead())
+                return Spells.LandOfTheDead();
 
-            if (Target.RadiusDistance < castDistance)
-            {
-                if (AllowedToUse(Settings.Cooldowns, Skills.Necromancer.LandOfTheDead) && ShouldLandOfTheDead())
-                    return Spells.LandOfTheDead();
+            if (AllowedToUse(Settings.Cooldowns, Skills.Necromancer.Simulacrum) && ShouldSimulacrum())
+                return Spells.Simulacrum();
 
-                if (AllowedToUse(Settings.Cooldowns, Skills.Necromancer.Simulacrum) && ShouldSimulacrum())
-                    return Spells.Simulacrum();
+            if (ShouldSkeletalMage())
+                return Spells.SkeletalMage(Target);
 
-                if (ShouldSkeletalMage())
-                    return Spells.SkeletalMage(Target);
+            if (ShouldCommandSkeletons())
+                return Spells.CommandSkeletons(Target);
 
-                if (ShouldCommandSkeletons())
-                    return Spells.CommandSkeletons(Target);
+            if (ShouldDevour())
+                return Spells.Devour();
 
-                if (ShouldDevour())
-                    return Spells.Devour();
+            if (ShouldFrailty(out target))
+                return Spells.Frailty(target);
 
-                if (ShouldFrailty(out target))
-                    return Spells.Frailty(target);
+            if (ShouldDecrepify(out target))
+                return Spells.Decrepify(target);
 
-                if (ShouldDecrepify(out target))
-                    return Spells.Decrepify(target);
+            if (ShouldCorpseExplosion())
+                return Spells.CorpseExplosion(Target.Position);
 
-                if (ShouldCorpseExplosion())
-                    return Spells.CorpseExplosion(Target.Position);
+            if (ShouldBoneSpikes())
+                return Spells.BoneSpikes(Target);
 
-                if (ShouldBoneSpikes())
-                    return Spells.BoneSpikes(Target);
+            if (ShouldSiphonBlood())
+                return Spells.SiphonBlood(Target);
 
-                if (ShouldSiphonBlood())
-                    return Spells.SiphonBlood(Target);
+            if (ShouldGrimScythe(out target))
+                return Spells.GrimScythe(target);
 
-                if (ShouldGrimScythe(out target))
-                    return Spells.GrimScythe(target);
-            }
             if (ShouldWalk(out location, castDistance))
                 return Walk(location);
 

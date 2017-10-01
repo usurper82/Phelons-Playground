@@ -1,0 +1,76 @@
+﻿<UserControl 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:system="clr-namespace:System;assembly=mscorlib"
+    xmlns:converters="clr-namespace:Trinity.UI.UIComponents.Converters"
+
+    mc:Ignorable="d" Background="#434343" d:DesignHeight="820" d:DesignWidth="390">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../../../../../UI/Template.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <converters:PercentConverter x:Key="PercentConverter" />
+            <converters:EnumBooleanConverter x:Key="EnumBooleanConverter" />
+            <converters:EnumVisibilityConverter x:Key="HiddenWhenEnumTrueConverter" Reverse="True"/>
+            <converters:EnumVisibilityConverter x:Key="VisibleWhenEnumTrueConverter" />
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Border Padding="10">
+        <Grid>
+            <StackPanel>
+
+                <GroupBox>
+                    <GroupBox.Header>General</GroupBox.Header>
+                    <StackPanel>
+                        <Slider Template="{DynamicResource LabelledSliderEditable}" 
+                            Tag="Cluster Size"
+                            ToolTip="Number of monsters that must be grouped up before fighting starts"
+                            Interval="100" IsSnapToTickEnabled="True"
+                            Maximum="40" Minimum="1" SmallChange="100" TickFrequency="1" TickPlacement="BottomRight" 
+                            Value="{Binding DataContext.ClusterSize}" 
+                            HorizontalAlignment="Stretch" Margin="0,0,0,0"
+                            MinWidth="175"/>
+                        <Slider  Template="{DynamicResource LabelledSliderEditable}" 
+                        Tag="Health Emergency %"
+                        ToolTip="How low your health must drop before the potion is used"
+                                Interval="500" Maximum="99" Minimum="0" 
+                                SmallChange="1" LargeChange="5"
+                                TickPlacement="None" 
+                                Value="{Binding DataContext.EmergencyHealthPct, Converter={StaticResource PercentConverter}}" 
+                                HorizontalAlignment="Stretch" Margin="0"/>
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox>
+                    <GroupBox.Header>Cooldowns</GroupBox.Header>
+                    <StackPanel>
+                        <WrapPanel>
+                            <RadioButton Content="Always" IsChecked="{Binding DataContext.Cooldowns.UseMode, ConverterParameter=Always, Converter={StaticResource EnumBooleanConverter}, Mode=TwoWay}"  />
+                            <RadioButton Content="Selectively" IsChecked="{Binding DataContext.Cooldowns.UseMode, ConverterParameter=Selective, Converter={StaticResource EnumBooleanConverter}, Mode=TwoWay}" />
+                        </WrapPanel>
+                        <StackPanel Margin="0,5,0,0" Visibility="{Binding DataContext.Cooldowns.UseMode, ConverterParameter=Selective, Converter={StaticResource VisibleWhenEnumTrueConverter}}">
+                            <CheckBox ToolTip="Use when there are Champions nearby" 
+                				IsChecked="{Binding DataContext.Cooldowns.Reasons, ConverterParameter=Champions, Converter={converters:FlagsToBoolConverter}}">Champions</CheckBox>
+                            <CheckBox ToolTip="Use when there are Elites nearby" 
+                				IsChecked="{Binding DataContext.Cooldowns.Reasons, ConverterParameter=Elites, Converter={converters:FlagsToBoolConverter}}">Elites</CheckBox>
+                            <CheckBox ToolTip="Use when you are surrounded by lots of mobs." 
+                				IsChecked="{Binding DataContext.Cooldowns.Reasons, ConverterParameter=Surrounded, Converter={converters:FlagsToBoolConverter}}">Trash Mob Count</CheckBox>
+                            <Slider Template="{DynamicResource LabelledSliderEditable}" 
+                            Tag="Trash Mob Count:"
+                            ToolTip="Number of monsters that must be grouped up before we blow cooldowns"
+                            Interval="100" IsSnapToTickEnabled="True"
+                            Maximum="40" Minimum="1" SmallChange="100" TickFrequency="1" TickPlacement="BottomRight" 
+                            Value="{Binding DataContext.CooldownTrashSize}" 
+                            HorizontalAlignment="Stretch" Margin="0,0,0,0"
+                            MinWidth="225"/>
+                        </StackPanel>
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>
+
+    

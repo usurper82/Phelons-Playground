@@ -26,7 +26,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
                 return false;
 
             var closestGlobe = Targeting.ClosestGlobe();
-            if (Player.CurrentHealthPct < 0.50 && closestGlobe != null && closestGlobe.Distance < 25f)
+            if (Player.CurrentHealthPct < 0.15 && closestGlobe != null && closestGlobe.Distance < 25f)
             {
                 position = closestGlobe.Position;
                 Core.Logger.Error(LogCategory.Routine,
@@ -45,7 +45,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
             //    return true;
             //}
 
-            var buffPosition = Targeting.BestBuffPosition(distance, Target.Position, Player.CurrentHealthPct > 0.35, out position);
+            var buffPosition = Targeting.BestBuffPosition(distance, Target.Position, Player.CurrentHealthPct > 0.55, out position);
 
             if (buffPosition && Player.Position.Distance2D(position) > 7f)
             {

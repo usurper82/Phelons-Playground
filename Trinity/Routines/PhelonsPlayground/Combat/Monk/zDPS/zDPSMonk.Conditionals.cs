@@ -152,7 +152,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
             if (!Skills.Monk.CripplingWave.CanCast())
                 return false;
 
-            var range = Skills.Monk.Epiphany.TimeSinceUse < 15000 ? 20 : 10f;
+            var range = Skills.Monk.Epiphany.TimeSinceUse < 15000 && Targeting.ClosestOcculous(7f, Player.Position) == Vector3.Zero ? 20 : 10f;
+
             if (target.Distance > 7f && range > 10f)
             {
                 Core.Logger.Error(LogCategory.Routine, $"[CripplingWave] - Epiphany distance closer on Unit: {target}.");
@@ -180,10 +181,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
             if (!Skills.Monk.InnerSanctuary.CanCast())
                 return false;
 
-            if (Skills.Monk.InnerSanctuary.TimeSinceUse < Settings.InnerSanctuaryDelay)
-                return false;
-
-            if (TargetUtil.BestAoeUnit(45, true).Distance > Settings.InnerSanctuaryMinRange)
+            if (Skills.Monk.InnerSanctuary.TimeSinceUse < Settings.InnerSanctuaryDelay && Skills.Monk.InnerSanctuary.DistanceFromLastUsePosition < 7)
                 return false;
 
             Core.Logger.Error(LogCategory.Routine,

@@ -332,14 +332,17 @@ namespace Trinity.DbProvider
             Core.Logger.Warn("Trying to get Unstuck...");
             Navigator.Clear();
             Navigator.NavigationProvider.Clear();
-            await ClearDestructibleNearby();
-
-            await Navigator.SearchGridProvider.Update();
             var startPosition = ZetaDia.Me.Position;
-            Core.Logger.Log("Starting Segment 1...");
-            await MoveAwayFrom(startPosition);
-            Core.Logger.Log("Starting Segment 2 ...");
-            await MoveAwayFrom(startPosition);
+            int attempts = 0;
+            while (Navigator.StuckHandler.IsStuck && attempts < 5)
+            {
+                attempts++;
+                await ClearDestructibleNearby();
+                await Coroutine.Yield();
+                await Navigator.SearchGridProvider.Update();
+                Core.Logger.Log($"Starting Segment Attempt: {attempts}");
+                await MoveAwayFrom(startPosition);
+            }
             return true;
         }
 

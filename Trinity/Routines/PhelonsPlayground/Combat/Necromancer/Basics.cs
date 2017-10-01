@@ -45,7 +45,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
 
         public static TrinityPower DestructiblePower()
         {
-            if (CurrentTarget.IsInLineOfSight && CurrentTarget.Distance < 45)
+            if (CurrentTarget.IsInLineOfSight && CurrentTarget.Distance < 12f)
             {
                 return Core.Routines.CurrentRoutine.GetOffensivePower();
                 if (Skills.Necromancer.BoneSpikes.CanCast())
@@ -64,13 +64,17 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
         {
             if (Player.IsInTown)
                 return null;
-            var projectedPosition = IsBlocked
-                    ? Core.Grids.Avoidance.GetPathCastPosition(45f, true)
-                    : Core.Grids.Avoidance.GetPathWalkPosition(45f, true);
-            return (!Player.Position.EasyNavToPosition(destination) || projectedPosition.Distance(Player.Position) > 10 || HasInstantCooldowns) &&
-                   Skills.Necromancer.BloodRush.CanCast()
-                ? Spells.BloodRush(destination)
-                : Spells.Walk(destination);
+            var pathPosition = Core.Grids.Avoidance.GetPathCastPosition(45f, true);
+            var farthestPoint = pathPosition.Distance(Player.Position) > destination.Distance(Player.Position)
+                ? pathPosition
+                : destination;
+            if (Player.Position.EasyNavToPosition(destination) && destination.Distance(Player.Position) < 15)
+                return Spells.Walk(farthestPoint);
+
+            if (Skills.Necromancer.BloodRush.CanCast())
+                return Spells.BloodRush(farthestPoint);
+
+            return Spells.Walk(farthestPoint);
         }
     }
 }

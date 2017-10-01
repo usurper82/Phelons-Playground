@@ -20,7 +20,6 @@ namespace Trinity.Modules
         public bool HasArchon { get; private set; }
         public bool HasInvulnerableShrine { get; private set; }
         public bool HasCastingShrine { get; set; }
-        public bool HasConduitPylon { get; set; }
         public bool HasBastiansWillSpenderBuff { get; set; }
         public bool HasBastiansWillGeneratorBuff { get; set; }
         public bool HasConduitShrine { get; set; }

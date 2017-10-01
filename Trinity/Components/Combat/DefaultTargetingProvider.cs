@@ -270,14 +270,9 @@ namespace Trinity.Components.Combat
 
         public bool IsInLineOfSight(Vector3 position)
         {
-            var longTargetTime = CurrentTarget?.Targeting.TotalTargetedTime < TimeSpan.FromSeconds(10);
-
-            if (longTargetTime || Core.BlockedCheck.IsBlocked || Core.StuckHandler.IsStuck || Core.ProfileSettings.Options.CurrentSceneOptions.AlwaysRayWalk)
-            {
-                return Core.Grids.Avoidance.CanRayWalk(Core.Player.Position, position, 5f);
-            }
-
-            return Core.Grids.Avoidance.CanRayCast(Core.Player.Position, position);
+            float distance = Core.Player.Position.Distance(position);
+            if (distance <= 2f) return true;
+            return !Navigator.Raycast(Core.Player.Position, position);
         }
 
         void ITargetingProvider.Clear()

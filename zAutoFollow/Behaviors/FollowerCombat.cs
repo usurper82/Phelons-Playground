@@ -127,7 +127,7 @@ namespace AutoFollow.Behaviors
             //Log.Info($"Distance: {AutoFollow.CurrentLeader.Distance} CurrentTarget: {AutoFollow.CurrentLeader.CurrentTarget} Position: {AutoFollow.CurrentLeader.Position} ");
             if (!AutoFollow.CurrentLeader.InDifferentLevelArea)// && !Targetting.IsPriorityTarget)
             {
-                if (AutoFollow.CurrentLeader.Distance < 45 && Player.Target != null &&
+                if (AutoFollow.CurrentLeader.Distance < Settings.Coordination.CatchUpDistance && Player.Target != null &&
                     Player.Target.Type == TrinityObjectType.Unit && AutoFollow.CurrentLeader.CurrentTarget != null &&
                     AutoFollow.CurrentLeader.CurrentTarget.Type == TrinityObjectType.Unit)
                 {
@@ -143,7 +143,7 @@ namespace AutoFollow.Behaviors
 
                 if (AutoFollow.CurrentLeader.Distance > Settings.Coordination.FollowDistance)
                 {
-                    Targetting.State = CombatState.Pulsing;
+                    Targetting.State = CombatState.Disabled;
                     return FollowMode.FollowLeader;
                 }
             }

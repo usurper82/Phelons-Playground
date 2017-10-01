@@ -167,13 +167,13 @@ namespace Trinity.Components.Combat
 
                 foreach (var unit in objects.Where(u => u.IsUnit && (u.IsElite || u.IsMinion)))
                 {
-                    if (_ignoredAffixes.Any(a => unit.MonsterAffixes.HasFlag(a)))
+                    string reason;
+                    if (_ignoredAffixes.Any(a => unit.MonsterAffixes.HasFlag(a)) && ShouldIgnoreElite(unit, out reason))
                     {
                         ignoredByAffixElites.Add(unit);
+                        continue;
                     }
-
-                    string reason;
-                    if (!ShouldIgnoreElite(unit, out reason))
+                    if (unit.IsElite)
                         elites.Add(unit);
                 }
 
@@ -800,6 +800,12 @@ namespace Trinity.Components.Combat
                                         //    break;
                                         //}
 
+                                        if (cacheObject.IsMinion)
+                                        {
+                                            cacheObject.WeightInfo += string.Format("Ignoring {0} Minion.", cacheObject.InternalName);
+                                            cacheObject.Weight = MinWeight;
+                                            break;
+                                        }
                                         if (cacheObject.Distance > TrinityCombat.Routines.Current.EliteRange)
                                         {
                                             cacheObject.WeightInfo += string.Format("Ignoring {0} Elite is too far away.", cacheObject.InternalName);
@@ -807,7 +813,7 @@ namespace Trinity.Components.Combat
                                             break;
                                         }
 
-                                        if (cacheObject.HitPointsPct <= 0.30 && !cacheObject.IsMinion)
+                                        if (cacheObject.HitPointsPct <= 0.35 && !cacheObject.IsMinion)
                                         {
                                             cacheObject.WeightInfo +=
                                                 string.Format("Adding {0} for Elite Under Health Threshold.",
@@ -1349,7 +1355,7 @@ namespace Trinity.Components.Combat
 
                                     if (!cacheObject.IsQuestMonster)
                                     {
-                                        if (Core.Settings.Weighting.ShrineWeighting == SettingMode.Disabled)
+                                        if (Core.Settings.Weighting.ShrineWeighting == SettingMode.Disabled || ZetaDia.Globals.RiftProgressionPercent >= 99f)
                                         {
                                             cacheObject.WeightInfo += $"Ignoring {cacheObject.InternalName} - Dont use shrines setting.";
                                             break;
@@ -1748,7 +1754,7 @@ namespace Trinity.Components.Combat
             if (!unit.IsElite)
                 return false;
 
-            if (unit.HitPointsPct < 0.25 && !unit.IsMinion)
+            if (unit.HitPointsPct < 0.35 && !unit.IsMinion)
             {
                 reason = "Keep(Elites=LowHealth)";
                 return false;

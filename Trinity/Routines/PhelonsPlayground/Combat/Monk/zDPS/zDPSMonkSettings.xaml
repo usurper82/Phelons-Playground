@@ -10,7 +10,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="../../../UI/Template.xaml"/>
+                <ResourceDictionary Source="../../../../../UI/Template.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <converters:PercentConverter x:Key="PercentConverter" />
             <converters:EnumBooleanConverter x:Key="EnumBooleanConverter" />

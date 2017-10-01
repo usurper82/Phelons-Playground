@@ -906,23 +906,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Routines\PhelonsPlayground\Settings\LoNSettings.xaml">
+    <Page Include="Routines\PhelonsPlayground\Combat\Witchdoctor\LoN\LoNSettings.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Routines\PhelonsPlayground\Settings\TragoulSettings.xaml">
+    <Page Include="Routines\PhelonsPlayground\Combat\Necromancer\Tragoul\TragoulSettings.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Routines\PhelonsPlayground\Settings\RathmaSettings.xaml">
+    <Page Include="Routines\PhelonsPlayground\Combat\Necromancer\Rathma\RathmaSettings.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Routines\PhelonsPlayground\Settings\zDPSBarbSettings.xaml">
+    <Page Include="Routines\PhelonsPlayground\Combat\Barbarian\zDPS\zDPSBarbSettings.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Routines\PhelonsPlayground\Settings\zDPSMonkSettings.xaml">
+    <Page Include="Routines\PhelonsPlayground\Combat\Monk\zDPS\zDPSMonkSettings.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

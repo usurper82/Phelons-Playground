@@ -201,23 +201,29 @@
                     <Border Height="1" Background="DarkSlateGray" />
                     <CheckBox Name="GreaterRiftRunNephalem" IsChecked="{Binding GreaterRiftRunNephalem}" Content="Run Nephalem Rifts If No Keys Found" Margin="2"></CheckBox>
                     <Border Height="1" Background="DarkSlateGray" />
-
-                    <!--<Border Height="1" Background="DarkSlateGray" />-->
                     <UniformGrid Rows="1">
-                            <CheckBox VerticalAlignment="Center" Name="UseEmpoweredRifts" IsChecked="{Binding UseEmpoweredRifts}" Content="Empower Rift" Margin="2" ToolTip="Sinks a lot of money to give you a 4th gem upgrade opportunity"></CheckBox>
-                            <WrapPanel HorizontalAlignment="Right" ToolTip="Max rift level for empowering rifts" Visibility="{Binding UseEmpoweredRifts, Converter={StaticResource VisibleWhenTrueConverter}}">
-                                <Label>Up To Level:</Label>
-                                <TextBox HorizontalAlignment="Right" Name="EmpowerMaxLevel" Width="50" Text="{Binding EmpoweredRiftLevelLimit, Converter={StaticResource IntToStringConverter}}" />
-                            </WrapPanel>
-                        </UniformGrid>
-                        <Border Height="1" Background="DarkSlateGray" />
-                        <UniformGrid Rows="1">
-                            <CheckBox VerticalAlignment="Center" Name="UseGemAutoLevel" IsChecked="{Binding UseGemAutoLevel}" Content="Automatically Reduce Rift Level" Margin="2" ToolTip="reduce rift level down to the minimum for 100% upgrade chance."></CheckBox>
-                            <WrapPanel HorizontalAlignment="Right" ToolTip="Max level reduction allowed (on top of the -10 required for 100% upgrade chance" Visibility="{Binding UseGemAutoLevel, Converter={StaticResource VisibleWhenTrueConverter}}">
-                                <Label>Max Reduction:</Label>
-                                <TextBox HorizontalAlignment="Right" Name="MaxLevelReduction" Width="50" Text="{Binding GemAutoLevelReductionLimit, Converter={StaticResource IntToStringConverter}}" />
-                            </WrapPanel>
-                        </UniformGrid>
+                        <CheckBox VerticalAlignment="Center" Name="UseEmpoweredRifts" IsChecked="{Binding UseEmpoweredRifts}" Content="Empower Rift" Margin="2" ToolTip="Sinks a lot of money to give you a 4th gem upgrade opportunity"></CheckBox>
+                        <WrapPanel HorizontalAlignment="Right" ToolTip="Max rift level for empowering rifts" Visibility="{Binding UseEmpoweredRifts, Converter={StaticResource VisibleWhenTrueConverter}}">
+                            <Label>Up To Level:</Label>
+                            <TextBox HorizontalAlignment="Right" Name="EmpowerMaxLevel" Width="50" Text="{Binding EmpoweredRiftLevelLimit, Converter={StaticResource IntToStringConverter}}" />
+                        </WrapPanel>
+                    </UniformGrid>
+                    <Border Height="1" Background="DarkSlateGray" />
+                    <UniformGrid Rows="1">
+                        <CheckBox VerticalAlignment="Center" Name="UseGemAutoLevel" IsChecked="{Binding UseGemAutoLevel}" Content="Automatically Reduce Rift Level" Margin="2" ToolTip="reduce rift level down to the minimum for 100% upgrade chance."></CheckBox>
+                        <WrapPanel HorizontalAlignment="Right" ToolTip="Max level reduction allowed (on top of the -10 required for 100% upgrade chance" Visibility="{Binding UseGemAutoLevel, Converter={StaticResource VisibleWhenTrueConverter}}">
+                            <Label>Max Reduction:</Label>
+                            <TextBox HorizontalAlignment="Right" Name="MaxLevelReduction" Width="50" Text="{Binding GemAutoLevelReductionLimit, Converter={StaticResource IntToStringConverter}}" />
+                        </WrapPanel>
+                    </UniformGrid>
+                    <Border Height="1" Background="DarkSlateGray" />
+                    <UniformGrid Rows="1">
+                        <CheckBox VerticalAlignment="Center" Name="UseMaxTimeInRift" IsChecked="{Binding UseMaxTimeInRift}" Content="Leave Rift if it Takes To Long" Margin="2" ToolTip="Set a timer so if you are in a bad rift, you will leave automatically once the timer is hit."></CheckBox>
+                        <WrapPanel HorizontalAlignment="Right" ToolTip="Total Time till Rift Timeout." Visibility="{Binding UseMaxTimeInRift, Converter={StaticResource VisibleWhenTrueConverter}}">
+                            <Label>Max Time:</Label>
+                            <TextBox HorizontalAlignment="Right" Name="MaxTimeInRift" Width="50" Text="{Binding MaxTimeInRift, Converter={StaticResource IntToStringConverter}}" />
+                        </WrapPanel>
+                    </UniformGrid>
                     <Border Height="1" Background="DarkSlateGray" />
                     <CheckBox Name="GetXPShrine" IsChecked="{Binding NormalRiftForXPShrine}" Content="Run normal rift until XP Shrine found" Margin="2" ToolTip="Whenever bonus XP is not found, bot will run normal rifts to fine an XP shrine"></CheckBox>
                     <UniformGrid Columns="2">

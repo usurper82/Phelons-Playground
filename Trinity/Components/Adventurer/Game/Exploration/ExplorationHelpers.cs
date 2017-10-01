@@ -187,11 +187,11 @@ namespace Trinity.Components.Adventurer.Game.Exploration
 
         public static double PriorityDistanceFormula(ExplorationNode n)
         {
-            var directionMultiplier = IsInPriorityDirection(n.NavigableCenter, 30) ? 3 : 1;
+            var directionMultiplier = IsInPriorityDirection(n.NavigableCenter, 30) ? 2 : 1;
             var sceneConnectionDirectionMultiplier = IsInSceneConnectionDirection(n.NavigableCenter, 30) ? 2 : 1;
             var nodeInPrioritySceneMultiplier = n.Priority ? 2.25 : 0;
-            var baseDistanceFactor = 10/n.NavigableCenter.Distance(AdvDia.MyPosition);
-            var canRayWalk = Core.Grids.CanRayWalk(AdvDia.MyPosition, n.NavigableCenter) && n.Distance > 65 ? 100/n.Distance : 1;
+            var baseDistanceFactor = 5/n.NavigableCenter.Distance(AdvDia.MyPosition);
+            var canRayWalk = Core.Grids.CanRayWalk(AdvDia.MyPosition, n.NavigableCenter) && n.Distance > 25 && n.Distance < 100 ? 100/n.Distance : 1;
 
             var edgeMultiplier = 1d;
             var visitedMultiplier = 1d;
@@ -202,7 +202,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration
             {
                 var isInExitScene = n.Scene.Name.Contains("Exit");
                 exitSceneMultiplier = isInExitScene ? 10 : 1;
-                visitedMultiplier = n.Scene.HasBeenVisited && !isInExitScene ? 0.2f : 1f;
+                visitedMultiplier = n.Scene.HasBeenVisited && !isInExitScene ? 0.1f : 1f;
 
                 // Ignore dead end scenes.
                 if (n.Scene.ExitPositions.Count <= 1 && !isInExitScene)

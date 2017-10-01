@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
 {
+    using Components.Adventurer.Game.Rift;
     using Framework;
     using Framework.Actors.ActorTypes;
     using Framework.Helpers;
@@ -47,7 +48,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
                 target = (Targeting.BestTargetWithoutDebuff(12f, SNOPower.P6_Necro_Decrepify, Player.Position) ??
                           Targeting.BestTargetWithoutDebuff(12f, SNOPower.P6_Necro_Leech, Player.Position) ??
                           Targeting.BestTargetWithoutDebuff(12f, SNOPower.P6_Necro_Frailty, Player.Position)) ??
-                         Target;
+                         Targeting.ClosestUnit(12f, Core.Player.Actor);
                 if (target == null)
                     return false;
                 Core.Logger.Error(LogCategory.Routine,
@@ -170,17 +171,20 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
 
             public static bool ShouldLandOfTheDead()
             {
-                if (!Skills.Necromancer.LandOfTheDead.CanCast() || Skills.Necromancer.LandOfTheDead.TimeSinceUse < 10000 || Skills.Necromancer.Simulacrum.IsActive && !Skills.Necromancer.Simulacrum.CanCast() && Skills.Necromancer.Simulacrum.TimeSinceUse > 15000)
+                if (Target.HitPointsPct < 0.30 || !Skills.Necromancer.LandOfTheDead.CanCast() || Skills.Necromancer.LandOfTheDead.TimeSinceUse < 10000 || Skills.Necromancer.Simulacrum.IsActive && !Skills.Necromancer.Simulacrum.CanCast() && Skills.Necromancer.Simulacrum.TimeSinceUse > 15000)
                     return false;
+                if (Targeting.NearbyTargets(Player.Actor, 45f).Count() > 20 && Legendary.HauntedVisions.IsEquipped && RiftData.GetGreaterRiftLevel() > 95)
+                {
+                    Core.Logger.Error(LogCategory.Routine,
+                        $"[Land of the Dead] - Because of Pack Size and Haunted Visisions is equipped..");
+                    return true;
+                }
                 var elite = Targeting.BestLOSEliteInRange(65f);
                 if (elite == null)
                     return false;
 
-                //Trying to alternate cooldowns
-     //           if (!Skills.Necromancer.CorpseLance.IsActive && 
-					//Targeting.Players.Any() && (Skills.Necromancer.Frailty.CanCast() && elite.IsChampion ||
-     //                                           Skills.Necromancer.Decrepify.CanCast() && elite.IsElite))
-     //               return false;
+                //if (Legendary.HauntedVisions.IsEquipped && Targeting.Monk != null && elite.IsChampion)
+                //    return false;
 
                 Core.Logger.Error(LogCategory.Routine,
                     $"[Land of the Dead] - Because of Elite {elite}.");
@@ -189,21 +193,24 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
 
             public static bool ShouldSimulacrum()
             {
-                if (!Skills.Necromancer.Simulacrum.CanCast() || Skills.Necromancer.Simulacrum.TimeSinceUse < 10000 || Player.PrimaryResourcePct < 0.90 && !Skills.Necromancer.LandOfTheDead.IsActive)
+                if (Target.HitPointsPct < 0.30 || !Skills.Necromancer.Simulacrum.CanCast() || Skills.Necromancer.Simulacrum.TimeSinceUse < 10000 || Player.PrimaryResourcePct < 0.90 && !Skills.Necromancer.LandOfTheDead.IsActive)
                     return false;
-
+                if (Targeting.NearbyTargets(Player.Actor, 45f).Count() > 20 && Legendary.HauntedVisions.IsEquipped && RiftData.GetGreaterRiftLevel() > 95)
+                {
+                    Core.Logger.Error(LogCategory.Routine,
+                        $"[Simulacrum] - Because of Pack Size and Haunted Visisions is equipped.");
+                    return true;
+                }
                 var elite = Targeting.BestLOSEliteInRange(65f);
                 if (elite == null)
                     return false;
 
                 //Trying to alternate cooldowns
-                //if (!Skills.Necromancer.CorpseLance.IsActive &&
-                //    Targeting.Players.Any() && (Skills.Necromancer.Frailty.CanCast() && elite.IsChampion ||
-                //                                Skills.Necromancer.Decrepify.CanCast() && elite.IsElite))
+                //if (Legendary.HauntedVisions.IsEquipped && Targeting.Monk != null && elite.IsChampion)
                 //    return false;
 
                 Core.Logger.Error(LogCategory.Routine,
-                    $"[Simulaccrum] - Because of Elite {elite}.");
+                    $"[Simulacrum] - Because of Elite {elite}.");
                 return true;
             }
 
