@@ -250,7 +250,7 @@ namespace Trinity.Settings
                     }
 
                     LoadDynamicSettings();
-                    Core.Logger.Log("Configuration file loaded");
+                    Core.Logger.Log($"Configuration file {filename} loaded.");
                     OnLoaded();
 
                     if (doc.Root.Name == "TrinitySetting")
