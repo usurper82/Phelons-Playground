@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Trinity.Framework.Helpers
 {
-    public static class JsonSerializer
+    public class JsonSerializer
     {
         public static string Serialize<T>(T value, bool ignoreTypes = true) where T : class
         {

@@ -32,6 +32,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
 {
     using System.Diagnostics;
     using Framework.Grid;
+    using Framework.Objects;
     using Zeta.Bot.Navigation;
 
     public class RiftCoroutine : IDisposable, ICoroutine
@@ -1578,6 +1579,12 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                 Core.Logger.Log("[Rift] Oh look! There is a portal over there, let's see what's on the other side.");
                 Core.Logger.Debug("[Rift] Found the objective at distance {0}",
                     AdvDia.MyPosition.Distance(_nextLevelPortalLocation));
+                ExitPortals.Load();
+                if (ExitPortals.Portals.Any(x => x.Position.Distance(_nextLevelPortalLocation) < 25)) return;
+                var newPortal = new ExitPortal();
+                ExitPortals.Portals.Add(newPortal);
+                ExitPortals.Save();
+                Core.Logger.Warn($"[Rift] Adding Exit Portal: {newPortal}");
             }
         }
 

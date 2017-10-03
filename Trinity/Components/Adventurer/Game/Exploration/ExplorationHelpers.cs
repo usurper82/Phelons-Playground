@@ -188,7 +188,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration
         public static double PriorityDistanceFormula(ExplorationNode n)
         {
             var directionMultiplier = IsInPriorityDirection(n.NavigableCenter, 30) ? 2 : 1;
-            var sceneConnectionDirectionMultiplier = IsInSceneConnectionDirection(n.NavigableCenter, 30) ? 2 : 1;
+            var sceneConnectionDirectionMultiplier = IsInSceneConnectionDirection(n.NavigableCenter, 30) ? 4 : 1;
             var nodeInPrioritySceneMultiplier = n.Priority ? 2.25 : 0;
             var baseDistanceFactor = 5/n.NavigableCenter.Distance(AdvDia.MyPosition);
             var canRayWalk = Core.Grids.CanRayWalk(AdvDia.MyPosition, n.NavigableCenter) && n.Distance > 25 && n.Distance < 100 ? 100/n.Distance : 1;

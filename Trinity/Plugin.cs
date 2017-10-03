@@ -19,6 +19,8 @@ using Application = System.Windows.Application;
 
 namespace Trinity
 {
+    using Framework.Objects;
+
     public class TrinityPlugin : IPlugin
     {
         private static TrinityPlugin _instance;
@@ -91,7 +93,7 @@ namespace Trinity
         {
             if (IsEnabled || !Application.Current.CheckAccess())
                 return;
-
+            ExitPortals.Load();
             Core.Init();
             TrinitySettings.InitializeSettings();
             SkillUtils.UpdateActiveSkills();            
@@ -131,6 +133,7 @@ namespace Trinity
             ItemManager.Current = new BlankItemManager();
             Zeta.Bot.RoutineManager.Current = null;
             ModuleManager.Disable();
+            ExitPortals.Save();
             Core.Logger.Log($"is now DISABLED!");
         }
 
