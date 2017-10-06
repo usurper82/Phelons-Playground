@@ -182,6 +182,7 @@
     <Compile Include="Components\Adventurer\UI\MainUI.cs" />
     <Compile Include="Components\QuestTools\BaseContainerProfileBehavior.cs" />
     <Compile Include="Framework\Objects\Enums\RequirementType.cs" />
+    <Compile Include="Framework\Objects\GemUpgrades.cs" />
     <Compile Include="Framework\Objects\ExitPortals.cs" />
     <Compile Include="Modules\ProfilePulsator.cs" />
     <Compile Include="Components\QuestTools\BaseProfileBehavior.cs" />

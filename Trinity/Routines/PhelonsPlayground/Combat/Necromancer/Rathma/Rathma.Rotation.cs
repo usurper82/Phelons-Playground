@@ -33,9 +33,6 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
             if (ShouldBoneArmor())
                 return Spells.BoneArmor();
 
-            if (ShouldBloodRush(45f, out location))
-                return Spells.BloodRush(location);
-
             //if (ShouldWalkToBuff(out location, Target.Position, Math.Min(castDistance, 25f)))
             //return Walk(location, 3f);
             if (AllowedToUse(Settings.Cooldowns, Skills.Necromancer.LandOfTheDead) && ShouldLandOfTheDead())
@@ -46,6 +43,9 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
 
             if (ShouldSkeletalMage())
                 return Spells.SkeletalMage(Target);
+
+            if (ShouldBloodRush(45f, out location))
+                return Spells.BloodRush(location);
 
             if (ShouldCommandSkeletons())
                 return Spells.CommandSkeletons(Target);
@@ -71,10 +71,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
             if (ShouldGrimScythe(out target))
                 return Spells.GrimScythe(target);
 
-            if (ShouldWalk(out location, castDistance))
-                return Walk(location);
-
-            return null;
+            return ShouldWalk(out location, castDistance) ? Walk(location) : null;
         }
     }
 }

@@ -83,14 +83,14 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
         {
             position = Vector3.Zero;
 
-            var closestGlobe = Targeting.ClosestGlobe(15f);
-            if (closestGlobe != null && Player.CurrentHealthPct < 0.50 && Player.Position.EasyNavToPosition(closestGlobe.Position))
-            {
-                Core.Logger.Error(LogCategory.Routine,
-                    $"[Walk] - Grabbing Health Globe.");
-                position = closestGlobe.Position;
-                return true;
-            }
+            //var closestGlobe = Targeting.ClosestGlobe(15f);
+            //if (closestGlobe != null && Player.CurrentHealthPct < 0.50 && Player.Position.EasyNavToPosition(closestGlobe.Position))
+            //{
+            //    Core.Logger.Error(LogCategory.Routine,
+            //        $"[Walk] - Grabbing Health Globe.");
+            //    position = closestGlobe.Position;
+            //    return true;
+            //}
 
             if (CurrentTarget != null && !CurrentTarget.IsUnit)
             {

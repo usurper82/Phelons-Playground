@@ -94,6 +94,7 @@ namespace Trinity
             if (IsEnabled || !Application.Current.CheckAccess())
                 return;
             ExitPortals.Load();
+            GemUpgrades.Load();
             Core.Init();
             TrinitySettings.InitializeSettings();
             SkillUtils.UpdateActiveSkills();            
@@ -134,6 +135,7 @@ namespace Trinity
             Zeta.Bot.RoutineManager.Current = null;
             ModuleManager.Disable();
             ExitPortals.Save();
+            GemUpgrades.Save();
             Core.Logger.Log($"is now DISABLED!");
         }
 

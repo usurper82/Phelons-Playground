@@ -39,7 +39,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
 
             if (!Skills.Necromancer.SkeletalMage.CanCast())
                 return false;
-            var magePercent = ZetaDia.Actors.GetActorsOfType<DiaPlayer>(true).Count() > 1 ? 0.95 : 0.50;
+            var magePercent = ZetaDia.Actors.GetActorsOfType<DiaPlayer>(true).Count() > 1 ? 0.90 : 0.50;
             if (Player.PrimaryResourcePct < magePercent)
                 return false;
 

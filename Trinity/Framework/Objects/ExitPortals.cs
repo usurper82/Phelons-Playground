@@ -29,7 +29,7 @@
             {
                 reader = new StreamReader(myFileStream);
                 var fileContents = reader.ReadToEnd();
-                Portals = JsonSerializer.Deserialize<List<ExitPortal>>(fileContents);
+                Portals = JsonSerializer.Deserialize<List<ExitPortal>>(fileContents).OrderBy(x => x.LevelAreaId).ToList();
                 //Portals = JsonConvert.DeserializeObject<List<ExitPortal>>(fileContents);
             }
             catch (Exception ex)

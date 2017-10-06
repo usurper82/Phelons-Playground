@@ -21,6 +21,9 @@ using RiftStep = Trinity.Components.Adventurer.Game.Rift.RiftStep;
 
 namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
 {
+    using Framework.Objects;
+    using Zeta.Game.Internals;
+
     public sealed class UpgradeGemsCoroutine : ICoroutine
     {
         public UpgradeGemsCoroutine()
@@ -29,8 +32,6 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
         }
 
         private readonly WaitTimer _pulseTimer = new WaitTimer(TimeSpan.FromMilliseconds(250));
-        private int _gemUpgradesLeft;
-        private bool _enableGemUpgradeLogs;
         private bool _isPulsing;
         private Vector3 _urshiLocation;
 
@@ -60,8 +61,8 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                 if (_state == value) return;
                 if (value != States.NotStarted)
                 {
-                    Core.Logger.Debug("[UpgradeGems] " + value);
-                    StatusText = "[UpgradeGems] " + value;
+                    Core.Logger.Debug("[Gem Upgrade Coroutine] " + value);
+                    StatusText = "[Gem Upgrade Coroutine] " + value;
                 }
                 _state = value;
             }
@@ -145,12 +146,12 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
             }
             if (!await ExplorationCoroutine.Explore(new HashSet<int> { AdvDia.CurrentLevelAreaId }))
             {
-                Core.Logger.Log("[UpgradeGems] Exploration for urshi has failed, the sadness!");
+                Core.Logger.Log("[Gem Upgrade Coroutine] Exploration for urshi has failed, the sadness!");
                 State = States.Failed;
                 return false;
             }
 
-            Core.Logger.Log("[UpgradeGems] Where are you, my dear Urshi!");
+            Core.Logger.Log("[Gem Upgrade Coroutine] Where are you, my dear Urshi!");
             Core.Scenes.Reset();
             return false;
         }
@@ -176,7 +177,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
             var urshi = ZetaDia.Actors.GetActorsOfType<DiaUnit>().FirstOrDefault(a => a.IsFullyValid() && a.ActorSnoId == RiftData.UrshiSNO);
             if (urshi == null)
             {
-                Core.Logger.Debug("[UpgradeGems] Can't find the Urshi lady :(");
+                Core.Logger.Debug("[Gem Upgrade Coroutine] Can't find the Urshi lady :(");
                 State = States.Failed;
                 return false;
             }
@@ -192,66 +193,116 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
             {
                 return false;
             }
-
-            _gemUpgradesLeft = 3;
-            _enableGemUpgradeLogs = false;
+            
             State = States.UpgradingGems;
             return false;
         }
 
         private async Task<bool> UpgradingGems()
         {
-            if (RiftData.VendorDialog.IsVisible && RiftData.ContinueButton.IsVisible && RiftData.ContinueButton.IsEnabled)
+            if (RiftData.VendorDialog.IsVisible && RiftData.ContinueButton.IsVisible &&
+                RiftData.ContinueButton.IsEnabled)
             {
-                Core.Logger.Debug("[UpgradeGems] Clicking to Continue button.");
+                Core.Logger.Debug("[Gem Upgrade Coroutine] Clicking to Continue button.");
                 RiftData.ContinueButton.Click();
                 RiftData.VendorCloseButton.Click();
-                await Coroutine.Sleep(250);
+                await Coroutine.Sleep(3000);
                 return false;
             }
-
+            if (ZetaDia.Me.JewelUpgradesLeft == 0)
+            {
+                Core.Logger.Debug("[Gem Upgrade Coroutine] Finished all upgrades, returning to town.");
+                State = States.Completed;
+                return false;
+            }
+            if (AdvDia.RiftQuest.Step == RiftStep.Cleared)
+            {
+                Core.Logger.Debug("[Gem Upgrade Coroutine] Rift Quest is completed, returning to town");
+                State = States.Completed;
+                return false;
+            }
             var gemToUpgrade = PluginSettings.Current.Gems.GetUpgradeTarget();
             if (gemToUpgrade == null)
             {
-                Core.Logger.Log("[UpgradeGems] I couldn't find any gems to upgrade, failing.");
+                Core.Logger.Log("[Gem Upgrade Coroutine] I couldn't find any gems to upgrade, failing.");
                 State = States.Failed;
                 return false;
             }
-            _enableGemUpgradeLogs = false;
-            if (AdvDia.RiftQuest.Step == RiftStep.Cleared)
-            {
-                Core.Logger.Debug("[UpgradeGems] Rift Quest is completed, returning to town");
-                State = States.Completed;
-                return false;
-            }
 
-            Core.Logger.Debug("[UpgradeGems] Gem upgrades left before the attempt: {0}", ZetaDia.Me.JewelUpgradesLeft);
-            if (!await CommonCoroutines.AttemptUpgradeGem(gemToUpgrade))
-            {
-                Core.Logger.Debug("[UpgradeGems] Gem upgrades left after the attempt: {0}", ZetaDia.Me.JewelUpgradesLeft);
-                return false;
-            }
-            var gemUpgradesLeft = ZetaDia.Me.JewelUpgradesLeft;
-            if (_gemUpgradesLeft != gemUpgradesLeft)
-            {
-                _gemUpgradesLeft = gemUpgradesLeft;
-                _enableGemUpgradeLogs = true;
-            }
-            if (gemUpgradesLeft == 0)
-            {
-                Core.Logger.Debug("[UpgradeGems] Finished all upgrades, returning to town.");
-                State = States.Completed;
-                return false;
-            }
+            await DoUpgrade(gemToUpgrade);
 
             return false;
+        }
+
+        public static async Task DoUpgrade(ACDItem gemToUpgrade)
+        {
+            Core.Logger.Debug("[Gem Upgrade Coroutine] ENTERING UPGRADE ROUTINE!");
+            int upgrade = ZetaDia.Me.JewelUpgradesLeft;
+            //for (int upgrade = ZetaDia.Me.JewelUpgradesLeft; upgrade > 0; upgrade--)
+            //{
+            Core.Logger.Debug("[Gem Upgrade Coroutine] Gem upgrades left before the attempt: {0}",
+                ZetaDia.Me.JewelUpgradesLeft);
+            var newGem = PluginSettings.Current.Gems.Gems.FirstOrDefault(x => x.Guid == gemToUpgrade.AnnId);
+            //Core.Logger.Debug($"Before Gem Rank: {newGem?.Name} {newGem?.Rank} [{newGem?.Guid}]");
+            if (!await CommonCoroutines.AttemptUpgradeGem(gemToUpgrade))
+            {
+                Core.Logger.Error("[Gem Upgrade Coroutine] Unable to Upgrade Gem.");
+                //await Coroutine.Yield();
+                await Coroutine.Sleep(2000);
+                return;
+            }
+            PluginSettings.Current.Gems.Update();
+            if (ZetaDia.Me.JewelUpgradesLeft != upgrade)
+            {
+                //await Coroutine.Sleep(4000);
+                var currentGem = PluginSettings.Current.Gems.Gems.FirstOrDefault(x => x.Guid == gemToUpgrade.AnnId);
+                //Core.Logger.Debug($"After Gem Rank: {currentGem?.Name} {currentGem?.Rank} [{currentGem?.Guid}]");
+                if (newGem != null && currentGem != null)
+                {
+                    GemUpgrades.Load();
+                    var existingGem = GemUpgrades.Upgrades.FirstOrDefault(x => x.Chance == newGem.UpgradeChance);
+                    if (existingGem == null)
+                    {
+                        existingGem = new GemUpgrade
+                        {
+                            //Name = newGem.Name,
+                            Chance = newGem.UpgradeChance,
+                            Failure = 0,
+                            Success = 0
+                        };
+                        if (newGem.Rank == currentGem.Rank)
+                            existingGem.Failure++;
+                        else
+                            existingGem.Success++;
+                        GemUpgrades.Upgrades.Add(existingGem);
+                    }
+                    else
+                    {
+                        if (newGem.Rank == currentGem.Rank)
+                            existingGem.Failure++;
+                        else
+                            existingGem.Success++;
+                    }
+                    Core.Logger.Debug(
+                        $"[Gem Upgrade Coroutine] {newGem.Name} {newGem.Rank} [{newGem.Guid}]");
+                    Core.Logger.Debug(
+                        $"[Gem Upgrade Coroutine] {currentGem.Name} {currentGem.Rank} [{currentGem.Guid}]");
+                    Core.Logger.Debug(existingGem.ToString());
+                    GemUpgrades.Save();
+                }
+                else
+                    Core.Logger.Error("[Gem Upgrade Coroutine] Unable to find Gem Upgrade.");
+                Core.Logger.Debug("[Gem Upgrade Coroutine] Gem upgrades left after the attempt: {0}",
+                    ZetaDia.Me.JewelUpgradesLeft);
+            }
+            //}
         }
 
         private void EnablePulse()
         {
             if (!_isPulsing)
             {
-                Core.Logger.Debug("[UpgradeGems] Registered to pulsator.");
+                Core.Logger.Debug("[Gem Upgrade Coroutine] Registered to pulsator.");
                 Pulsator.OnPulse += OnPulse;
                 _isPulsing = true;
             }
@@ -261,7 +312,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
         {
             if (_isPulsing)
             {
-                Core.Logger.Debug("[UpgradeGems] Unregistered from pulsator.");
+                Core.Logger.Debug("[Gem Upgrade Coroutine] Unregistered from pulsator.");
                 Pulsator.OnPulse -= OnPulse;
                 _isPulsing = false;
             }
@@ -298,9 +349,9 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
             }
             if (_urshiLocation != Vector3.Zero)
             {
-                Core.Logger.Log("[UpgradeGems] Urshi is near.");
+                Core.Logger.Log("[Gem Upgrade Coroutine] Urshi is near.");
                 State = States.MovingToUrshi;
-                Core.Logger.Debug("[UpgradeGems] Found Urshi at distance {0}", AdvDia.MyPosition.Distance(_urshiLocation));
+                Core.Logger.Debug("[Gem Upgrade Coroutine] Found Urshi at distance {0}", AdvDia.MyPosition.Distance(_urshiLocation));
             }
         }
 

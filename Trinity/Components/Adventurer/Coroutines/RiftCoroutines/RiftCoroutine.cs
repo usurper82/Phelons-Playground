@@ -1142,49 +1142,48 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
 
         private async Task<bool> UpgradingGems()
         {
-            if (RiftData.VendorDialog.IsVisible && RiftData.ContinueButton.IsVisible && RiftData.ContinueButton.IsEnabled)
+            if (RiftData.VendorDialog.IsVisible && RiftData.ContinueButton.IsVisible &&
+                RiftData.ContinueButton.IsEnabled)
             {
-                Core.Logger.Debug("[Rift] Clicking to Continue button.");
+                Core.Logger.Debug("[Gem Upgrade] Clicking to Continue button.");
                 RiftData.ContinueButton.Click();
                 RiftData.VendorCloseButton.Click();
-                await Coroutine.Sleep(250);
+                await Coroutine.Sleep(3000);
                 return false;
             }
 
-            var gemToUpgrade = PluginSettings.Current.Gems.GetUpgradeTarget();
-            if (gemToUpgrade == null)
+            if (ZetaDia.Me.JewelUpgradesLeft == 0)
             {
-                Core.Logger.Log("[Rift] I couldn't find any gems to upgrade, failing.");
-                State = States.Failed;
+                Core.Logger.Debug("[Gem Upgrade] Finished all upgrades, returning to town.");
+                State = States.Completed;
                 return false;
             }
+
             _enableGemUpgradeLogs = false;
             if (AdvDia.RiftQuest.Step == RiftStep.Cleared)
             {
-                Core.Logger.Debug("[Rift] Rift Quest is completed, returning to town");
+                Core.Logger.Debug("[Gem Upgrade] Rift Quest is completed, returning to town");
                 State = States.Completed;
                 return false;
             }
 
-            Core.Logger.Debug("[Rift] Gem upgrades left before the attempt: {0}", ZetaDia.Me.JewelUpgradesLeft);
-            if (!await CommonCoroutines.AttemptUpgradeGem(gemToUpgrade))
+            if (AdvDia.RiftQuest.State == QuestState.Completed && AdvDia.RiftQuest.Step != RiftStep.UrshiSpawned)
+                //gemUpgradesLeft == 0)
             {
-                Core.Logger.Debug("[Rift] Gem upgrades left after the attempt: {0}", ZetaDia.Me.JewelUpgradesLeft);
-                return false;
-            }
-            var gemUpgradesLeft = ZetaDia.Me.JewelUpgradesLeft;
-            if (_gemUpgradesLeft != gemUpgradesLeft)
-            {
-                _gemUpgradesLeft = gemUpgradesLeft;
-                _enableGemUpgradeLogs = true;
-            }
-            if (AdvDia.RiftQuest.State == QuestState.Completed && AdvDia.RiftQuest.Step != RiftStep.UrshiSpawned)//gemUpgradesLeft == 0)
-            {
-                Core.Logger.Debug("[Rift] Finished all upgrades, returning to town.");
+                Core.Logger.Debug("[Gem Upgrade] Finished all upgrades, returning to town.");
                 State = States.Completed;
                 return false;
             }
 
+            Core.Logger.Warn("[Gem Upgrade] Gem upgrades left before the attempt: {0}", ZetaDia.Me.JewelUpgradesLeft);
+            var gemToUpgrade = PluginSettings.Current.Gems.GetUpgradeTarget();
+            if (gemToUpgrade == null)
+            {
+                Core.Logger.Log("[Gem Upgrade] I couldn't find any gems to upgrade, failing.");
+                State = States.Failed;
+                return false;
+            }
+            await UpgradeGemsCoroutine.DoUpgrade(gemToUpgrade);
             return false;
         }
 

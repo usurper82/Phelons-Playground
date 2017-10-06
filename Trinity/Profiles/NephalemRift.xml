@@ -7,7 +7,7 @@
     <ToggleTargeting questId="1" combat="True" looting="True" />
     <NephalemRift/>
     <WaitTimer questId="1" waitTime="3000" />
-    <LeaveGame reason="Done" stayInParty="true" />
+    <!--LeaveGame reason="Done" stayInParty="true" /-->
     <LoadProfile profile="NephalemRift.xml" />
   </Order>
 </Profile>

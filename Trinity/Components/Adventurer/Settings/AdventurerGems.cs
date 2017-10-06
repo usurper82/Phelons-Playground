@@ -116,6 +116,12 @@ namespace Trinity.Components.Adventurer.Settings
             }
         }
 
+        public void Update()
+        {
+            ZetaDia.Actors.Update();
+            var level = ZetaDia.Me.InTieredLootRunLevel + 1;
+            UpdateGems(level);
+        }
         public ACDItem GetUpgradeTarget()
         {
             ZetaDia.Actors.Update();
@@ -128,57 +134,57 @@ namespace Trinity.Components.Adventurer.Settings
 
             UpdateGems(level);
 
-            Core.Logger.Log($"[UpgradeGems] ---- Gem Upgrade Summary ----");
-            Core.Logger.Log($"[UpgradeGems] Current Rift Level: {level}");
-            Core.Logger.Log($"[UpgradeGems] Gem Count: {Gems.Count}");
-            Core.Logger.Log($"[UpgradeGems] Highest Ranked Gem: {Gems.Max(g => g.Rank)}");
-            Core.Logger.Log($"[UpgradeGems] Lowest Ranked Gem: {Gems.Min(g => g.Rank)}");
-            Core.Logger.Log($"[UpgradeGems] Upgrade Chance Setting: {minChance}%");
-            Core.Logger.Log($"[UpgradeGems] Ordering Priority: {priority}");
-            Core.Logger.Log($"[UpgradeGems] Prioritize Equipped: {equipPriority}");
+            Core.Logger.Debug($"[UpgradeGems] ---- Gem Upgrade Summary ----");
+            Core.Logger.Debug($"[UpgradeGems] Current Rift Level: {level}");
+            Core.Logger.Debug($"[UpgradeGems] Gem Count: {Gems.Count}");
+            Core.Logger.Debug($"[UpgradeGems] Highest Ranked Gem: {Gems.Max(g => g.Rank)}");
+            Core.Logger.Debug($"[UpgradeGems] Lowest Ranked Gem: {Gems.Min(g => g.Rank)}");
+            Core.Logger.Debug($"[UpgradeGems] Upgrade Chance Setting: {minChance}%");
+            Core.Logger.Debug($"[UpgradeGems] Ordering Priority: {priority}");
+            Core.Logger.Debug($"[UpgradeGems] Prioritize Equipped: {equipPriority}");
 
             var gems = Gems.ToList();
 
-            Core.Logger.Log($"[UpgradeGems] ---- Excluded: User Disabled Type ----");
+            Core.Logger.Debug($"[UpgradeGems] ---- Excluded: User Disabled Type ----");
 
             foreach (var gem in gems.ToList())
             {
                 if (!gem.Settings.IsEnabled)
                 {
-                    Core.Logger.Log($"[UpgradeGems] {gem.Name} ({gem.SNO}) Id={gem.Guid} Rank={gem.Rank}");
+                    Core.Logger.Debug($"[UpgradeGems] {gem.Name} ({gem.SNO}) Id={gem.Guid} Rank={gem.Rank}");
                     gems.Remove(gem);
                 }
             }
 
-            Core.Logger.Log($"[UpgradeGems] ---- Excluded: By Max Rank ----");
+            Core.Logger.Debug($"[UpgradeGems] ---- Excluded: By Max Rank ----");
 
             foreach (var gem in gems.ToList())
             {
                 if (gem.Rank >= gem.Settings.MaxRank)
                 {
-                    Core.Logger.Log($"[UpgradeGems] {gem.Name} ({gem.SNO}) Id={gem.Guid} Rank={gem.Rank} MaxRank={gem.Settings.MaxRank}");
+                    Core.Logger.Debug($"[UpgradeGems] {gem.Name} ({gem.SNO}) Id={gem.Guid} Rank={gem.Rank} MaxRank={gem.Settings.MaxRank}");
                     gems.Remove(gem);
                 }
             }
 
-            Core.Logger.Log($"[UpgradeGems] ---- Excluded: User Rank Limit ----");
+            Core.Logger.Debug($"[UpgradeGems] ---- Excluded: User Rank Limit ----");
 
             foreach (var gem in gems.ToList())
             {
                 if (gem.Settings.IsLimited && gem.Rank >= gem.Settings.Limit)
                 {
-                    Core.Logger.Log($"[UpgradeGems] {gem.Name} ({gem.SNO}) Id={gem.Guid} Rank={gem.Rank} Limit={(!gem.Settings.IsLimited ? "None" : gem.Settings.Limit.ToString())}");
+                    Core.Logger.Debug($"[UpgradeGems] {gem.Name} ({gem.SNO}) Id={gem.Guid} Rank={gem.Rank} Limit={(!gem.Settings.IsLimited ? "None" : gem.Settings.Limit.ToString())}");
                     gems.Remove(gem);
                 }
             }
 
-            Core.Logger.Log($"[UpgradeGems] ---- Excluded: Below Chance ({minChance}%) ----");
+            Core.Logger.Debug($"[UpgradeGems] ---- Excluded: Below Chance ({minChance}%) ----");
 
             foreach (var gem in gems.ToList())
             {
                 if (gem.UpgradeChance < chanceReq)
                 {
-                    Core.Logger.Log($"[UpgradeGems] {gem.Name} ({gem.SNO}) Id={gem.Guid} Rank={gem.Rank} Chance={gem.UpgradeChance}");
+                    Core.Logger.Debug($"[UpgradeGems] {gem.Name} ({gem.SNO}) Id={gem.Guid} Rank={gem.Rank} Chance={gem.UpgradeChance}");
                     gems.Remove(gem);
                 }
             }
@@ -187,39 +193,39 @@ namespace Trinity.Components.Adventurer.Settings
             {
                 case GemPriority.None:
                 case GemPriority.Rank:
-                    Core.Logger.Log($"[UpgradeGems] ---- 'Rank' Ordered Candidates ({gems.Count}), by {(equipPriority ? "Equipped, " : "")}Rank ----");
+                    Core.Logger.Debug($"[UpgradeGems] ---- 'Rank' Ordered Candidates ({gems.Count}), by {(equipPriority ? "Equipped, " : "")}Rank ----");
                     gems = gems.OrderBy(g => equipPriority && g.IsEquiped ? 0 : 1).ThenByDescending(g => g.Rank).ThenBy(g => g.Settings.Order).ToList();
                     break;
                 case GemPriority.Order:
-                    Core.Logger.Log($"[UpgradeGems] ---- 'Order' Ordered Candidates ({gems.Count}), by {(equipPriority ? "Equipped, " : "")}Order ----");
+                    Core.Logger.Debug($"[UpgradeGems] ---- 'Order' Ordered Candidates ({gems.Count}), by {(equipPriority ? "Equipped, " : "")}Order ----");
                     gems = gems.OrderBy(g => equipPriority && g.IsEquiped ? 0 : 1).ThenBy(g => g.Settings.Order).ToList();
                     break;
                 case GemPriority.Chance:
-                    Core.Logger.Log($"[UpgradeGems] ---- 'Chance' Ordered Candidates ({gems.Count}), by {(equipPriority ? "Equipped, " : "")}Chance, then Rank ----");
+                    Core.Logger.Debug($"[UpgradeGems] ---- 'Chance' Ordered Candidates ({gems.Count}), by {(equipPriority ? "Equipped, " : "")}Chance, then Rank ----");
                     gems = gems.OrderBy(g => equipPriority && g.IsEquiped ? 0 : 1).ThenByDescending(g => g.UpgradeChance).ThenByDescending(g => g.Rank).ToList();
                     break;
             }
 
             //if (focus)
             //{
-            //    Core.Logger.Log($"[UpgradeGems] ---- Ordered Candidates ({gems.Count}), by {(equipPriority ? "Equipped, " : "")}Order, Rank - Focus Mode ----");
+            //    Core.Logger.Debug($"[UpgradeGems] ---- Ordered Candidates ({gems.Count}), by {(equipPriority ? "Equipped, " : "")}Order, Rank - Focus Mode ----");
             //    gems = gems.OrderBy(g => equipPriority && g.IsEquiped ? 0 : 1).ThenBy(g => g.Settings.Order).ToList();
             //}
             //else
             //{
-            //    Core.Logger.Log($"[UpgradeGems] ---- Ordered Candidates ({gems.Count}), by {(equipPriority ? "Equipped, " : "")}Chance, Order, Rank ----");
+            //    Core.Logger.Debug($"[UpgradeGems] ---- Ordered Candidates ({gems.Count}), by {(equipPriority ? "Equipped, " : "")}Chance, Order, Rank ----");
             //    gems = gems.OrderBy(g => equipPriority && g.IsEquiped ? 0 : 1).ThenByDescending(g => g.UpgradeChance).ThenBy(g => g.Settings.Order).ThenBy(g => g.Rank).ToList();
             //}
 
             for (int i = 0; i < gems.Count; i++)
             {
                 var gem = gems.ElementAtOrDefault(i);
-                Core.Logger.Log($"[UpgradeGems] #{(i + 1)}: {gem.Name} ({gem.SNO}) Id={gem.Guid} Rank={gem.Rank} Chance={gem.UpgradeChance} @{level} Order={gem.Settings.Order} Limit={(gem.Settings.IsLimited ? "None" : gem.Settings.Limit.ToString())} Equipped={gem.IsEquiped}");
+                Core.Logger.Debug($"[UpgradeGems] #{(i + 1)}: {gem.Name} ({gem.SNO}) Id={gem.Guid} Rank={gem.Rank} Chance={gem.UpgradeChance} @{level} Order={gem.Settings.Order} Limit={(gem.Settings.IsLimited ? "None" : gem.Settings.Limit.ToString())} Equipped={gem.IsEquiped}");
             }
 
             if (gems.Count == 0)
             {
-                Core.Logger.Log("[UpgradeGems] Couldn't find any gems over the minimum upgrade chance, upgrading the gem with highest upgrade chance");
+                Core.Logger.Debug("[UpgradeGems] Couldn't find any gems over the minimum upgrade chance, upgrading the gem with highest upgrade chance");
                 gems = Gems.Where(g => !g.IsMaxRank).OrderByDescending(g => g.UpgradeChance).ToList();
             }
 
@@ -228,15 +234,15 @@ namespace Trinity.Components.Adventurer.Settings
             var gemToUpgrade = gems.FirstOrDefault();
             if (gemToUpgrade != null)
             {
-                Core.Logger.Log($"[UpgradeGems] ---- Selection ----");
-                Core.Logger.Log($"[UpgradeGems] Attempting to upgrade {gemToUpgrade.DisplayName} ({gemToUpgrade.SNO}) Rank={gemToUpgrade.Rank} Chance={gemToUpgrade.UpgradeChance}%");
+                Core.Logger.Debug($"[UpgradeGems] ---- Selection ----");
+                Core.Logger.Debug($"[UpgradeGems] Attempting to upgrade {gemToUpgrade.DisplayName} ({gemToUpgrade.SNO}) Rank={gemToUpgrade.Rank} Chance={gemToUpgrade.UpgradeChance}%");
                 acdGem = ZetaDia.Actors.GetActorsOfType<ACDItem>().FirstOrDefault(i => gemToUpgrade.Guid == i.AnnId);
             }
 
             if (acdGem == null)
             {
                 acdGem = ZetaDia.Actors.GetActorsOfType<ACDItem>().FirstOrDefault(i => i.ItemType == ItemType.LegendaryGem);
-                Core.Logger.Log($"[UpgradeGems] AcdItem Not Found {gemToUpgrade?.DisplayName} - Using {acdGem?.Name} so the quest can be completed");
+                Core.Logger.Debug($"[UpgradeGems] AcdItem Not Found {gemToUpgrade?.DisplayName} - Using {acdGem?.Name} so the quest can be completed");
             }
 
             return acdGem;

@@ -93,10 +93,14 @@ namespace Trinity.Components.Coroutines
                         VacuumedAcdIds.Add(item.AcdId, DateTime.Now.Subtract(new TimeSpan(0,0,0,20)));
                     continue;
                 }
-                if (!VacuumedAcdIds.Keys.Contains(item.AcdId))
+                if (Player.IsInTown && !VacuumedAcdIds.Keys.Contains(item.AcdId))
+                {
+                    await Coroutine.Yield();
+                    await Coroutine.Sleep(Math.Min((int) item.Position.Distance2D(Player.Position) * 25, 150));
                     VacuumedAcdIds.Add(item.AcdId, DateTime.Now);
+                }
                 Logger.Warn($"Vacuumed: {item.Name} ({item.ActorSnoId}) InternalName={item.InternalName} GbId={item.GameBalanceId}");
-                await Coroutine.Sleep(Math.Max((int)item.Position.Distance2D(Player.Position) * 50, 150));
+
                 count++;
                 isVacuuming = true;
             }

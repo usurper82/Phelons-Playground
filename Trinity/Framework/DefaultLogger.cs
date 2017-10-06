@@ -5,6 +5,8 @@ using Zeta.Common;
 
 namespace Trinity.Framework
 {
+    using System;
+
     public interface IFrameworkLogger
     {
         string Prefix { get; set; }
@@ -72,7 +74,7 @@ namespace Trinity.Framework
             if (Core.Settings?.Advanced?.LogCategories.HasFlag(category) ?? true)
             {
                 var cat = category != LogCategory.None ? $" [{category}] " : string.Empty;
-                var msg = $"[{Prefix}]{cat} {s}";
+                var msg = $"{DateTime.Now.ToShortTimeString()} - [{Prefix}]{cat} {s}";
 
                 if (LastMessage == msg)
                     return;
