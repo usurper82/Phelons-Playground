@@ -350,6 +350,9 @@
                 <Setter Property="ContentTemplate" Value="{DynamicResource DefaultFormTemplate}" />
                 <Setter Property="DockPanel.Dock" Value="Top" />
                 <Style.Triggers>
+                    <DataTrigger Binding="{Binding Path=ItemProperty}" Value="PrimalAncient">
+                        <Setter Property="ContentTemplate" Value="{DynamicResource CheckboxFormTemplate}" />
+                    </DataTrigger>
                     <DataTrigger Binding="{Binding Path=ItemProperty}" Value="Ancient">
                         <Setter Property="ContentTemplate" Value="{DynamicResource CheckboxFormTemplate}" />
                     </DataTrigger>

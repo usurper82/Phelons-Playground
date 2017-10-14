@@ -50,6 +50,16 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
 
         #endregion Helper fields
 
+        internal static List<TrinityActor> UnitSafeList(bool objectsInAoe = true)
+        {
+            return
+                Targets.Where(
+                    x =>
+                        !x.IsPlayer && !x.IsShadowClone && !x.IsIllusion && !x.IsSummonedByPlayer && x.IsUnit &&
+                        x.HitPoints > 0 && (objectsInAoe || !Core.Avoidance.InAvoidance(x.Position)) &&
+                        !Core.Avoidance.InCriticalAvoidance(x.Position)).ToList();
+        }
+
         internal static List<TrinityActor> SafeList(bool objectsInAoe = true)
         {
             return
@@ -101,24 +111,21 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
             bool includeUnitsInAoe = true)
         {
             return
-            (from u in SafeList(includeUnitsInAoe)
-                where u.IsUnit && u.Position.Distance(pullLocation) <= groupRadius
-                select u).ToList();
+            (UnitSafeList(includeUnitsInAoe).Where(u => u.IsUnit && u.Position.Distance(pullLocation) <= groupRadius)).ToList();
         }
 
         internal static List<TrinityActor> UnitsAroundPlayer(float groupRadius = 20, bool includeUnitsInAoe = true)
         {
             return
-            (from u in SafeList(includeUnitsInAoe)
-                where u.IsUnit && u.Position.Distance2D(Player.Position) <= groupRadius
-                select u).ToList();
+            (UnitSafeList(includeUnitsInAoe)
+                .Where(u => u.IsUnit && u.Position.Distance2D(Player.Position) <= groupRadius)).ToList();
         }
 
         internal static List<TrinityActor> UnitsToPull(Vector3 pullLocation, float groupRadius = 15,
             int groupCount = 1, float searchRange = 65f, bool includeUnitsInAoe = true)
         {
             return
-                SafeList(includeUnitsInAoe)
+                UnitSafeList(includeUnitsInAoe)
                     .Where(u => u.IsUnit && u.CanCastTo() && u.IsInLineOfSight &&
                                 !UnitsAroundPuller(pullLocation, groupRadius, includeUnitsInAoe)
                                     .Select(x => x.AcdId)
@@ -148,8 +155,8 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         internal static bool BestBuffPosition(float maxRange, Vector3 fromLocation, bool objectsInAoe, out Vector3 location)
         {
             location = Vector3.Zero;
-            var closestOcc = ClosestOcculous(maxRange, fromLocation, Core.Avoidance.InAvoidance(Player.Position));
-            if (ZetaDia.Me.IsParticipatingInTieredLootRun)
+            var closestOcc = ClosestOcculous(maxRange, fromLocation, !Core.Avoidance.InAvoidance(Player.Position));
+            if (ZetaDia.Me.IsParticipatingInTieredLootRun || Core.Player.IsInventoryLockedForGreaterRift)
             {
                 var closestSancAndOcc = ClosestSancAndOcc(maxRange, fromLocation, objectsInAoe);
                 if (closestSancAndOcc != Vector3.Zero)
@@ -157,7 +164,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
                     location = closestSancAndOcc;
                     return true;
                 }
-                var closestSanc = ClosestSanctuary(maxRange, fromLocation, objectsInAoe);
+                var closestSanc = ClosestSanctuary(maxRange, fromLocation);
                 if ((closestOcc != Vector3.Zero || AnyElitesChampionsBossesInRange(45f) ||
                      Core.Player.CurrentHealthPct < 0.55 ||
                      CurrentTarget != null &&
@@ -241,18 +248,16 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
 
         internal static List<TrinityActor> MobsBetweenRange(float startRange = 15f, float endRange = 25)
         {
-            return (from u in SafeList(true)
-                where u.IsUnit && u.IsValid &&
-                      u.Position.Distance2D(Player.Position) <= endRange &&
-                      u.Position.Distance2D(Player.Position) >= startRange
-                select u).ToList();
+            return (UnitSafeList(true).Where(u => u.IsUnit && u.IsValid &&
+                                                  u.Position.Distance2D(Player.Position) <= endRange &&
+                                                  u.Position.Distance2D(Player.Position) >= startRange)).ToList();
         }
 
         internal static TrinityActor GetFarthestClusterUnit(Vector3 position, float aoe_radius = 25f,
             float maxRange = 65f,
             int count = 1, bool useWeights = true, bool includeUnitsInAoe = true)
         {
-            return SafeList(includeUnitsInAoe)
+            return UnitSafeList(includeUnitsInAoe)
                 .OrderBy(u => u.NearbyUnitsWithinDistance(aoe_radius))
                 .ThenByDescending(u => u.Distance)
                 .FirstOrDefault(u => ((useWeights && u.Weight > 0) || !useWeights) &&
@@ -264,7 +269,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         internal static List<TrinityActor> AuraUnits(SNOPower aura, float maxSearchRange = 65f,
             bool addUnitsInAoE = false)
         {
-            return (from u in SafeList(addUnitsInAoE)
+            return (from u in UnitSafeList(addUnitsInAoE)
                 where u.IsUnit &&
                       u.Position.Distance2D(Player.Position) <= maxSearchRange &&
                       u.HasBeenInLoS && !u.HasDebuff(aura)
@@ -276,7 +281,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         internal static TrinityActor BestAuraUnit(SNOPower aura, float maxSearchRange = 65f,
             bool addUnitsInAoE = false)
         {
-            return (from u in SafeList(addUnitsInAoE)
+            return (from u in UnitSafeList(addUnitsInAoE)
                 where u.IsUnit &&
                       u.Position.Distance2D(Player.Position) <= maxSearchRange &&
                       u.HasBeenInLoS && !u.HasDebuff(aura)
@@ -308,7 +313,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
 
         internal static List<TrinityActor> TargetsInFrontOfMe(float maxRange, bool ignoreUnitsInAoE = false)
         {
-            return (from u in SafeList(true)
+            return (from u in UnitSafeList(true)
                 where u.IsUnit &&
                       u.Position.Distance2D(Player.Position) <= maxRange && u.IsInLineOfSight &&
                       !(ignoreUnitsInAoE && u.IsInAvoidance)
@@ -319,7 +324,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         public static List<TrinityActor> UnitsBetweenLocations(Vector3 fromLocation, Vector3 toLocation)
         {
             return
-            (from u in SafeList(true)
+            (from u in UnitSafeList(true)
                 where u.IsUnit &&
                       MathUtil.IntersectsPath(u.Position, u.Radius, fromLocation, toLocation)
                 select u).ToList();
@@ -366,7 +371,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
             float clusterRadius = 15f, float maxSearchRange = 65f, bool useWeights = true, bool includeUnitsInAoe = true,
             bool ignoreElites = false, bool inLineOfSight = false)
         {
-            return SafeList(includeUnitsInAoe).Where(u => u.IsUnit &&
+            return UnitSafeList(includeUnitsInAoe).Where(u => u.IsUnit &&
                                                           (!inLineOfSight || u.IsInLineOfSight) &&
                                                           u.Position.Distance2D(Player.Position) <= maxSearchRange)
                 .OrderByDescending(u => u.NearbyUnitsWithinDistance(clusterRadius))
@@ -376,15 +381,15 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         public static TrinityActor BestEliteInRange(float range, bool objectsInAoe = true)
         {
             return
-                SafeList(objectsInAoe)
+                UnitSafeList(objectsInAoe)
                     .OrderBy(u => u.Distance)
                     .FirstOrDefault(
-                        u => u.IsUnit && (u.IsElite || u.IsChampion || u.IsBoss) && u.Position.Distance2D(Player.Position) <= range);
+                        u => u.IsUnit && (u.IsRare || u.IsChampion || u.IsBoss) && u.Position.Distance2D(Player.Position) <= range);
         }
 
         internal static Vector3 ClosestOcculous(float maxRange, Vector3 fromLocation, bool objectsInAoe = true)
         {
-            var trinityActor = GetOculusBuffDiaObjects(maxRange, fromLocation, objectsInAoe).OrderBy(x => x.IsSafeSpot).FirstOrDefault();
+            var trinityActor = GetOculusBuffDiaObjects(maxRange, fromLocation, objectsInAoe).OrderBy(x => x.IsSafeSpot).ThenBy(y => NearbyTargets(y, 15).Count()).FirstOrDefault();
             return trinityActor?.Position ?? Vector3.Zero;
         }
 
@@ -523,22 +528,18 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
 
         public static int CountUnitsBehind(TrinityActor actor, float range)
         {
+            int count = 0;
+            foreach (TrinityActor u in UnitSafeList())
+            {
+                if (u.RActorId != actor.RActorId && u.IsUnit && MathUtil.IntersectsPath(actor.Position, actor.Radius, Core.Player.Position, u.Position)) count++;
+            }
             return
-            (from u in SafeList()
-             where u.RActorId != actor.RActorId &&
-                      u.IsUnit &&
-                      MathUtil.IntersectsPath(actor.Position, actor.Radius, Core.Player.Position, u.Position)
-                select u).Count();
+            count;
         }
 
         public static int CountUnitsInFront(TrinityActor actor)
         {
-            return
-            (from u in SafeList()
-             where u.RActorId != actor.RActorId &&
-                      u.IsUnit &&
-                      MathUtil.IntersectsPath(u.Position, u.Radius, Core.Player.Position, actor.Position)
-                select u).Count();
+            return UnitSafeList().Count(u => u.RActorId != actor.RActorId && u.IsUnit && MathUtil.IntersectsPath(u.Position, u.Radius, Core.Player.Position, actor.Position));
         }
 
         public static bool IsFacing(TrinityActor actor, Vector3 targetPosition, float arcDegrees = 70f)
@@ -569,7 +570,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
 
         public static IEnumerable<TrinityActor> NearbyTargets(float range)
         {
-            return ObjectCache.Where(u => u.RActorId != Player.RActorGuid && u.IsUnit && !u.IsSummonedByPlayer && u.Position.Distance2D(Player.Position) <= range && u.HasBeenInLoS);
+            return UnitSafeList().Where(u => u.RActorId != Player.RActorGuid && u.Position.Distance2D(Player.Position) <= range && u.HasBeenInLoS);
         }
 
         /// <summary>
@@ -580,10 +581,8 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         internal static int UnitsFacingPlayer(float range)
         {
             return
-            (from u in ObjectCache
-                where u.IsUnit &&
-                      u.IsFacingPlayer
-                select u).Count();
+            (ObjectCache.Where(u => u.IsUnit &&
+                                    u.IsFacingPlayer)).Count();
         }
 
         /// <summary>

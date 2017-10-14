@@ -205,6 +205,13 @@ namespace Trinity.Settings.ItemList
                     returnValue = ruleValue;
                     break;
 
+                case ItemProperty.PrimalAncient:
+                    itemValue = item.IsPrimalAncient ? 1 : 0;
+                    ruleValue = value;
+                    result = item.IsPrimalAncient && Math.Abs(value - 1) < double.Epsilon;
+                    returnValue = ruleValue;
+                    break;
+
                 case ItemProperty.PrimaryStat:
                     itemValue = item.Attributes.PrimaryStat;
                     ruleValue = value;
@@ -229,7 +236,7 @@ namespace Trinity.Settings.ItemList
                 case ItemProperty.AttackSpeed:
 
                     itemValue = item.Attributes.AttacksPerSecondPercent;
-                    if (itemValue == 0)
+                    if (Math.Abs(itemValue) < 1)
                     {
                         itemValue = item.Attributes.AttacksPerSecondItemPercent;
                     }

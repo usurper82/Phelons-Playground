@@ -63,9 +63,9 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
             if (!Skills.Barbarian.Whirlwind.CanCast())
                 return false;
 
-            if (Targeting.HealthGlobeExists(60f))
+            if (Targeting.HealthGlobeExists(45f))
             {
-                position = Targeting.GetBestHealthGlobeClusterPoint(7f, 60f, false);
+                position = Targeting.GetBestHealthGlobeClusterPoint(7f, 45f, false);
                 Core.Logger.Error(LogCategory.Routine,
                     $"[Whirlwind] -  On Closest Health Globe: [{position.Distance(Player.Position)}].");
                 return true;
@@ -74,7 +74,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
             Vector3 actor = Targeting.Monk != null ? Targeting.Monk.Position : Player.Position;
             var farthestUnit = Targeting.FarthesttUnits(40f, actor)
                         .OrderByDescending(x => x.Distance)
-                        .FirstOrDefault(x => x.Distance < 65f);
+                        .FirstOrDefault(x => x.Distance < 45f);
             if (farthestUnit != null)
             {
                 position = farthestUnit.Position;

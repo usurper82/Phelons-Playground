@@ -76,8 +76,6 @@ namespace Trinity.Components.Combat
                 return startHookResult;
 
             await UsePotion.Execute();
-            if (await VacuumItems.Execute())
-                return true;
 
             var target = Weighting.WeightActors(Core.Targets);
 
@@ -98,6 +96,9 @@ namespace Trinity.Components.Combat
 
             if (await Routines.Current.HandleOutsideCombat())
                 return true;
+
+            //if (await VacuumItems.Execute())
+                //return true;
 
             if (!Core.Player.IsCasting && (!TargetUtil.AnyMobsInRange(20f) || !Core.Player.IsTakingDamage))
             {

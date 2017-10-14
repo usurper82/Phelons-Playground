@@ -20,24 +20,18 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Monk.zDPS
         public static TrinityActor Target = CurrentTarget;
         public TrinityPower OffensivePower()
         {
-            Target = Targeting.BestTarget(12f, true);
+            var distance = Skills.Monk.Epiphany.TimeSinceUse < 10000 ? 18 : 12;
+            Target = Targeting.BestTarget(distance, true);
             if (Target == null)
                 return null;
 
-            //var closestOcc = Targeting.GetOculusBuffDiaObjects(18f, Core.Player.Position).OrderBy(x => x.RadiusDistance).FirstOrDefault() ?? Target;//x => Targeting.NearbyTargets(x, 12f).Any()
-            //if (closestOcc != null && closestOcc.Position.Distance2D(Player.Position) > 7f)
-            //{
-            //    Core.Logger.Warn(LogCategory.Routine, $"[Movement] - Moving to Best Tank Area: {closestOcc}.");
-            //    return Walk(closestOcc);
-            //}
-
             TrinityPower power;
-
-            if (TryMantra(out power))
-                return power;
 
             if (ShouldEpiphany())
                 return Spells.Epiphany();
+
+            if (TryMantra(out power))
+                return power;
 
             if (ShouldInnerSanctuary())
                 return Spells.InnerSanctuary();

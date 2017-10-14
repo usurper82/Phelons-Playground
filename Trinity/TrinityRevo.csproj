@@ -180,6 +180,7 @@
     <Compile Include="Components\Adventurer\UI\ConfigWindow.cs" />
     <Compile Include="Components\Adventurer\UI\DeveloperUI.cs" />
     <Compile Include="Components\Adventurer\UI\MainUI.cs" />
+    <Compile Include="Components\Adventurer\Util\LogCleaner.cs" />
     <Compile Include="Components\QuestTools\BaseContainerProfileBehavior.cs" />
     <Compile Include="Framework\Objects\Enums\RequirementType.cs" />
     <Compile Include="Framework\Objects\GemUpgrades.cs" />

@@ -122,9 +122,8 @@ namespace Trinity.DbProvider
             var resLimit = isInGreaterRift ? 16 : 10;
             if (_deathCounter > resLimit && !ZetaDia.IsInTown && needRepair)
             {
-                Core.Logger.Log("Durability is zero and {0} deaths within 60s of each other - emergency leave game", deathCount);
-                ZetaDia.Service.Party.LeaveGame(true);
-                await CommonCoroutines.LeaveGame("Durability is zero");
+                Core.Logger.Log("Durability is zero and {0} deaths within 60s of each other - emergency res in town", deathCount);
+                reviveInTownButton.Click();
                 _deathCounter = 0;
                 return true;
             }

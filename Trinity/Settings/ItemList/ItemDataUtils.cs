@@ -280,7 +280,7 @@ namespace Trinity.Settings.ItemList
 
             var result = new ItemStatRange();
 
-            if (prop == ItemProperty.Ancient)
+            if (prop == ItemProperty.Ancient || prop == ItemProperty.PrimalAncient)
                 return new ItemStatRange { Max = 1, Min = 0 };
 
             if (ItemPropertyLimitsByItemType.TryGetValue(new KeyValuePair<TrinityItemType, ItemProperty>(item.TrinityItemType, prop), out statRange))
@@ -301,7 +301,7 @@ namespace Trinity.Settings.ItemList
 
             var result = new ItemStatRange();
 
-            if (prop == ItemProperty.Ancient)
+            if (prop == ItemProperty.Ancient || prop == ItemProperty.PrimalAncient)
                 return new ItemStatRange { Max = 1, Min = 0 };
 
             if (ItemPropertyLimitsByItemType.TryGetValue(new KeyValuePair<TrinityItemType, ItemProperty>(itemType, prop), out statRange))
@@ -334,7 +334,7 @@ namespace Trinity.Settings.ItemList
         {
             ItemStatRange statRange;
 
-            if (prop == ItemProperty.Ancient)
+            if (prop == ItemProperty.Ancient || prop == ItemProperty.PrimalAncient)
                 return true;
 
             if (prop == ItemProperty.Attribute)
@@ -371,6 +371,7 @@ namespace Trinity.Settings.ItemList
             if (item.TrinityItemType != TrinityItemType.HealthPotion)
             {
                 props.Add(ItemProperty.Ancient);
+                props.Add(ItemProperty.PrimalAncient);
             }
 
             props.Add(ItemProperty.Attribute);
@@ -385,6 +386,7 @@ namespace Trinity.Settings.ItemList
             var specialProps = SpecialItemsPropertyCases.Where(pair => pair.Key.Item1.TrinityItemType == itemType).Select(pair => pair.Key.Item2).ToList();
             props = props.Concat(specialProps).Distinct().ToList();
             props.Add(ItemProperty.Ancient);
+            props.Add(ItemProperty.PrimalAncient);
             props.Sort();
             return props;
         }

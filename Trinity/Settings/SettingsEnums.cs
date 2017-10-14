@@ -175,6 +175,7 @@ namespace Trinity.Settings
         AlwaysStash,
         Ignore,
         StashAncients,
+        StashPrimals,
         ItemList
     }
 

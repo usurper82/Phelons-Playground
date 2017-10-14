@@ -19,6 +19,7 @@ using Application = System.Windows.Application;
 
 namespace Trinity
 {
+    using Components.Adventurer.Util;
     using Framework.Objects;
 
     public class TrinityPlugin : IPlugin
@@ -83,7 +84,7 @@ namespace Trinity
                 Core.Logger.Debug("Waiting while Quest is invalid (-1)");
                 BotMain.PauseFor(TimeSpan.FromSeconds(1));
             }
-
+            LogCleaner.Delete();
             HookManager.CheckHooks();
             GameUI.SafeClickUIButtons();
             VisualizerViewModel.Instance.UpdateVisualizer();               
@@ -95,6 +96,7 @@ namespace Trinity
                 return;
             ExitPortals.Load();
             GemUpgrades.Load();
+            LogCleaner.Delete();
             Core.Init();
             TrinitySettings.InitializeSettings();
             SkillUtils.UpdateActiveSkills();            

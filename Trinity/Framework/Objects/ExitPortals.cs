@@ -100,25 +100,25 @@
             WorldDynamicId = Core.Player.WorldDynamicId;
             LevelAreaId = Core.Player.LevelAreaId;
             SceneId = Core.Player.SceneId;
-            X = Core.Player.Position.X;
-            Y = Core.Player.Position.Y;
-            Z = Core.Player.Position.Z;
+            //X = Core.Player.Position.X;
+            //Y = Core.Player.Position.Y;
+            //Z = Core.Player.Position.Z;
             Position = Core.Player.Position;
-            ZoneType = ZetaDia.Me.InTieredLootRunLevel > 0 ? "GreaterRift" : "NephalemRift";
+            //ZoneType = ZetaDia.Me.InTieredLootRunLevel > 0 ? "GreaterRift" : "NephalemRift";
         }
         public int WorldDynamicId { get; set; }
         public int LevelAreaId { get; set; }
 
         public int SceneId { get; set; }
         
-        public float X { get; set; }
+        //public float X { get; set; }
         
-        public float Y { get; set; }
+        //public float Y { get; set; }
         
-        public float Z { get; set; }
+        //public float Z { get; set; }
 
         public Vector3 Position { get; set; }
-        public string ZoneType { get; set; }
+        //public string ZoneType { get; set; }
         public override string ToString()
         {
             return $"World Dynamic Id: {WorldDynamicId} | Level Area Id: {LevelAreaId} | Scene Id: {SceneId} | Position: {Position}";

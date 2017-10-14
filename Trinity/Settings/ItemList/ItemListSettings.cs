@@ -246,7 +246,7 @@ namespace Trinity.Settings.ItemList
             //TrinityItemType.UberReagent
             TrinityItemType.Scythe,
             TrinityItemType.TwoHandScythe,
-            TrinityItemType.Phylactery,
+            TrinityItemType.Phylactery
         };
 
         private bool _alwaysStashPrimalAncients;

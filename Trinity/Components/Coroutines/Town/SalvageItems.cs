@@ -69,8 +69,6 @@ namespace Trinity.Components.Coroutines.Town
             Core.Logger.Verbose("[SalvageItems] Starting salvage for {0} items", salvageItems.Count);
             salvageItems.ForEach(i => Core.Logger.Debug($"[SalvageItems] Salvaging: {i.Name} ({i.ActorSnoId}) InternalName={i.InternalName} Ancient={i.IsAncient} Ann={i.AnnId}"));
 
-            GameUI.CloseVendorWindow();
-
             var blacksmith = TownInfo.BlacksmithSalvage;
             if (blacksmith == null)
             {
@@ -92,12 +90,13 @@ namespace Trinity.Components.Coroutines.Town
                     return false;
                 };
 
+                await Coroutine.Sleep(Rnd.Next(750, 1250));
+
                 if (!await MoveToAndInteract.Execute(blacksmith, 10f))
                 {
                     Core.Logger.Error($"[SalvageItems] Failed to move to blacksmith ({blacksmith.Name}) to salvage items :(");
                     return false;
-                };
-                await Coroutine.Sleep(Rnd.Next(750, 1250));
+                }
             }
 
             if (UIElements.SalvageWindow.IsVisible)
@@ -180,6 +179,7 @@ namespace Trinity.Components.Coroutines.Town
                 return true;
             }
 
+            GameUI.CloseVendorWindow();
             Core.Logger.Error($"[SalvageItems] Failed to salvage items");
             return false;
         }
