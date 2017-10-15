@@ -56,7 +56,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
 
 
         private static int lastChargeTargetAcdId = 0;
-
+        private TrinityActor _lastWwTarget = null;
         protected virtual bool ShouldWhirlwind(out Vector3 position)
         {
             position = Vector3.Zero;
@@ -71,18 +71,28 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
                 return true;
             }
 
-            Vector3 actor = Targeting.Monk != null ? Targeting.Monk.Position : Player.Position;
-            var farthestUnit = Targeting.FarthesttUnits(40f, actor)
-                        .OrderByDescending(x => x.Distance)
-                        .FirstOrDefault(x => x.Distance < 45f);
-            if (farthestUnit != null)
+            TrinityActor actor = Targeting.Monk ?? Player.Actor;
+            if (_lastWwTarget == null || _lastWwTarget.Distance < 10 || _lastWwTarget.Position.Distance(actor.Position) > 55)
             {
-                position = farthestUnit.Position;
-                Core.Logger.Error(LogCategory.Routine,
-                    $" [Whirlwind] - On Farthest Target Distance: [{position.Distance(Player.Position)}].");
-                return true;
+                if (_lastWwTarget == null || _lastWwTarget.AcdId == actor.AcdId)
+                {
+                    var farthestUnit = Targeting.FarthesttUnits(45f, actor.Position)
+                        .OrderByDescending(x => x.Distance)
+                        .FirstOrDefault(x => x.AcdId != _lastWwTarget?.AcdId);
+                    if (farthestUnit != null)
+                    {
+                        position = farthestUnit.Position;
+                        _lastWwTarget = farthestUnit;
+                        Core.Logger.Error(LogCategory.Routine,
+                            $" [Whirlwind] - Selecting Farthest Target Distance: [{position.Distance(Player.Position)}].");
+                        return true;
+                    }
+                }
+                else
+                    _lastWwTarget = actor;
             }
-            position = Target.Position;
+            var target = _lastWwTarget ?? Target;
+            position = target.Position;
             Core.Logger.Error(LogCategory.Routine,
                 $" [Whirlwind] - On Target Distance: [{position.Distance(Player.Position)}].");
             return true;
@@ -163,7 +173,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
 
         protected virtual bool ShouldGroundStomp()
         {
-            if (!Skills.Barbarian.GroundStomp.CanCast() || Target.Distance > 12f)
+            if (!Skills.Barbarian.GroundStomp.CanCast() || Target != null && Target.Distance > 12f)
                 return false;
 
             Core.Logger.Error(LogCategory.Routine,

@@ -65,6 +65,9 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
             if (ShouldSprint())
                 return Spells.Sprint();
 
+            if (ShouldThreateningShout())
+                return Spells.ThreateningShout();
+
             return null;
         }
        

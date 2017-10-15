@@ -14,6 +14,8 @@ using Zeta.Game;
 
 namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
 {
+    using Framework;
+
     public partial class zDPSBarb : RoutineBase, IRoutine
     {
         // Important Notes!
@@ -101,9 +103,12 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
 
             if (!Player.IsInTown)
             {
-
-                if (Skills.Barbarian.Whirlwind.CanCast() && CurrentTarget != null && !CurrentTarget.IsGizmo)
+                if (Skills.Barbarian.Whirlwind.CanCast())
+                {
+                    Core.Logger.Error(LogCategory.Routine,
+                        $" [Whirlwind] - For Movement Distance: [{destination.Distance(Player.Position)}].");
                     return Spells.Whirlwind(destination);
+                }
 
                 if (CanChargeTo(destination) && Skills.Barbarian.FuriousCharge.TimeSinceUse > 500)
                 {
@@ -115,14 +120,22 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
                     if (IsInCombat && (chargeStacks == 3 || isImportantTarget && chargeStacks > 1) ||
                         TargetUtil.PierceHitsMonster(destination))
                     {
+                        Core.Logger.Error(LogCategory.Routine,
+                            $" [FuriousCharge] - For Movement Distance: [{destination.Distance(Player.Position)}].");
                         return Spells.FuriousCharge(destination);
                     }
                 }
             }
-            return Walk(destination);
+            if (destination.Distance(Player.Position) < 35)
+            {
+                Core.Logger.Error(LogCategory.Routine,
+                    $" [Walk] - For Movement Distance: [{destination.Distance(Player.Position)}].");
+                return Walk(destination);
+            }
+            return null;
         }
 
-        public TrinityPower GetDestructiblePower() => DefaultPower;
+        public TrinityPower GetDestructiblePower() => OffensivePower();
 
         #region Settings
 
