@@ -384,7 +384,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
                 UnitSafeList(objectsInAoe)
                     .OrderBy(u => u.Distance)
                     .FirstOrDefault(
-                        u => u.IsUnit && (u.IsRare || u.IsChampion || u.IsBoss) && u.Position.Distance2D(Player.Position) <= range);
+                        u => u.IsUnit && (u.IsRare || u.IsUnique || u.IsChampion || u.IsBoss) && u.Position.Distance2D(Player.Position) <= range);
         }
 
         internal static Vector3 ClosestOcculous(float maxRange, Vector3 fromLocation, bool objectsInAoe = true)

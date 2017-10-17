@@ -93,8 +93,11 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
             }
             var target = _lastWwTarget ?? Target;
             position = target.Position;
+            Random rand = new Random();
+            position.X = rand.Next((int)position.X - 5, (int)position.X + 5);
+            position.Y = rand.Next((int)position.Y - 5, (int)position.Y + 5);
             Core.Logger.Error(LogCategory.Routine,
-                $" [Whirlwind] - On Target Distance: [{position.Distance(Player.Position)}].");
+                $" [Whirlwind] - On {target.Name} Distance: [{position.Distance(Player.Position)}].");
             return true;
         }
         protected virtual bool ShouldFuriousChargeInCombat(out Vector3 position)
@@ -173,7 +176,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
 
         protected virtual bool ShouldGroundStomp()
         {
-            if (!Skills.Barbarian.GroundStomp.CanCast() || Target != null && Target.Distance > 12f)
+            if (!Skills.Barbarian.GroundStomp.CanCast() || Target != null && Target.Distance > 12f ||
+                Skills.Barbarian.GroundStomp.TimeSinceUse < 3000)
                 return false;
 
             Core.Logger.Error(LogCategory.Routine,
@@ -183,7 +187,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
 
         protected virtual bool ShouldIgnorePain()
         {
-            if (!Skills.Barbarian.IgnorePain.CanCast())
+            if (!Skills.Barbarian.IgnorePain.CanCast() ||
+                Skills.Barbarian.IgnorePain.TimeSinceUse < 4000)
                 return false;
 
             if (Legendary.PrideOfCassius.IsEquipped && Target != null)
@@ -211,7 +216,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
 
         protected virtual bool ShouldSprint()
         {
-            if (!Skills.Barbarian.Sprint.CanCast())
+            if (!Skills.Barbarian.Sprint.CanCast() ||
+                Skills.Barbarian.Sprint.TimeSinceUse < 3000)
                 return false;
 
             if (Player.PrimaryResource < PrimaryEnergyReserve)
@@ -233,7 +239,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
 
         protected virtual bool ShouldThreateningShout()
         {
-            if (!Skills.Barbarian.ThreateningShout.CanCast())
+            if (!Skills.Barbarian.ThreateningShout.CanCast() ||
+                Skills.Barbarian.ThreateningShout.TimeSinceUse < 3000)
                 return false;
             Core.Logger.Error(LogCategory.Routine,
                 $" [Threatening Shout] -  off CD.");
@@ -242,7 +249,8 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
 
         protected virtual bool ShouldWarCry()
         {
-            if (!Skills.Barbarian.WarCry.CanCast())
+            if (!Skills.Barbarian.WarCry.CanCast() ||
+                Skills.Barbarian.WarCry.TimeSinceUse < 2000)
                 return false;
 
             if (Legendary.ChilaniksChain.IsEquipped)

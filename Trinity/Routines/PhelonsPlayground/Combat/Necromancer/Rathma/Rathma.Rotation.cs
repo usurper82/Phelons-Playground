@@ -63,7 +63,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
                 return Spells.CorpseExplosion(Target.Position);
 
             if (ShouldBoneSpikes())
-                return Spells.BoneSpikes(Target);
+                return Spells.BoneSpikes(Targeting.GetBestClusterUnit(12f, castDistance, false, true));
 
             if (ShouldSiphonBlood())
                 return Spells.SiphonBlood(Target);
