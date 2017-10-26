@@ -158,7 +158,7 @@ namespace AutoFollow.Coroutines
 
                 if (AutoFollow.CurrentLeader.IsMe && Player.IsInTown &&
                     (Trinity.Routines.PhelonsPlayground.Utils.Targeting.Players.Count() < AutoFollow.NumberOfConnectedBots ||
-                     AutoFollow.NumberOfConnectedBots < Settings.Coordination.ExpectedBots))
+                     AutoFollow.NumberOfConnectedBots < Settings.Coordination.ExpectedBots-1))
                     //AutoFollow.CurrentFollowers.All(f => f.IsInSameWorld && f.Distance > 35f)))
                 {
                     Log.Info("Waiting for followers to show up.");
@@ -267,7 +267,7 @@ namespace AutoFollow.Coroutines
         /// <returns></returns>
         private static async Task<bool> CanTeleportToPlayer(Message playerMessage)
         {
-            if (!ZetaDia.IsInGame || ZetaDia.Globals.IsLoadingWorld)
+            if (!ZetaDia.IsInGame || ZetaDia.Globals.IsLoadingWorld || Player.IsCasting)
                 return false;
 
             if (Player.IsInTown && BrainBehavior.IsVendoring)
@@ -308,10 +308,13 @@ namespace AutoFollow.Coroutines
                 Log.Info("Cant teleport because we are in the same town world.");
                 return false;
             }
-            if (!_teleportTimer.IsRunning)
-                _teleportTimer.Restart();
-
             var portalNearby = Data.Portals.FirstOrDefault(p => p.Distance < 25f);
+
+            if (_teleportTimer.ElapsedMilliseconds < 25000)
+            {
+                Log.Debug("{0} waiting before teleport as it is on Cooldown.  Portal Close:{1}", playerMessage.HeroAlias, portalNearby);
+                return false;
+            }
 
             // Allow time for leader to resolve in new world.
             if (!Player.IsInTown && portalNearby != null && _teleportTimer.ElapsedMilliseconds < 6000 && !AutoFollow.CurrentLeader.IsInRift)
@@ -320,8 +323,8 @@ namespace AutoFollow.Coroutines
                 return false;
             }
 
-            if (Player.IsCasting)
-                return false;
+            if (!_teleportTimer.IsRunning)
+                _teleportTimer.Restart();
 
             return true;
         }

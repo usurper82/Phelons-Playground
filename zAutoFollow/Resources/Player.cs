@@ -280,16 +280,7 @@ namespace AutoFollow.Resources
 
         public static bool GetIsInCombat()
         {
-            if (TrinityCombat.Targeting.CurrentTarget == null)
-                return false;
-
-            if (ZetaDia.Me.IsInCombat)
-                return true;
-
-            if (TrinityCombat.Targeting.CurrentTarget.IsValid && TrinityCombat.Targeting.CurrentTarget?.ActorType == ActorType.Monster)
-                return true;
-
-            return false;
+            return ZetaDia.Me.IsInCombat && TrinityCombat.Targeting.CurrentTarget.IsValid && TrinityCombat.Targeting.CurrentTarget?.ActorType == ActorType.Monster;
         }
 
         public static float GetProfilePathPrecision()

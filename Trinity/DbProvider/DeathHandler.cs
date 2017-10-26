@@ -18,6 +18,9 @@ using Zeta.Game.Internals.SNO;
 
 namespace Trinity.DbProvider
 {
+    using Components.Adventurer;
+    using Components.Adventurer.Game.Rift;
+
     public static class DeathHandler
     {
         private static bool _isDead;
@@ -175,8 +178,16 @@ namespace Trinity.DbProvider
 
         public async static Task<bool> MoveWhileGhosted()
         {
+            var portal =
+                   ZetaDia.Actors.GetActorsOfType<DiaGizmo>(true)
+                       .Where(
+                           g =>
+                               g.IsFullyValid() && g.IsPortal && !RiftData.DungeonStoneSNOs.Contains(g.ActorSnoId) &&
+                               g.Distance < 75 && g.CommonData.GizmoType != GizmoType.HearthPortal)
+                       .OrderBy(g => g.Position.Distance2DSqr(AdvDia.MyPosition))
+                       .FirstOrDefault();
             var playerNear = ZetaDia.Actors.GetActorsOfType<DiaPlayer>(true).FirstOrDefault(x => x.ACDId != Core.Player.AcdId);
-            var safespot = playerNear?.Position ?? Core.Avoidance.GridEnricher.SafeNodeLayer.Positions.OrderBy(d =>
+            var safespot = portal?.Position ?? playerNear?.Position ?? Core.Avoidance.GridEnricher.SafeNodeLayer.Positions.OrderBy(d =>
                                d.Distance(Core.Avoidance.GridEnricher.MonsterCentroid) +
                                d.Distance(Core.Avoidance.GridEnricher.AvoidanceCentroid)).FirstOrDefault();
 

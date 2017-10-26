@@ -134,6 +134,11 @@ namespace AutoFollow.Behaviors
                     Targetting.State = CombatState.Enabled;
                     return FollowMode.Combat;
                 }
+                if (AutoFollow.CurrentLeader.Distance > Settings.Coordination.TeleportDistance && !RiftHelper.IsInGreaterRift)
+                {
+                    Targetting.State = CombatState.Enabled;
+                    return FollowMode.TeleportToLeader;
+                }
 
                 if (AutoFollow.CurrentLeader.Distance > Settings.Coordination.CatchUpDistance)
                 {
@@ -161,6 +166,7 @@ namespace AutoFollow.Behaviors
             MoveToRiftExit,
             FollowLeader,
             ChaseLeader,
+            TeleportToLeader
         }
 
         private static async Task<bool> FollowLeader()
@@ -187,6 +193,13 @@ namespace AutoFollow.Behaviors
                         await Trinity.Components.Adventurer.Coroutines.NavigationCoroutine.MoveTo(AutoFollow.CurrentLeader.Position, 0);
                         //await Navigator.MoveTo(AutoFollow.CurrentLeader.Position);
                         return true;
+                    }
+                    break;
+                case FollowMode.TeleportToLeader:
+                    if (AutoFollow.CurrentLeader.Distance > Settings.Coordination.TeleportDistance)
+                    {
+                        Log.Info("Teleporting to Leader.");
+                        return await Coordination.TeleportToPlayer(AutoFollow.CurrentLeader);
                     }
                     break;
 

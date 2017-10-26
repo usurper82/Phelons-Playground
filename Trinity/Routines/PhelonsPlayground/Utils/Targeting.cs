@@ -55,7 +55,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
             return
                 Targets.Where(
                     x =>
-                        !x.IsPlayer && !x.IsShadowClone && !x.IsIllusion && !x.IsSummonedByPlayer && x.IsUnit &&
+                        !x.IsPlayer && !x.IsShadowClone && !x.IsIllusion && !x.IsSummonedByPlayer && x.IsUnit && !x.IsPlayer &&
                         x.HitPoints > 0 && (objectsInAoe || !Core.Avoidance.InAvoidance(x.Position)) &&
                         !Core.Avoidance.InCriticalAvoidance(x.Position)).ToList();
         }
@@ -1455,7 +1455,7 @@ namespace Trinity.Routines.PhelonsPlayground.Utils
         }
         internal static List<TrinityActor> FarthesttUnits(float range, Vector3 position)
         {
-            return ObjectCache.OrderByDescending(u => u.Distance).Where(u => u.Position.Distance2D(position) <= range).Take(5).ToList();
+            return ObjectCache.OrderByDescending(u => u.Distance).Where(u => u.Position.Distance2D(position) <= range && u.IsUnit).Take(5).ToList();
         }
 
         /// <summary>

@@ -24,7 +24,9 @@ namespace AutoFollow.Behaviors
     using Trinity.Components.Adventurer;
     using Trinity.Components.Adventurer.Coroutines;
     using Trinity.Components.Adventurer.Game.Actors;
+    using Trinity.Components.Adventurer.Game.Events;
     using Trinity.Components.Adventurer.Game.Exploration;
+    using Trinity.Framework;
 
     public class Leader : BaseBehavior
     {
@@ -96,7 +98,7 @@ namespace AutoFollow.Behaviors
             //if (!Service.IsConnected || AutoFollow.NumberOfConnectedBots == 0)
             //    return false;
 
-            if (Player.IsInTown && AdvDia.CurrentWorldId != ExplorationData.ActHubWorldIds[Act.A1])
+            if (Player.IsInTown && AdvDia.CurrentWorldId != ExplorationData.ActHubWorldIds[Act.A1] && (PluginEvents.CurrentProfileType == ProfileType.Rift || PluginEvents.CurrentProfileType == ProfileType.Unknown))
                 return !await WaypointCoroutine.UseWaypoint(WaypointFactory.ActHubs[Act.A1]);
 
             if (Player.IsFollower)

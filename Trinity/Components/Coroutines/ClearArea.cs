@@ -21,7 +21,7 @@ namespace Trinity.Components.Coroutines
     {
         public static Vector3 StartPosition;
         public static DateTime ClearStarted = DateTime.MinValue;
-        public static int ClearTimeSeconds = 10;
+        public static int ClearTimeSeconds = 20;
         public static bool IsClearing;
         public static int StartWorld;
 
@@ -41,6 +41,7 @@ namespace Trinity.Components.Coroutines
                 Combat.TrinityCombat.CombatMode = CombatMode.KillAll;
                 StartWorld = ZetaDia.Globals.WorldSnoId;
                 StartPosition = ZetaDia.Me.Position;
+                ClearStarted = DateTime.Now;
             }
         }
 
@@ -73,7 +74,7 @@ namespace Trinity.Components.Coroutines
             var clearFinished = DateTime.UtcNow.Subtract(ClearStarted).TotalSeconds > ClearTimeSeconds;
             if (clearFinished)
             {
-                Core.Logger.Debug("Clear timer finished, go back to portal position. Distance={StartPosition.Distance(ZetaDia.Me.Position)}");
+                Core.Logger.Debug($"Clear timer finished, go back to portal position. Distance={StartPosition.Distance(ZetaDia.Me.Position)}");
                 await MoveTo.Execute(StartPosition, "Town Portal Position", 15f, () => ZetaDia.Globals.WorldSnoId != StartWorld || Navigator.StuckHandler.IsStuck || PlayerMover.IsBlocked);
                 Stop();
                 return false;
