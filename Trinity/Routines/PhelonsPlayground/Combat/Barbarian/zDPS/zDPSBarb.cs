@@ -103,7 +103,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
 
             if (!Player.IsInTown)
             {
-                if (Skills.Barbarian.Whirlwind.CanCast())
+                if (Skills.Barbarian.Whirlwind.CanCast() && (CurrentTarget == null || !CurrentTarget.IsGizmo))
                 {
                     Core.Logger.Error(LogCategory.Routine,
                         $" [Whirlwind] - For Movement Distance: [{destination.Distance(Player.Position)}].");

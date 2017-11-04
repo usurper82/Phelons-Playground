@@ -283,13 +283,40 @@ namespace AutoFollow.Networking
                     };
                     return m;
                 }
-
-                if (ZetaDia.Me == null)
+                if (!ZetaDia.IsInGame && ZetaDia.Me == null)
                 {
                     m = new Message
                     {
                         //Index = Player.Index,
                         IsInGame = false,
+                        LastUpdated = DateTime.UtcNow,
+                        IsInParty = Player.IsInParty,
+                        OwnerId = Player.BattleTagHash,
+                        //NumPartymembers = Player.NumPlayersInParty,
+                        Events = EventManager.Events.ToList(),
+                        //BNetPartyMembers = ZetaDia.Service.Party.NumPartyMembers,
+                        IsServer = Service.ConnectionMode == ConnectionMode.Server,
+                        IsClient = Service.ConnectionMode == ConnectionMode.Client,
+                        //IsRequestingLeader = AutoFollow.CurrentBehavior.Category == BehaviorCategory.Leader,
+                        //BehaviorCategory = AutoFollow.CurrentBehavior.Category,
+                        //IsQuickJoinEnabled = Player.IsQuickJoinEnabled,
+                        BattleTagEncrypted = GetMyEncryptedBattleTag(),
+                        RealIdNameEncrypted = GetMyEncryptedRealId(),
+                        HeroName = Player.HeroName,
+                        HeroId = Player.HeroId,
+                        ActorClass = Player.ActorClass,
+                        Paragon = Player.Paragon,
+                        Level = Player.Level,
+                        IsLoadingWorld = Player.IsLoadingWorld,
+
+                    };
+                }
+                else if (ZetaDia.Me == null)
+                {
+                    m = new Message
+                    {
+                        //Index = Player.Index,
+                        IsInGame = ZetaDia.IsInGame,
                         LastUpdated = DateTime.UtcNow,
                         //IsInParty = Player.IsInParty,
                         //OwnerId = Player.BattleTagHash,
@@ -317,7 +344,7 @@ namespace AutoFollow.Networking
                     {
                         Index = Player.Index,
                         LastUpdated = DateTime.UtcNow,
-                        IsInGame = Player.IsInGame,
+                        IsInGame = ZetaDia.IsInGame,
                         OwnerId = Player.BattleTagHash,
                         IsInParty = Player.IsInParty,
                         NumPartymembers = Player.NumPlayersInParty,

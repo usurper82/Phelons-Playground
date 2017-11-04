@@ -190,13 +190,17 @@ namespace Trinity.Components.Adventurer.Game.Exploration
             var directionMultiplier = IsInPriorityDirection(n.NavigableCenter, 30) ? 1.5 : 1;
             var sceneConnectionDirectionMultiplier = IsInSceneConnectionDirection(n.NavigableCenter, 30) ? 1.25 : 1;
             var nodeInPrioritySceneMultiplier = n.Priority ? 2.25 : 0;
-            var baseDistanceFactor = 100/n.NavigableCenter.Distance(AdvDia.MyPosition) * 0.5;
-            var canRayWalk = Core.Grids.CanRayWalk(AdvDia.MyPosition, n.NavigableCenter) && n.Distance > 15 && n.Distance < 100 ? 10/n.Distance : 1;
+            var baseDistanceFactor = 100 / n.NavigableCenter.Distance(AdvDia.MyPosition) * 0.5;
+            var canRayWalk = Core.Grids.CanRayWalk(AdvDia.MyPosition, n.NavigableCenter) && n.Distance > 15 &&
+                             n.Distance < 75
+                ? 75 / n.Distance
+                : 1;
 
             var edgeMultiplier = 1d;
             var visitedMultiplier = 1d;
             var exitSceneMultiplier = 1d;
-
+            var exploredPercent = ExplorationGrid.Instance.WalkableNodes.Count(x => x.Scene.HasBeenVisited) /
+                                  ExplorationGrid.Instance.WalkableNodes.Count();
             // for now.. restrict this group of checks from effecting bounties.
             if (Core.Rift.IsInRift)
             {
@@ -212,15 +216,16 @@ namespace Trinity.Components.Adventurer.Game.Exploration
                     return 0;
 
                 // Lower weight for scenes near the edge of an open style map.
-                edgeMultiplier = (n.Scene.Name.Contains("Border") || n.Scene.Name.Contains("Edge")) && n.Distance > 15 && n.Distance < 100
-                    ? ExplorationGrid.Instance.WalkableNodes.Count() /
-                      ExplorationGrid.Instance.WalkableNodes.Count(x => !x.Scene.HasBeenVisited) - 1.5
+                edgeMultiplier = (n.Scene.Name.Contains("Border") || n.Scene.Name.Contains("Edge")) && n.Distance < 100 &&
+                                 exploredPercent > 0.75
+                    ? 2.5
                     : 1;
             }
 
-            return baseDistanceFactor * exitSceneMultiplier * 
-                directionMultiplier * sceneConnectionDirectionMultiplier 
-                * (n.UnvisitedWeight + nodeInPrioritySceneMultiplier) * visitedMultiplier * edgeMultiplier * canRayWalk;
+            return baseDistanceFactor * exitSceneMultiplier *
+                   directionMultiplier * sceneConnectionDirectionMultiplier
+                   * (n.UnvisitedWeight + nodeInPrioritySceneMultiplier) * visitedMultiplier * edgeMultiplier *
+                   canRayWalk;
         }
 
         /// <summary>

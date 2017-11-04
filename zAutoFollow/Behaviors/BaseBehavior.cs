@@ -140,10 +140,10 @@ namespace AutoFollow.Behaviors
 
         private async Task<bool> BaseOutOfGameTask()
         {
-            if (await DefaultOutOfGameChecks())
-                return true;
+            //if (await DefaultOutOfGameChecks())
+            //    return true;
 
-            return await OutOfGameTask();
+            return await OutOfGameTask() || await DefaultOutOfGameChecks();
         }
 
         private async Task<bool> DefaultOutOfGameChecks()

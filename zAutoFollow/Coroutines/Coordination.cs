@@ -119,24 +119,15 @@ namespace AutoFollow.Coroutines
                 //    return true;
                 //}
 
-                if (
-                    AutoFollow.CurrentFollowers.Any(
-                        f => f.IsVendoring || !ZetaDia.Me.IsParticipatingInTieredLootRun && f.InDifferentLevelArea))
-                {
-                    Log.Info("Waiting for followers to finish vendoring.");
-                    await Coroutine.Sleep(20000);
-                    return true;
-                }
-
-                if (ZetaDia.Service.Party.NumPartyMembers < 3)
+                if (ZetaDia.Service.Party.NumPartyMembers < Settings.Coordination.ExpectedBots)
                 {
                     if (Equals(PartyJoinTimer, DateTime.MinValue))
                     {
-                        PartyJoinTimer = DateTime.Now.AddMinutes(3);
+                        PartyJoinTimer = DateTime.UtcNow.AddMinutes(3);
                         return true;
                     }
 
-                    if (DateTime.Now > PartyJoinTimer)
+                    if (DateTime.UtcNow > PartyJoinTimer)
                     {
                         Log.Info("Followers took too long to join.  Leaving Game.");
                         await Party.LeaveGame(true);
@@ -144,8 +135,20 @@ namespace AutoFollow.Coroutines
                         PartyJoinTimer = DateTime.MinValue;
                         return true;
                     }
-                    Log.Info("Waiting for followers to join game.");
-                    await Coroutine.Sleep(10000);
+                    foreach (var toon in AutoFollow.CurrentParty.Where(b => (!b.IsInGame || b.GameId != Player.GameId) && b.AcdId != ZetaDia.ActivePlayerACDId))
+                    {
+                        await Party.InviteFollower(toon);
+                    }
+                    Log.Info($"Waiting for followers to join game. Total of [{AutoFollow.CurrentParty.Count}] in Current Party.");
+                    await Coroutine.Sleep(2000);
+                    return true;
+                }
+
+                if (AutoFollow.CurrentFollowers.Any(
+                        f => f.IsVendoring || !ZetaDia.Me.IsParticipatingInTieredLootRun && f.InDifferentLevelArea))
+                {
+                    Log.Info("Waiting for followers to finish vendoring.");
+                    await Coroutine.Sleep(30000);
                     return true;
                 }
 
@@ -240,10 +243,13 @@ namespace AutoFollow.Coroutines
         /// <summary>
         /// Teleport to player if possible.
         /// </summary>
-        public static async Task<bool> TeleportToPlayer(Message playerMessage)
+        public static async Task<bool> TeleportToPlayer(Message playerMessage, bool forceTeleport = false)
         {
-            if (!await CanTeleportToPlayer(playerMessage))
+            if (!await CanTeleportToPlayer(playerMessage) && forceTeleport)
+            {
+                Log.Error("Unable to teleport to leader.");
                 return false;
+            }
 
             Log.Warn("Teleporting to player {0} SameGame={1} SameWorld={2}",
                 playerMessage.HeroAlias, playerMessage.IsInSameGame, playerMessage.IsInSameWorld);
@@ -268,58 +274,56 @@ namespace AutoFollow.Coroutines
         private static async Task<bool> CanTeleportToPlayer(Message playerMessage)
         {
             if (!ZetaDia.IsInGame || ZetaDia.Globals.IsLoadingWorld || Player.IsCasting)
+            {
+                Log.Warn("Can't teleport because I am casting.");
                 return false;
+            }
 
             if (Player.IsInTown && BrainBehavior.IsVendoring)
+            {
+                Log.Warn("Can't teleport because I am vendoring.");
                 return false;
+            }
 
             if (playerMessage.IsInGreaterRift && RiftHelper.RiftQuest.Step != RiftQuest.RiftStep.UrshiSpawned)
             {
-                Log.Debug("Can't teleport in greater rifts until Urshi spawns.");
+                Log.Warn("Can't teleport in greater rifts until Urshi spawns.");
                 return false;
             }
 
             if (playerMessage.IsInSameWorld && playerMessage.Distance < 100f)
             {
-                Log.Debug("In the same world and closer than 100 feet.");
-                return false;
-            }
-
-            if (ZetaDia.Service.Party.NumPartyMembers <= 1)
-            {
-                Log.Info("Cant teleport because you are not in a party!");
-                await Party.LeaveGame(true);
-                await Party.RequestPartyInvite();
+                Log.Warn("In the same world and closer than 100 feet.");
                 return false;
             }
 
             if (Player.IsInCombat)
             {
-                Log.Info("Cant teleport because you are in combat.");
+                Log.Warn("Cant teleport because you are in combat.");
                 return false;
             }
             if (Player.IsInBossEncounter || playerMessage.IsInBossEncounter)
             {
-                Log.Info("Cant teleport because you are in BOSS combat.");
+                Log.Warn("Cant teleport because you are in BOSS combat.");
                 return false;
             }
             if (Player.IsInTown && playerMessage.WorldSnoId == Player.CurrentMessage.WorldSnoId)
             {
-                Log.Info("Cant teleport because we are in the same town world.");
+                Log.Warn("Cant teleport because we are in the same town world.");
                 return false;
             }
             var portalNearby = Data.Portals.FirstOrDefault(p => p.Distance < 25f);
 
-            if (_teleportTimer.ElapsedMilliseconds < 25000)
-            {
-                Log.Debug("{0} waiting before teleport as it is on Cooldown.  Portal Close:{1}", playerMessage.HeroAlias, portalNearby);
-                return false;
-            }
+            //if (_teleportTimer.ElapsedMilliseconds < 2500)
+            //{
+            //    Log.Warn("{0} waiting before teleport as it is on Cooldown.  Portal Close:{1}", playerMessage.HeroAlias, portalNearby);
+            //    return false;
+            //}
 
             // Allow time for leader to resolve in new world.
             if (!Player.IsInTown && portalNearby != null && _teleportTimer.ElapsedMilliseconds < 6000 && !AutoFollow.CurrentLeader.IsInRift)
             {
-                Log.Debug("{0} is in a different world... waiting before teleport.  Portal Close:{1}", playerMessage.HeroAlias, portalNearby);
+                Log.Warn("{0} is in a different world... waiting before teleport.  Portal Close:{1}", playerMessage.HeroAlias, portalNearby);
                 return false;
             }
 

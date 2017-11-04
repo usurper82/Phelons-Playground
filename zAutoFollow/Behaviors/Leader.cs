@@ -53,27 +53,15 @@ namespace AutoFollow.Behaviors
             if (await Party.WaitForPlayersToLeaveGame())
                 return true;
 
-            if (AutoFollow.CurrentParty.Any(b => b.IsLoadingWorld))
+
+            if (AutoFollow.CurrentParty.Any(b => !b.IsInParty && b.AcdId != ZetaDia.ActivePlayerACDId))
             {
-                Log.Info("Waiting for bots to finish loading...");
-                await Coroutine.Sleep(500);
-                return true;
+                foreach (var toon in AutoFollow.CurrentParty)
+                {
+                    await Party.InviteFollower(toon);
+                }
+                Log.Info("Waiting for bots to join party...");
             }
-
-            if (Player.IsFollower)
-            {
-                if (await Party.AcceptPartyInvite())
-                    return true;
-
-                if (await Party.RequestPartyInvite())
-                    return true;
-            }
-
-            //if (AutoFollow.CurrentParty.Any(b => !b.IsInParty))
-            //{
-            //    Log.Info("Waiting for bots to join party...");
-            //    return true;
-            //}
 
             //var forcedWaitUntil = ChangeMonitor.LastBotStartedTime + TimeSpan.FromSeconds(10);
             //if (DateTime.UtcNow < forcedWaitUntil)
@@ -101,11 +89,6 @@ namespace AutoFollow.Behaviors
             if (Player.IsInTown && AdvDia.CurrentWorldId != ExplorationData.ActHubWorldIds[Act.A1] && (PluginEvents.CurrentProfileType == ProfileType.Rift || PluginEvents.CurrentProfileType == ProfileType.Unknown))
                 return !await WaypointCoroutine.UseWaypoint(WaypointFactory.ActHubs[Act.A1]);
 
-            if (Player.IsFollower)
-            {
-                if (await Party.LeaveWhenInWrongGame())
-                    return true;
-            }
             if (ZetaDia.Storage.RiftCompleted && ZetaDia.Storage.RiftStarted)
                 return false;
 

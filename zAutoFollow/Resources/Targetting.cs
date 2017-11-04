@@ -139,7 +139,8 @@ namespace AutoFollow.Resources
             //var combatTarget = TrinityCombat.Targeting.CurrentTarget? ;
             //return combatTarget != null && combatTarget is GizmoShrine && combatTarget.Distance < 80f;
 
-            return Target != null && Target.IsGizmo && !Target.IsUsed && Target.Weight > 0 && Target.Distance < 80f;
+            return Target != null && Target.IsGizmo && !Target.IsUsed && Target.Weight > 0 &&
+                   Target.Distance < Settings.Coordination.CatchUpDistance - 10;
         }
 
         public static bool RoutineWantsToAttackUnit()

@@ -165,6 +165,14 @@ namespace AutoFollow.Coroutines
             if (ZetaDia.Globals.IsLoadingWorld || DateTime.UtcNow.Subtract(ChangeMonitor.LastGameJoinedTime).Seconds < 5)
                 return false;
 
+            if (ZetaDia.Service.Party.NumPartyMembers <= 1)
+            {
+                Log.Info("Cant teleport because you are not in a party!");
+                await Party.LeaveGame(true);
+                await Party.RequestPartyInvite();
+                return false;
+            }
+
             // Leaves party when out of game the d3-party leader and not the bot-leader.
             // Disbands party if leader leaves it.
             if (Player.IsFollower && Player.IsInParty && ZetaDia.Service.Party.IsPartyLeader && !ZetaDia.IsInGame &&
@@ -191,7 +199,6 @@ namespace AutoFollow.Coroutines
                     if (DateTime.UtcNow > LeaderGameMismatchLeaveTime)
                     {
                         Log.Warn($"Leader GameId is different: {AutoFollow.CurrentLeader?.GameId} | {Player.CurrentGameId} - {AutoFollow.CurrentLeader?.GameId.High} | {Player.CurrentGameId.High}");
-                        LeaderGameMismatchLeaveTime = default(DateTime);
                         await LeaveGame(true);
                         Coordination.WaitFor(TimeSpan.FromSeconds(10));
                         LeaderGameMismatchLeaveTime = DateTime.UtcNow.AddSeconds(120);
@@ -202,7 +209,7 @@ namespace AutoFollow.Coroutines
             return false;
         }
 
-        public static DateTime LeaderGameMismatchLeaveTime = DateTime.MaxValue;
+        public static DateTime LeaderGameMismatchLeaveTime = DateTime.MinValue;
 
         /// <summary>
         /// Use the quickjoin links on the hero screen to join the leaders game.
@@ -254,17 +261,21 @@ namespace AutoFollow.Coroutines
         /// <param name="follower">the player to be invited</param>
         public static async Task<bool> InviteFollower(Message follower)
         {
-            if (DateTime.UtcNow.Subtract(_lastInviteAttempt).TotalSeconds < 1)
-                return false;
+            //if (DateTime.UtcNow.Subtract(_lastInviteAttempt).TotalSeconds < 1)
+            //    return false;
 
             if (ZetaDia.Service.Party.CurrentPartyLockReasonFlags != PartyLockReasonFlag.None)
             {
                 Log.Info("Party is locked, can't invite right now");
                 return false;
             }
+            Log.Warn($"Trying to Invite: {follower}.");
 
-            if (AutoFollow.NumberOfConnectedBots == 0)
-                return false;
+            //if (AutoFollow.NumberOfConnectedBots == 0)
+            //{
+            //    Log.Info("No Connected Bots in Party.");
+            //    return false;
+            //}
 
             if (!GameUI.FriendsListContent.IsVisible)
             {
@@ -280,10 +291,10 @@ namespace AutoFollow.Coroutines
 
             if (!contacts.Any())
             {
-                Log.Info("No friends, local or recent players were found!");
+                Log.Warn("No friends, local or recent players were found!");
                 return false;
             }
-
+            bool invited = false;
             foreach (var item in contacts)
             {
                 var name = Common.CleanString(item.TextElement.Text);
@@ -300,8 +311,12 @@ namespace AutoFollow.Coroutines
                     var isClassMatch = string.Equals(actorClass?.StringValue, follower.ActorClass.ToString(), StringComparison.CurrentCultureIgnoreCase);
                     var isParagonMatch = isClassMatch && paragon?.NumberValue == follower.Paragon && level?.NumberValue == follower.Level;
                     var isLeadersRealId = Message.IsRealId(name, AutoFollow.CurrentLeader.RealIdNameEncrypted);
-                    if (!isParagonMatch && Settings.Misc.InviteByParagon && !isLeadersRealId || !Settings.Misc.InviteByParagon && !isLeadersRealId)
+                    if (!isParagonMatch && Settings.Misc.InviteByParagon && !isLeadersRealId ||
+                        !Settings.Misc.InviteByParagon && !isLeadersRealId)
+                    {
+                        //Log.Info($"Isn't Battle Tag Invite: {actorClass.StringValue} | {paragon.NumberValue}");
                         continue;
+                    }
                 }
 
                 Log.Info("Found follower on friends list!");
@@ -318,9 +333,11 @@ namespace AutoFollow.Coroutines
                     await Coroutine.Sleep(250);
                 }
 
-                return true;
+                Log.Warn($"Inviting: {actorClass.StringValue} | {paragon.NumberValue}.");
+                invited = true;
             }
-
+            if (invited)
+                return true;
             Log.Info("Unable to find invitation requester on friends list!");
             _lastInviteAttempt = DateTime.UtcNow;
             return false;
@@ -343,7 +360,7 @@ namespace AutoFollow.Coroutines
 
             if (!Player.IsInParty)
             {
-                Log.Warn("Requesting party invite!", timeSinceRequest);
+                Log.Warn($"Requesting party invite! Requested Invite [{timeSinceRequest}] seconds ago.");
                 _lastInviteRequestTime = DateTime.UtcNow;
                 EventManager.FireEvent(new EventData(EventType.InviteRequest));
                 return true;

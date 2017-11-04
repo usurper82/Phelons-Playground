@@ -16,5 +16,6 @@ namespace Trinity.Components.Combat.Resources
         LeavingGame,
         JoiningGame,
         Teleporting,
+        Looting
     }
 }

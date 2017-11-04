@@ -8,6 +8,8 @@ using AutoFollow.Resources;
 
 namespace AutoFollow.Networking
 {
+    using Zeta.Game;
+
     public class Client
     {
         public delegate void ClientMessageDelegate(Message message);
@@ -156,6 +158,7 @@ namespace AutoFollow.Networking
                 _httpProxy.SendMessageToServer(new MessageWrapper
                 {
                     PrimaryMessage = Player.CurrentMessage
+                    //PrimaryMessage = ZetaDia.Me == null && ZetaDia.IsInGame ? new Message() : Message.GetMessage()
                 });
 
                 var messageWrapper = _httpProxy.GetMessageFromServer();

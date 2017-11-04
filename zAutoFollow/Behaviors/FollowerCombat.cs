@@ -71,8 +71,8 @@ namespace AutoFollow.Behaviors
             if (await Party.LeaveWhenInWrongGame())
                 return Repeat(PartyObjective.LeavingGame);
 
-            if (await Coordination.TeleportToPlayer(AutoFollow.CurrentLeader))
-                return Repeat(PartyObjective.Teleporting);
+            //if (await Coordination.TeleportToPlayer(AutoFollow.CurrentLeader))
+            //    return Repeat(PartyObjective.Teleporting);
 
             if (await base.InGameTask())
                 return Repeat(PartyObjective.TownRun);
@@ -89,10 +89,8 @@ namespace AutoFollow.Behaviors
             if (await Coordination.WaitForGreaterRiftInProgress())
                 return Repeat(PartyObjective.TownRun);
 
-            if (Targetting.RoutineWantsToClickGizmo())
-
-            if (await Coordination.LeaveFinishedRift())
-                return Repeat(PartyObjective.TownRun);
+            if (await Movement.MoveToGreaterRiftExitPortal())
+                return Repeat(PartyObjective.FollowLeader);
 
             if (await Coordination.FollowLeaderThroughPortal())
                 return Repeat(PartyObjective.FollowLeader);
@@ -100,11 +98,14 @@ namespace AutoFollow.Behaviors
             if (await FollowLeader())
                 return Continue(PartyObjective.FollowLeader);
 
-            if (await Questing.ReturnToGreaterRift())
+            if (await Coordination.LeaveFinishedRift())
                 return Repeat(PartyObjective.TownRun);
 
-            if (await Movement.MoveToGreaterRiftExitPortal())
-                return Repeat(PartyObjective.FollowLeader);
+            if (Targetting.RoutineWantsToLoot() || Targetting.RoutineWantsToClickGizmo())
+                return Continue(PartyObjective.Looting);
+
+            if (await Questing.ReturnToGreaterRift())
+                return Repeat(PartyObjective.TownRun);
 
             if (Targetting.RoutineWantsToLoot())
                 return Continue(PartyObjective.None);
@@ -113,16 +114,21 @@ namespace AutoFollow.Behaviors
 
         private static FollowMode GetFollowMode()
         {
-            if (TrinityCombat.Routines.Current.ShouldIgnoreFollowing())
+
+            if ((AutoFollow.CurrentLeader.Distance > Settings.Coordination.TeleportDistance || AutoFollow.CurrentLeader.InDifferentLevelArea) && !RiftHelper.IsInGreaterRift)
             {
                 Targetting.State = CombatState.Enabled;
-                return FollowMode.None;
+                return FollowMode.TeleportToLeader;
             }
-
             if (AutoFollow.CurrentLeader.InDifferentLevelArea)// && !RiftHelper.IsInGreaterRift)
             {
                 Targetting.State = CombatState.Disabled;
                 return FollowMode.MoveToRiftExit;
+            }
+            if (TrinityCombat.Routines.Current.ShouldIgnoreFollowing())
+            {
+                Targetting.State = CombatState.Enabled;
+                return FollowMode.None;
             }
             //Log.Info($"Distance: {AutoFollow.CurrentLeader.Distance} CurrentTarget: {AutoFollow.CurrentLeader.CurrentTarget} Position: {AutoFollow.CurrentLeader.Position} ");
             if (!AutoFollow.CurrentLeader.InDifferentLevelArea)// && !Targetting.IsPriorityTarget)
@@ -133,11 +139,6 @@ namespace AutoFollow.Behaviors
                 {
                     Targetting.State = CombatState.Enabled;
                     return FollowMode.Combat;
-                }
-                if (AutoFollow.CurrentLeader.Distance > Settings.Coordination.TeleportDistance && !RiftHelper.IsInGreaterRift)
-                {
-                    Targetting.State = CombatState.Enabled;
-                    return FollowMode.TeleportToLeader;
                 }
 
                 if (AutoFollow.CurrentLeader.Distance > Settings.Coordination.CatchUpDistance)
@@ -173,35 +174,25 @@ namespace AutoFollow.Behaviors
         {
             if (!AutoFollow.CurrentLeader.IsInSameGame || Player.IsInTown)
                 return false;
-            
+
             switch (State)
             {
                 case FollowMode.FollowLeader:
-                    //var catchUpDistance = AutoFollow.CurrentLeader.CurrentTarget != null ? Settings.Coordination.CatchUpDistance : Settings.Coordination.FollowDistance;
-                    if (AutoFollow.CurrentLeader.Distance > Settings.Coordination.FollowDistance)
-                    {
-                        Log.Info("Moving to Follow Leader.");
-                        await Trinity.Components.Adventurer.Coroutines.NavigationCoroutine.MoveTo(AutoFollow.CurrentLeader.Position, 0);
-                        //await Navigator.MoveTo(AutoFollow.CurrentLeader.Position);
-                        return true;
-                    }
-                    break;
+                    Log.Info("Moving to Follow Leader.");
+                    await Trinity.Components.Adventurer.Coroutines.NavigationCoroutine.MoveTo(
+                        AutoFollow.CurrentLeader.Position, 0);
+                    //await Navigator.MoveTo(AutoFollow.CurrentLeader.Position);
+                    return true;
                 case FollowMode.ChaseLeader:
-                    if (AutoFollow.CurrentLeader.Distance > Settings.Coordination.CatchUpDistance)
-                    {
-                        Log.Info("Moving to Chase Leader.");
-                        await Trinity.Components.Adventurer.Coroutines.NavigationCoroutine.MoveTo(AutoFollow.CurrentLeader.Position, 0);
-                        //await Navigator.MoveTo(AutoFollow.CurrentLeader.Position);
-                        return true;
-                    }
-                    break;
+                    Log.Info("Moving to Chase Leader.");
+                    await Trinity.Components.Adventurer.Coroutines.NavigationCoroutine.MoveTo(
+                        AutoFollow.CurrentLeader.Position, 0);
+                    //await Navigator.MoveTo(AutoFollow.CurrentLeader.Position);
+                    return true;
                 case FollowMode.TeleportToLeader:
                     if (AutoFollow.CurrentLeader.Distance > Settings.Coordination.TeleportDistance)
-                    {
                         Log.Info("Teleporting to Leader.");
-                        return await Coordination.TeleportToPlayer(AutoFollow.CurrentLeader);
-                    }
-                    break;
+                    return await Coordination.TeleportToPlayer(AutoFollow.CurrentLeader, true);
 
                 case FollowMode.MoveToRiftExit:
                     await Movement.MoveToGreaterRiftExitPortal();
