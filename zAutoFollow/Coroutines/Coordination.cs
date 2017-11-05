@@ -337,13 +337,14 @@ namespace AutoFollow.Coroutines
         /// Use portal if it's the one our leader used last.
         /// </summary>
         /// <returns></returns>
-        public async static Task<bool> FollowLeaderThroughPortal()
+        public static async Task<bool> FollowLeaderThroughPortal()
         {
             var leaderWasLastInMyCurrentWorld = AutoFollow.CurrentLeader.PreviousWorldSnoId == Player.CurrentWorldSnoId;
             var lastWorldPosition = AutoFollow.CurrentLeader.LastPositionInPreviousWorld;
+
             if (leaderWasLastInMyCurrentWorld)
             {
-                var portalUsed = Data.Portals.Where(p => p.Position.Distance(lastWorldPosition) < 25f).OrderBy(p => p.Position.Distance(lastWorldPosition)).FirstOrDefault();
+                var portalUsed = Data.Portals.Where(p => p.Position.Distance(lastWorldPosition) < 45f && p.ACDId != 178293).OrderBy(p => p.Position.Distance(lastWorldPosition)).FirstOrDefault();
                 if (portalUsed != null && portalUsed.CommonData.GizmoType != GizmoType.HearthPortal)
                 {
                     Log.Info("Leader {0} appears to have used this portal here: '{1}' Dist={2}. Following.",

@@ -190,7 +190,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration
             var directionMultiplier = IsInPriorityDirection(n.NavigableCenter, 30) ? 1.5 : 1;
             var sceneConnectionDirectionMultiplier = IsInSceneConnectionDirection(n.NavigableCenter, 30) ? 1.25 : 1;
             var nodeInPrioritySceneMultiplier = n.Priority ? 2.25 : 0;
-            var baseDistanceFactor = 100 / n.NavigableCenter.Distance(AdvDia.MyPosition) * 0.5;
+            var baseDistanceFactor = 75 / n.NavigableCenter.Distance(AdvDia.MyPosition) * 0.5;
             var canRayWalk = Core.Grids.CanRayWalk(AdvDia.MyPosition, n.NavigableCenter) && n.Distance > 15 &&
                              n.Distance < 75
                 ? 75 / n.Distance

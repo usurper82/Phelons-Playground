@@ -55,6 +55,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
                     $"[Grim Scythe] - On {target}.");
                 return true;
             }
+
             #endregion Primary Skills
 
             #region Defensives
@@ -171,9 +172,17 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
 
             public static bool ShouldLandOfTheDead()
             {
-                if (Target.HitPointsPct < 0.30 || !Skills.Necromancer.LandOfTheDead.CanCast() || Skills.Necromancer.LandOfTheDead.TimeSinceUse < 10000 || Skills.Necromancer.Simulacrum.IsActive && !Skills.Necromancer.Simulacrum.CanCast() && Skills.Necromancer.Simulacrum.TimeSinceUse > 15000)
+                if (Target.HitPointsPct < 0.30 || !Skills.Necromancer.LandOfTheDead.CanCast() ||
+                    Skills.Necromancer.LandOfTheDead.TimeSinceUse < 10000 ||
+                    Skills.Necromancer.Simulacrum.IsActive && !Skills.Necromancer.Simulacrum.CanCast() &&
+                    Skills.Necromancer.Simulacrum.TimeSinceUse > 15000)
                     return false;
-                if (Targeting.NearbyTargets(Player.Actor, 45f).Count() > 20 && Legendary.HauntedVisions.IsEquipped && RiftData.GetGreaterRiftLevel() > 95)
+
+                if (MageCount < 4)
+                    return false;
+
+                if (Targeting.NearbyTargets(Player.Actor, 45f).Count() > 20 && Legendary.HauntedVisions.IsEquipped &&
+                    RiftData.GetGreaterRiftLevel() > 95)
                 {
                     Core.Logger.Error(LogCategory.Routine,
                         $"[Land of the Dead] - Because of Pack Size and Haunted Visisions is equipped..");
@@ -193,9 +202,12 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
 
             public static bool ShouldSimulacrum()
             {
-                if (Target.HitPointsPct < 0.30 || !Skills.Necromancer.Simulacrum.CanCast() || Skills.Necromancer.Simulacrum.TimeSinceUse < 10000 || Player.PrimaryResourcePct < 0.90 && !Skills.Necromancer.LandOfTheDead.IsActive)
+                if (Target.HitPointsPct < 0.30 || !Skills.Necromancer.Simulacrum.CanCast() ||
+                    Skills.Necromancer.Simulacrum.TimeSinceUse < 10000 ||
+                    Player.PrimaryResourcePct < 0.90 && !Skills.Necromancer.LandOfTheDead.IsActive)
                     return false;
-                if (Targeting.NearbyTargets(Player.Actor, 45f).Count() > 20 && Legendary.HauntedVisions.IsEquipped && RiftData.GetGreaterRiftLevel() > 95)
+                if (Targeting.NearbyTargets(Player.Actor, 45f).Count() > 20 && Legendary.HauntedVisions.IsEquipped &&
+                    RiftData.GetGreaterRiftLevel() > 95)
                 {
                     Core.Logger.Error(LogCategory.Routine,
                         $"[Simulacrum] - Because of Pack Size and Haunted Visisions is equipped.");

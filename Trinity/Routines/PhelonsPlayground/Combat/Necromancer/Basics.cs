@@ -28,6 +28,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
         public static PlayerCache Player => Core.Player;
         public static TrinityActor CurrentTarget => TrinityCombat.Targeting.CurrentTarget;
         public static HashSet<SNOPower> Hotbar => Core.Hotbar.ActivePowers;
+        public static int MageCount => Core.Actors.Actors.Count(a => a.ActorSnoId == 472606);
 
         public static TrinityPower DefensivePower()
         {
@@ -64,17 +65,19 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer
         {
             if (Player.IsInTown)
                 return null;
+
+            if (CurrentTarget != null && CurrentTarget.IsGizmo && CurrentTarget.Distance < 15)
+                return null;
+
             var pathPosition = Core.Grids.Avoidance.GetPathCastPosition(45f, true);
             var farthestPoint = pathPosition.Distance(Player.Position) > destination.Distance(Player.Position)
                 ? pathPosition
                 : destination;
-            if (Player.Position.EasyNavToPosition(destination) && destination.Distance(Player.Position) < 15)
-                return Spells.Walk(farthestPoint);
 
-            if (Skills.Necromancer.BloodRush.CanCast())
+            if (Skills.Necromancer.BloodRush.CanCast() && destination.Distance(Player.Position) > 15)
                 return Spells.BloodRush(farthestPoint);
 
-            return Spells.Walk(farthestPoint);
+            return null;
         }
     }
 }

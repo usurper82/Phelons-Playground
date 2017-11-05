@@ -103,7 +103,10 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
 
             if (!Player.IsInTown)
             {
-                if (Skills.Barbarian.Whirlwind.CanCast() && (CurrentTarget == null || !CurrentTarget.IsGizmo))
+                if (CurrentTarget != null && CurrentTarget.IsGizmo && CurrentTarget.Distance < 10)
+                    return null;
+
+                if (Skills.Barbarian.Whirlwind.CanCast())
                 {
                     Core.Logger.Error(LogCategory.Routine,
                         $" [Whirlwind] - For Movement Distance: [{destination.Distance(Player.Position)}].");
@@ -126,7 +129,7 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Barbarian.zDPS
                     }
                 }
             }
-            if (destination.Distance(Player.Position) < 35)
+            if (destination.Distance(Player.Position) < 65)
             {
                 Core.Logger.Error(LogCategory.Routine,
                     $" [Walk] - For Movement Distance: [{destination.Distance(Player.Position)}].");

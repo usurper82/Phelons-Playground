@@ -3,6 +3,7 @@
 namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
 {
     using System;
+    using System.Linq;
     using Framework;
     using Framework.Helpers;
     using Trinity.Components.Combat.Resources;

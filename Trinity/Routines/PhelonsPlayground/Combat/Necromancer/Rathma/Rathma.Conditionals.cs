@@ -36,15 +36,16 @@ namespace Trinity.Routines.PhelonsPlayground.Combat.Necromancer.Rathma
 
         protected virtual bool ShouldSkeletalMage()
         {
-
             if (!Skills.Necromancer.SkeletalMage.CanCast())
                 return false;
-            var magePercent = ZetaDia.Actors.GetActorsOfType<DiaPlayer>(true).Count() > 1 ? 0.90 : 0.50;
+
+            var magePercent = ZetaDia.Actors.GetActorsOfType<DiaPlayer>(true).Count() > 1 && MageCount > 4 ? 0.90 : 0.50;
+
             if (Player.PrimaryResourcePct < magePercent)
                 return false;
 
             Core.Logger.Error(LogCategory.Routine,
-                $"[Skeletal Mage] - On {Target}.");
+                $"[Skeletal Mage] - On {Target} - Mage Count: [{MageCount}].");
             return true;
         }
 
